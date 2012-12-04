@@ -1,1 +1,47 @@
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*.zip
+*.gz
+*.tar
+
+#java specific
+*.class
+*.war
+*.jar
+
+## netbeans ignore personal stuff 
+nbproject/private/
+
+## eclipse project ignores
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
+
+## Maven Project Ignored
 target/
