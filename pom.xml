@@ -10,6 +10,7 @@
   <name>AP Trust</name>
 
   <modules>
+    <module>aptrust-common</module>
     <module>aptrust-ingest</module>
     <module>aptrust-client</module>
     <module>aptrust-admin</module>
