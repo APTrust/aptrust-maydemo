@@ -1,4 +1,4 @@
-package org.aptrust.client.api;
+package org.aptrust.common.exception;
 /**
  * 
  * @author Daniel Bernstein

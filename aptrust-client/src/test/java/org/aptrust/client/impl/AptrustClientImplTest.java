@@ -1,13 +1,11 @@
 package org.aptrust.client.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 import junit.framework.Assert;
 
 import org.aptrust.client.api.InstitutionId;
-import org.aptrust.client.api.AptrustException;
 import org.aptrust.client.api.Summary;
-import org.aptrust.client.impl.ClientConfig;
-import org.aptrust.client.impl.AptrustClientImpl;
+import org.aptrust.common.exception.AptrustException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

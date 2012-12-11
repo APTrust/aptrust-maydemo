@@ -2,8 +2,8 @@ package org.aptrust.client.impl;
 
 import org.aptrust.client.api.AptrustClient;
 import org.aptrust.client.api.InstitutionId;
-import org.aptrust.client.api.AptrustException;
 import org.aptrust.client.api.Summary;
+import org.aptrust.common.exception.AptrustException;
 
 /**
  * @author Daniel Bernstein
