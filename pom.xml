@@ -20,6 +20,16 @@
     <name>AP Trust</name>
     <url>http://aptrust.org/</url>
   </organization>
+  <developers>
+    <developer>
+      <name>Daniel Bernstein</name>
+      <email>dbernstein@duraspace.org</email>
+    </developer>
+    <developer>
+      <name>Mike Durbin</name>
+      <email>md5wz@virginia.edu</email>
+    </developer>
+  </developers>
 
   <licenses>
     <license>
