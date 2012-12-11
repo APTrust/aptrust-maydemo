@@ -1,6 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -30,7 +29,7 @@
     <integrationTests>**/Test*.class</integrationTests>
     <jetty.port>8888</jetty.port>
   </properties>
-  
+
   <build>
     <testResources>
       <testResource>
@@ -56,7 +55,7 @@
           </execution>
         </executions>
       </plugin>
-         
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -87,7 +86,7 @@
         </configuration>
       </plugin>
 
-     <plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -140,7 +139,7 @@
             </systemProperty>
           </systemProperties>
           <webApp>
-           <contextPath>/${project.artifactId}</contextPath>
+            <contextPath>/${project.artifactId}</contextPath>
           </webApp>
           <webAppConfig>
             <unpackOverlays>true</unpackOverlays>
@@ -190,12 +189,12 @@
         <executions>
           <execution>
             <id>xvfb</id>
-             <phase>pre-integration-test</phase>
+            <phase>pre-integration-test</phase>
             <goals>
               <goal>xvfb</goal>
             </goals>
             <configuration>
-               <skip>${skipITs}</skip>
+              <skip>${skipITs}</skip>
             </configuration>
           </execution>
           <execution>
@@ -212,22 +211,22 @@
       </plugin>
 
       <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>buildnumber-maven-plugin</artifactId>
-          <version>1.1</version>
-          <executions>
-              <execution>
-                  <phase>generate-resources</phase>
-                  <goals>
-                      <goal>create</goal>
-                  </goals>
-              </execution>
-          </executions>
-          <configuration>
-              <doCheck>false</doCheck>
-              <doUpdate>false</doUpdate>
-              <shortRevisionLength>5</shortRevisionLength>
-          </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <shortRevisionLength>5</shortRevisionLength>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -273,7 +272,7 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-jsp</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
@@ -338,12 +337,12 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-    </dependency>      
-      
+    </dependency>
+
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-    </dependency>      
+    </dependency>
 
     <dependency>
       <groupId>cglib</groupId>
@@ -351,13 +350,20 @@
     </dependency>
 
     <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>common</artifactId>
+      <groupId>org.aptrust</groupId>
+      <artifactId>aptrust-common</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>storeclient</artifactId>
+      <groupId>org.aptrust</groupId>
+      <artifactId>aptrust-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
     </dependency>
 
     <dependency>
@@ -379,6 +385,6 @@
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
     </dependency>
-      
+
   </dependencies>
- </project>
+</project>
