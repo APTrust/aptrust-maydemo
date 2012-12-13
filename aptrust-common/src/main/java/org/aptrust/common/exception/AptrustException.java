@@ -1,4 +1,5 @@
 package org.aptrust.common.exception;
+
 /**
  * 
  * @author Daniel Bernstein
@@ -6,5 +7,13 @@ package org.aptrust.common.exception;
  *
  */
 public class AptrustException extends Exception {
+
+    public AptrustException(Exception rootCause) {
+        super(rootCause);
+    }
+
+    public AptrustException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
 
 }

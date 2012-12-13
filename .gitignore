@@ -45,3 +45,6 @@ local.properties
 
 ## Maven Project Ignored
 target/
+
+# Local configuration files to ignore
+client-config.properties
