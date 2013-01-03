@@ -5,15 +5,79 @@ Page: Home page placeholder.
 --%>
 <%-- Author: Daniel Bernstein --%><%@include file="../include/libraries.jsp"%>
 <tiles:insertDefinition
-  name="app-base" flush="true">
+  name="app-base"
+  flush="true">
 
 
-  <tiles:putAttribute name="content" cascade="true">
+  <tiles:putAttribute
+    name="content"
+    cascade="true">
 
-    <h1>AP Trust Admin</h1>
-    <h2>Welcome</h2>
-    <p>to your window into the workings of the AP Trust preservation system.
-    </p>
+
+    <section id="institutional-activity">
+      <h1>Institutional Activity</h1>
+      <p>
+        ${institution.fullName} has <strong>${summary.packageCount}
+          packages</strong> containing <strong>${summary.objectCount}
+          objects</strong>, using <strong>${summary.bytesUsed} of storage</strong>.
+      </p>
+      <ul>
+        <li><a href="discovery.html">${summary.dpnBoundPackageCount}
+            packages</a> are <strong>DPN Bound</strong></li>
+        <li><a href="discovery.html">${summary.publicPackageCount} packages</a>
+          are <strong>Public</strong></li>
+        <li><a href="discovery.html">${summary.privatePackageCount}
+            packages</a> are <strong>Private</strong></li>
+        <li><a href="discovery.html">${summary.institutionPackageCount}
+            packages</a> are <strong>Institution Only</strong></li>
+        <li><a href="discovery.html">${summary.failedPackageCount}
+            packages</a> have <strong>Failed Health Checks</strong></li>
+      </ul>
+      <p>
+        <a href="discovery.html">Browse ${institution.fullName} Packages</a>
+      </p>
+
+      <h2>Monthly Activity</h2>
+      <div id="chart"></div>
+    </section>
+
+    <section id="recent-ingests">
+      <h1>Recent Ingests</h1>
+      <c:choose>
+        <c:when test="${empty recentIngests}">
+          <p class="info">There are no recent ingests.</p>
+        </c:when>
+        <c:otherwise>
+          <ul class="ingests">
+            <c:forEach
+              var="ingest"
+              items="${recentIngests}">
+              <li class="ingest ${fn:toLowerCase(ingest.status)}">
+                <h2>${ingest.name}</h2>
+                <p class="info">
+                  Started <strong class="date date-started">${ingest.startDate}
+                    </strong> by <strong class="user">${ingest.initiatingUser}</strong>
+                </p>
+                <p class="progress">
+                  <progress
+                    max="100"
+                    value="${ingest.progress}"></progress>
+                  <strong> <c:choose>
+                      <c:when test="${not empty ingest.message}">
+                        ${ingest.message}
+                      </c:when>
+                      <c:otherwise>
+                         ${ingest.progress}% done
+                      </c:otherwise>
+                    </c:choose>
+                  </strong>
+                </p>
+              </li>
+            </c:forEach>
+          </ul>
+        </c:otherwise>
+      </c:choose>
+    </section>
   </tiles:putAttribute>
 </tiles:insertDefinition>
 

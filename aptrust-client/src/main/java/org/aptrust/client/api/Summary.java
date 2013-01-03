@@ -1,4 +1,5 @@
 package org.aptrust.client.api;
+
 /**
  *  Provides a basic summary of the ingested content for a single institution
  *  in AP Trust.

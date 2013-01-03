@@ -3,21 +3,28 @@ package org.aptrust.client.impl;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.Assert;
 
+import org.aptrust.client.api.IngestProcessSummary;
+import org.aptrust.client.api.IngestStatus;
+import org.aptrust.client.api.InstitutionInfo;
 import org.aptrust.client.api.Summary;
 import org.aptrust.common.exception.AptrustException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
  * 
  * @author Daniel Bernstein
  * @created Dec 11, 2012
- *
+ * 
  */
 public class AptrustClientImplTest {
 
@@ -25,9 +32,9 @@ public class AptrustClientImplTest {
 
     @Before
     public void setUp() throws Exception {
-        //Properties p = new Properties();
-        //p.load(getClass().getClassLoader().getResourceAsStream("client-config.properties"));
-        //client = new AptrustClientImpl(new PropertiesClientConfig(p));
+        Properties p = new Properties();
+        p.load(getClass().getClassLoader().getResourceAsStream("client-config-example.properties"));
+        client = new AptrustClientImpl(new PropertiesClientConfig(p));
     }
 
     @After
@@ -36,10 +43,10 @@ public class AptrustClientImplTest {
 
     @Test
     public void testServiceClientConstructorFailed() {
-        try{
+        try {
             new AptrustClientImpl(null);
             fail();
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Assert.assertTrue(true);
         }
     }
@@ -52,6 +59,13 @@ public class AptrustClientImplTest {
         for (String id : institutionIds) {
             System.out.println(id);
         }
+    }
+
+    @Test
+    public void testGetInsitution() throws AptrustException {
+        InstitutionInfo institution =
+            client.getInstitutionInfo("uva");
+        Assert.assertNotNull(institution);
     }
 
     @Test
@@ -72,5 +86,22 @@ public class AptrustClientImplTest {
         Assert.assertEquals(summary.getPackageCount().intValue(), summary.getPrivatePackageCount().intValue() + summary.getInstitutionPackageCount().intValue() + summary.getPublicPackageCount().intValue());
     }
     */
+    @Test
+    public void testFindIngestProcess() throws AptrustException {
+        String institutionId = "uva";
+        Date startDate = new Date();
+        String name = "test name";
+        IngestStatus status = IngestStatus.COMPLETED;
+
+        try{
+            List<IngestProcessSummary> details =
+                client.findIngestProcesses(institutionId, startDate, name, status);
+            Assert.assertFalse(true);
+        }catch(NotImplementedException ex){
+            Assert.assertTrue(true);
+        }
+
+    }
+
 
 }

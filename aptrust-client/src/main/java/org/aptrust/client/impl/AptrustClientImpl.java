@@ -1,7 +1,9 @@
 package org.aptrust.client.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServer;
@@ -12,9 +14,13 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.aptrust.client.api.AptrustClient;
+import org.aptrust.client.api.IngestProcessSummary;
+import org.aptrust.client.api.IngestStatus;
 import org.aptrust.client.api.InstitutionInfo;
 import org.aptrust.client.api.Summary;
 import org.aptrust.common.exception.AptrustException;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * An AptrustClient implementation that gets all available information from
@@ -26,14 +32,16 @@ public class AptrustClientImpl implements AptrustClient {
     
     private SolrServer solr;
     
+
     public AptrustClientImpl(ClientConfig config) {
-        if(config == null){
+        if (config == null) {
             throw new IllegalArgumentException("client config must be non-null");
-        } 
+        }
+        
         this.config = config;
         solr = new HttpSolrServer(config.getSolrUrl());
     }
-    
+
     @Override
     public Summary getSummary(String institutionId) throws AptrustException {
         Summary s = new Summary();
@@ -106,5 +114,14 @@ public class AptrustClientImpl implements AptrustClient {
         params.set("facet.limit", max);
         params.set("facet.offset", offset);
         return solr.query(params);
+    }
+    
+    @Override
+    public List<IngestProcessSummary>
+        findIngestProcesses(String institutionId,
+                            Date startDate,
+                            String name,
+                            IngestStatus status) throws AptrustException {
+        throw new NotImplementedException();
     }
 }

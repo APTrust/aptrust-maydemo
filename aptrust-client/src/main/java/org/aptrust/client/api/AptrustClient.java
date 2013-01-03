@@ -1,6 +1,8 @@
 package org.aptrust.client.api;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import org.aptrust.common.exception.AptrustException;
 /**
@@ -37,4 +39,15 @@ public interface AptrustClient {
      * @throws AptrustException
      */
     public Summary getSummary(String institutionId) throws AptrustException;
+    
+    /**
+     * Returns a list of ingest process summaries.
+     * @param institutionId 
+     * @param startDate optional
+     * @param name optional 
+     * @param status optional 
+     * @return
+     * @throws AptrustException
+     */
+    List<IngestProcessSummary> findIngestProcesses(String institutionId, Date startDate,  String name,  IngestStatus status) throws AptrustException;
 }

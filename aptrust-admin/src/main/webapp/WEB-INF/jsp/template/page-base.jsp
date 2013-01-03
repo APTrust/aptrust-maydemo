@@ -3,24 +3,26 @@
 <%-- Author: Daniel Bernstein --%>
 
 <%@include file="../include/libraries.jsp"%>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+<html>
 <jsp:directive.page contentType="text/html; charset=utf-8" />
+
 <head>
-<title>AP Trust</title>
+    <meta charset="utf-8">
+    <title>AP Trust Admin</title>
 <link
   rel="stylesheet"
   type="text/css"
   href="${pageContext.request.contextPath}/static/css/global.css" />
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/init.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui.js"></script>
 <tiles:insertAttribute name="head-extension" ignore="true"/>
 
 </head>
-
 <body>
   <tiles:insertAttribute name="body" />
+
 </body>
 </html>

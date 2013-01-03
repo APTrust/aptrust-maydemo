@@ -10,6 +10,11 @@ public class InstitutionInfo {
 
     private String fullName;
 
+    public InstitutionInfo(String id, String fullName){
+        this.id = id;
+        this.fullName = fullName;
+        
+    }
     public String getId() {
         return id;
     }

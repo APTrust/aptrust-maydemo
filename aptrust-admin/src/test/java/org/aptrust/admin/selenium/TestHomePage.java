@@ -16,7 +16,10 @@ public class TestHomePage extends BaseSeleniumTest {
 
     @Test
     public void testGet() {
-        sc.open(getAppRoot() + "/");
+        sc.open(getAppRoot() + "/1");
         Assert.assertTrue(isTextPresent("Welcome"));
+        Assert.assertTrue(isElementPresent("id=institutional-activity"));
+        Assert.assertTrue(isElementPresent("id=recent-ingests"));
+
     }
 }
