@@ -32,5 +32,7 @@
   <definition name="login" template="/WEB-INF/jsp/pages/login.jsp" />
   <definition name="exception" template="/WEB-INF/jsp/pages/exception.jsp" />
   <definition name="home"  template="/WEB-INF/jsp/pages/home.jsp" />
+  <definition name="discovery"  template="/WEB-INF/jsp/pages/discovery.jsp" />
+  <definition name="package"  template="/WEB-INF/jsp/pages/package.jsp" />
   
 </tiles-definitions>

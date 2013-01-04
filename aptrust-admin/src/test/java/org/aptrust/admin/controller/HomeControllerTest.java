@@ -1,4 +1,4 @@
-package org.aptrust.admin.selenium;
+package org.aptrust.admin.controller;
 
 import java.util.ArrayList;
 import java.util.Date;

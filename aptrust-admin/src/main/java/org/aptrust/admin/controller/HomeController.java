@@ -13,7 +13,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+/**
+ * 
+ * @author Daniel Bernstein
+ * Date Dec 15, 2012
+ *
+ */
 @Controller
 public class HomeController {
     private static Logger log = LoggerFactory.getLogger(HomeController.class);
@@ -25,7 +30,7 @@ public class HomeController {
         this.client = client;
     }
 
-    @RequestMapping("/{institutionId}")
+    @RequestMapping("/html/{institutionId}")
     public String getHome(@PathVariable String institutionId, Model model)
         throws AptrustException {
 
