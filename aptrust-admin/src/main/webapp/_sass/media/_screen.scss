@@ -1,0 +1,144 @@
+@include establish-baseline;
+
+* {
+  @include box-sizing(border-box);
+}
+
+html {
+  background-color: #fff;
+}
+
+body {
+  @include container;
+  font-family: Helvetica, sans-serif;
+  color: #333;
+}
+
+h1 {
+  @include adjust-font-size-to(30px);
+}
+
+h2 {
+  @include adjust-font-size-to(24px);
+  font-weight:bold;
+}
+
+ul {
+  list-style:square;
+  margin-left: rhythm(1);
+}
+
+p,ul,ol,dl {
+  @include trailer(1);
+}
+
+header[role="banner"] {
+  @include background(
+    rgba(0,0,200, 0.05)
+  );
+  @include pad(1,1);
+  padding-top: rhythm(1);
+  padding-bottom: rhythm(1);
+  border-bottom: 1px solid rgba(0,0,200,0.1);
+  @include clearfix;
+
+  h1 {
+    @include adjust-font-size-to(16px);
+    margin:0;
+    font-weight:bold;
+    color:rgba(0,0,0,0.5);
+  }
+
+  hgroup {
+    @include span-columns(6,12);
+  }
+  #courtesy {
+    @include span-columns(6 omega, 12);
+    text-align:right;
+    p {
+      margin:0;
+      font-weight:bold;
+      @include adjust-font-size-to(12px);
+    }
+  }
+}
+
+#primary-nav {
+  @include clearfix;
+  @include pad(1,1);
+  padding-top:rhythm(0.5);
+  @include adjust-font-size-to(14px);
+
+  ul {
+    margin-left:0;
+  }
+
+  li {
+    display:inline;
+  
+    & + li:before {
+      content: "| ";
+      color: rgba(0,0,0,0.5);
+    }
+  }
+}
+
+div[role="main"] {
+  @include clearfix;
+  @include pad(1,1);
+}
+
+section {
+  @include span-columns(5,10);
+  &#recent-ingests {
+    @include span-columns(5 omega, 10);
+  }
+}
+
+#chart {
+  height: 200px;
+  background: #eee;
+  margin-top:rhythm(0.5);
+}
+
+
+.ingests {
+  list-style:none;
+  margin-left:0;
+  li {
+    padding: rhythm(0.5);
+    margin-bottom: rhythm(0.5);
+
+    p {
+      margin:0;
+      @include adjust-font-size-to(14px);
+
+      .progress & {
+        margin-top: rhythm(0.5);
+      }
+    }
+
+    h2 {
+      @include adjust-font-size-to(18px);
+    }
+
+    & + li {
+      border-top: 1px dotted rgba(0,0,0,0.25);
+    }
+
+    &.completed {
+      background-color: rgba(0, 255,0, 0.1);
+      border: 1px dotted rgba(0,0,0,0.25);
+    }
+
+    &.failed {
+      background-color: rgba(255,0,0,0.1);
+      border: 1px dotted rgba(0,0,0,0.25);
+
+      .progress {
+        color: rgba(255,0,0,1);
+        font-weight:bold;
+      }
+    }
+  }
+}

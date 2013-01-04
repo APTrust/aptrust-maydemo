@@ -14,7 +14,7 @@
 <link
   rel="stylesheet"
   type="text/css"
-  href="${pageContext.request.contextPath}/static/css/global.css" />
+  href="${pageContext.request.contextPath}/static/css/styles.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/init.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui.js"></script>

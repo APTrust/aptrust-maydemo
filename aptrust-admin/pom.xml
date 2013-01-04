@@ -29,6 +29,12 @@
     <integrationTests>**/Test*.class</integrationTests>
     <jetty.port>8888</jetty.port>
   </properties>
+  <repositories>
+    <repository>
+      <id>rubygems-releases</id>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
+    </repository>
+  </repositories>
 
   <build>
     <testResources>
@@ -61,7 +67,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <webXml>${basedir}/target/web.xml</webXml>
-          <warSourceExcludes>**/*.jsp</warSourceExcludes>
+          <warSourceExcludes>**/*.jsp,**/*.rvmrc,**/.sass-cache/**,**/_sass/**,**/*.rb</warSourceExcludes>
           <webResources>
             <resource>
               <directory>src/main/webapp</directory>
@@ -210,6 +216,23 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <version>0.29.1</version>
+	<extensions>true</extensions>
+        <executions>
+	  <execution>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <phase>compile</phase>
+	  </execution>
+	</executions>
+	<configuration>
+	  <execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/webapp</execArgs>
+	</configuration>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
@@ -391,5 +414,17 @@
       <artifactId>easymock</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>compass</artifactId>
+      <version>0.13.alpha.0</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>susy</artifactId>
+      <version>1.0.4</version>
+      <type>gem</type>
+    </dependency>
   </dependencies>
 </project>
