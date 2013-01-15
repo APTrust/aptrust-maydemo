@@ -4,9 +4,16 @@
 Page: Home page placeholder.
 --%>
 <%-- Author: Daniel Bernstein --%><%@include file="../include/libraries.jsp"%>
-<tiles:insertDefinition
+<tiles:importAttribute name="institution" scope="request"/>
+<c:url var="institutionBaseUrl" value="/html/${institution.id}"/>
+<c:set var="discoveryUrl" value="${institutionBaseUrl}/discovery"/>
+<c:set var="packageBaseUrl" value="${institutionBaseUrl}/package"/>
+
+
+<tiles:insertDefinition  
   name="app-base"
   flush="true">
+
 
 
   <tiles:putAttribute
@@ -22,19 +29,19 @@ Page: Home page placeholder.
           objects</strong>, using <strong>${summary.bytesUsed} of storage</strong>.
       </p>
       <ul>
-        <li><a href="discovery.html">${summary.dpnBoundPackageCount}
+        <li><a href="${discoveryUrl}">${summary.dpnBoundPackageCount}
             packages</a> are <strong>DPN Bound</strong></li>
-        <li><a href="discovery.html">${summary.publicPackageCount} packages</a>
+        <li><a href="${discoveryUrl}">${summary.publicPackageCount} packages</a>
           are <strong>Public</strong></li>
-        <li><a href="discovery.html">${summary.privatePackageCount}
+        <li><a href="${discoveryUrl}">${summary.privatePackageCount}
             packages</a> are <strong>Private</strong></li>
-        <li><a href="discovery.html">${summary.institutionPackageCount}
+        <li><a href="${discoveryUrl}">${summary.institutionPackageCount}
             packages</a> are <strong>Institution Only</strong></li>
-        <li><a href="discovery.html">${summary.failedPackageCount}
+        <li><a href="${discoveryUrl}">${summary.failedPackageCount}
             packages</a> have <strong>Failed Health Checks</strong></li>
       </ul>
       <p>
-        <a href="discovery.html">Browse ${institution.fullName} Packages</a>
+        <a href="${discoveryUrl}">Browse ${institution.fullName} Packages</a>
       </p>
 
       <h2>Monthly Activity</h2>

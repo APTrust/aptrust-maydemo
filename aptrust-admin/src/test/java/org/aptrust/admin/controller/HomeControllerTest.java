@@ -3,11 +3,9 @@ package org.aptrust.admin.controller;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.aptrust.admin.controller.HomeController;
 import org.aptrust.client.api.AptrustClient;
 import org.aptrust.client.api.IngestProcessSummary;
 import org.aptrust.client.api.IngestStatus;
-import org.aptrust.client.api.InstitutionInfo;
 import org.aptrust.client.api.Summary;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -34,10 +32,6 @@ public class HomeControllerTest {
     @Test
     public void testGetHome() throws Exception {
         AptrustClient client = EasyMock.createMock(AptrustClient.class);
-        InstitutionInfo institution =
-            EasyMock.createMock(InstitutionInfo.class);
-        EasyMock.expect(client.getInstitutionInfo(EasyMock.isA(String.class)))
-                .andReturn(institution);
         Summary summary = EasyMock.createMock(Summary.class);
         EasyMock.expect(client.getSummary(EasyMock.isA(String.class)))
                 .andReturn(summary);

@@ -20,7 +20,37 @@ h1 {
 
 h2 {
   @include adjust-font-size-to(24px);
+  @include trailer(1);
   font-weight:bold;
+}
+
+h3 {
+  @include adjust-font-size-to(20px);
+  font-weight:bold;
+  color: #999;
+}
+
+table {
+  width:100%;
+  @include adjust-font-size-to(14px);
+  @include trailer(1);
+
+  tr {
+    border-bottom: 1px dotted #ccc;
+  }
+
+  thead tr {
+    border-bottom: 2px solid #999;
+  }
+
+  th {
+    font-weight:bold;
+  }
+
+  th,td {
+    vertical-align:top;
+    padding: rhythm(0.25) 0;
+  }
 }
 
 ul {
@@ -30,6 +60,37 @@ ul {
 
 p,ul,ol,dl {
   @include trailer(1);
+}
+
+a {
+
+  &:link {
+    color: #39f;
+  }
+
+  &:visited {
+    color: #38c;
+  }
+
+  &:hover {
+    color: #36f;
+  }
+
+  &:focus {
+    color: #36f;
+  }
+
+  &:active {
+    color: #555;
+  }
+
+}
+
+.kicker {
+  color: #999;
+  @include adjust-font-size-to(12px);
+  display:block;
+  font-weight:bold;
 }
 
 header[role="banner"] {
@@ -86,12 +147,79 @@ header[role="banner"] {
 div[role="main"] {
   @include clearfix;
   @include pad(1,1);
+
+  h1 {
+    margin-bottom: rhythm(0.5);
+  }
+
+  #facets,
+  #package {
+    @include span-columns(3,10);
+  }
+
+  #package {
+    .dates {
+      list-style:none;
+      margin-left:0;
+      padding-left:0;
+      @include adjust-font-size-to(12px);
+      color: #999;
+      border-top: 1px dotted #ccc;
+
+      li {
+        border-bottom: 1px dotted #ccc;
+        padding: rhythm(0.25) 0;
+      }
+    }
+
+    input[type=text],
+    select {
+      width: 100%;
+      border: 1px solid #999;
+      padding: 5px;
+    }
+  }
+
+  #results,
+  #object {
+    @include span-columns(7 omega, 10);
+
+    .result {
+      border: 1px solid #ddd;
+      padding: 20px;
+
+      margin-bottom: rhythm(1);
+
+      .health-check {
+        margin: 0 -20px -20px;
+        padding: 10px 20px;
+        border: 1px solid #fff;
+        @include adjust-font-size-to(12px);
+        font-weight:bold;
+      }
+
+      .meta {
+        @include adjust-font-size-to(12px);
+        color: #999;
+      }
+
+      .good {
+        background-color: rgba(0, 255, 0, 0.25);
+      }
+
+      .bad {
+        background-color: rgba(255, 0, 0, 0.25);
+      }
+    }
+
+  }
 }
 
 section {
   @include span-columns(5,10);
   &#recent-ingests {
     @include span-columns(5 omega, 10);
+
   }
 }
 
@@ -120,6 +248,7 @@ section {
 
     h2 {
       @include adjust-font-size-to(18px);
+      margin:0;
     }
 
     & + li {

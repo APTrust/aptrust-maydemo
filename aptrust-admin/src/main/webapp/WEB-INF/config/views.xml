@@ -20,19 +20,18 @@
   <definition name="app-base" extends="page-base">
 
     <put-attribute name="body">
-
-      <definition template="/WEB-INF/jsp/template/app-base.jsp">
+      <definition template="/WEB-INF/jsp/template/app-base.jsp" preparer="institutionPreparer">
         <put-attribute name="content" cascade="true" />
       </definition>
     </put-attribute>  
   </definition>
 
-    
+  <definition name="institution-page" preparer="institutionPreparer"/>
  <!-- global views -->
   <definition name="login" template="/WEB-INF/jsp/pages/login.jsp" />
   <definition name="exception" template="/WEB-INF/jsp/pages/exception.jsp" />
-  <definition name="home"  template="/WEB-INF/jsp/pages/home.jsp" />
-  <definition name="discovery"  template="/WEB-INF/jsp/pages/discovery.jsp" />
-  <definition name="package"  template="/WEB-INF/jsp/pages/package.jsp" />
+  <definition name="home"  template="/WEB-INF/jsp/pages/home.jsp" extends="institution-page"/>
+  <definition name="discovery"  template="/WEB-INF/jsp/pages/discovery.jsp" extends="institution-page"/>
+  <definition name="package"  template="/WEB-INF/jsp/pages/package.jsp" extends="institution-page"/>
   
 </tiles-definitions>
