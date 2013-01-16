@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject VERSION="1.1" PID="aptrust:package"
+    xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-1.xsd">
+    <foxml:objectProperties>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="AP Trust participant content model"/>
+    </foxml:objectProperties>
+    <foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Record for this object" MIMETYPE="text/xml" FORMAT_URI="http://www.openarchives.org/OAI/2.0/oai_dc/">
+            <foxml:xmlContent>
+                <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+                    <dc:title>Content Model for objects describing APTrust packages</dc:title>
+                    <dc:identifier>aptrust:package</dc:identifier>
+                </oai_dc:dc>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="RELS-EXT.0" FORMAT_URI="info:fedora/fedora-system:FedoraRELSExt-1.0" MIMETYPE="application/rdf+xml">
+            <foxml:xmlContent>
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                    xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+                    <rdf:Description rdf:about="info:fedora/aptrust:package">
+                        <fedora-model:hasModel  rdf:resource="info:fedora/fedora-system:ContentModel-3.0"/>
+                        <fedora-model:hasService rdf:resource="info:fedora/aptrust:indexableSDef"/>
+                    </rdf:Description>
+                </rdf:RDF>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="DS-COMPOSITE-MODEL" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="DS-COMPOSITE-MODEL1.0" LABEL="Datastream Composite Model" MIMETYPE="text/xml" FORMAT_URI="info:fedora/fedora-system:FedoraDSCompositeModel-1.0">
+            <foxml:xmlContent>
+                <dsCompositeModel xmlns="info:fedora/fedora-system:def/dsCompositeModel#">
+                </dsCompositeModel>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="ONTOLOGY" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="ONTOLOGY1.0" MIMETYPE="application/rdf+xml" FORMAT_URI="info:fedora/fedora-system:FedoraOntology-1.0">
+            <foxml:xmlContent>
+                <rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+                    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+                    xmlns:owl="http://www.w3.org/2002/07/owl#">
+                    <owl:Class rdf:about="info:fedora/aptrust:package#class">
+                        <rdfs:subClassOf>
+                            <!-- the descriptive object must match at least one other resource -->
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.aptrust.org/relationships#describesAPTrustResource"/>
+                                <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</owl:minCardinality>
+                            </owl:Restriction>
+                        </rdfs:subClassOf>
+                        
+                        <rdfs:subClassOf>
+                            <!-- the descriptive object must have an owning institution  -->
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.aptrust.org/relationships#hasOwningInstitution"/>
+                                <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</owl:cardinality>
+                            </owl:Restriction>
+                        </rdfs:subClassOf>
+                        
+                        <rdfs:subClassOf>
+                            <!-- the descriptive object must have some reference to an access control policy  -->
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.aptrust.org/relationships#hasAccessControlPolicy"/>
+                                <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</owl:cardinality>
+                            </owl:Restriction>
+                        </rdfs:subClassOf>
+                    </owl:Class>
+                    <owl:Class rdf:about="info:fedora/fedora-system:ContentModel-3.0#datastreams/RELS-EXT/class"/>
+                    <owl:ObjectProperty rdf:about="http://www.aptrust.org/relationships#describesAPTrustResource"/>
+                    <owl:ObjectProperty rdf:about="http://www.aptrust.org/relationships#hasOwningInstitution"/>
+                    <owl:ObjectProperty rdf:about="http://www.aptrust.org/relationships#hasAccessControlPolicy"/>
+                </rdf:RDF>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="aptrust-metadata-v1.xsd" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="aptrust-metadata-v1.xsd1.0" LABEL="AP Trust metadata schema" CREATED="2012-10-05T15:28:55.515Z" MIMETYPE="text/xml" SIZE="3347">
+            <foxml:xmlContent>
+                <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://www.aptrust.org/metadata/v1" targetNamespace="http://www.aptrust.org/metadata/v1" elementFormDefault="qualified">
+                    <xs:element name="metadata">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The top-level element for AP Trust object metadata when serialized to XML. (not RDF)
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element ref="m:id"></xs:element>
+                                <xs:element ref="m:institution"></xs:element>
+                                <xs:element ref="m:title"></xs:element>
+                                <xs:element ref="m:access"></xs:element>
+                                <xs:element name="dpn" type="xs:boolean"></xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    
+                    <xs:element name="id">
+                        <xs:annotation>
+                            <xs:documentation>
+                                This string represents the id of the pacakge
+                                object.  This must be a valid fedora PID.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="64"/>
+                                <xs:pattern value="([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    
+                    <xs:element name="institution" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>
+                                This string represents the standard name of the
+                                institution that owns the resources this metadata
+                                describes.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    
+                    <xs:element name="title" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>
+                                This string represents the human-readable title for
+                                the material (or set of materials) that is described
+                                by this metadata.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    
+                    <xs:element name="access">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The access controls for the materials described by
+                                this metadata.  &quot;World&quot; indicates that anyone can 
+                                access the materials.  &quot;Institution&quot; means that anyone
+                                from the contributing institution may access the
+                                materials.  &quot;Restricted&quot; means that only administrators
+                                from the submitting institution may access the 
+                                materials.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="world"></xs:enumeration>
+                                <xs:enumeration value="institution"></xs:enumeration>
+                                <xs:enumeration value="restricted"></xs:enumeration>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:schema>                                
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+</foxml:digitalObject>
