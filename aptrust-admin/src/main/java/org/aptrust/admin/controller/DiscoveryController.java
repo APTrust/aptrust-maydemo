@@ -5,6 +5,8 @@
 package org.aptrust.admin.controller;
 
 import org.aptrust.client.api.AptrustClient;
+import org.aptrust.client.api.PackageSummaryQueryResponse;
+import org.aptrust.client.api.SearchParams;
 import org.aptrust.common.exception.AptrustException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +16,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 /**
  * 
- * @author Daniel Bernstein
- * Date: Jan 3, 2013
- *
+ * @author Daniel Bernstein Date: Jan 3, 2013
+ * 
  */
 @Controller
 public class DiscoveryController {
-    private static Logger log = LoggerFactory.getLogger(DiscoveryController.class);
+    private static Logger log =
+        LoggerFactory.getLogger(DiscoveryController.class);
 
     private AptrustClient client;
 
@@ -32,12 +35,13 @@ public class DiscoveryController {
     }
 
     @RequestMapping("/html/{institutionId}/discovery")
-    public String get(@PathVariable 
-                      @ModelAttribute 
-                      String institutionId, Model model)
-        throws AptrustException {
-
-        log.debug("displaying discovery...");
+    public String get(@PathVariable @ModelAttribute String institutionId,
+                      @ModelAttribute SearchParams searchParams,
+                      Model model) throws AptrustException {
+        log.debug("calling discovery...");
+        PackageSummaryQueryResponse response =
+            client.findPackageSummaries(institutionId, searchParams);
+        model.addAttribute("queryResponse", response);
         return "discovery";
     }
 }

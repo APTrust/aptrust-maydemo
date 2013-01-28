@@ -17,14 +17,10 @@
       accept-charset="utf-8">
       <input
         type="search"
-        name="search"
+        name="query"
         id="search"
-        placeholder="lorem ipsum"
-        value=""><input
-        type="submit"
-        name="submit"
-        id="submit"
-        value="Search">
+        placeholder="enter search terms"
+        value=""/>
     </form>
   </div>
 </header>

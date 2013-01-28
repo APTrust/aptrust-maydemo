@@ -6,16 +6,27 @@ package org.aptrust.admin.config;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.solr.client.solrj.response.FacetField;
 import org.aptrust.client.api.AptrustClient;
+import org.aptrust.client.api.AptrustObjectDetail;
+import org.aptrust.client.api.HealthCheckInfo;
 import org.aptrust.client.api.IngestProcessSummary;
 import org.aptrust.client.api.IngestStatus;
 import org.aptrust.client.api.InstitutionInfo;
+import org.aptrust.client.api.PackageSummary;
+import org.aptrust.client.api.PackageSummaryQueryResponse;
+import org.aptrust.client.api.SearchParams;
 import org.aptrust.client.api.Summary;
+import org.aptrust.client.impl.AptrustPackageDetail;
+import org.aptrust.client.impl.ObjectDescriptor;
 import org.aptrust.common.exception.AptrustException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.yourmediashelf.fedora.client.FedoraClient;
 
 /**
  * A bean configuration class supporting the service layer.
@@ -85,6 +96,65 @@ public class ServiceConfig {
                                              null,
                                              "1/4 packages failed") });
 
+            }
+
+            @Override
+            public PackageSummaryQueryResponse
+                findPackageSummaries(String institutionId,
+                                     SearchParams searchParams)
+                    throws AptrustException {
+                List<FacetField> facetFields = new LinkedList<FacetField>();
+
+                FacetField ff = new FacetField("dpnBound");
+                ff.add("true", 100);
+                ff.add("false", 234);
+                facetFields.add(ff);
+
+                List<PackageSummary> packageSummaries =
+                    new LinkedList<PackageSummary>();
+                PackageSummary ps =
+                    new PackageSummary("package1",
+                                       "Test Package",
+                                       new Date(),
+                                       108,
+                                       "Udacity",
+                                       new HealthCheckInfo(new Date(), true));
+                packageSummaries.add(ps);
+
+                return new PackageSummaryQueryResponse(packageSummaries,
+                                                       facetFields);
+            }
+            
+            @Override
+            public AptrustPackageDetail getPackageDetail(String institutionId, String packageId)
+                throws AptrustException {
+                
+                List<ObjectDescriptor> objectDescriptors = new LinkedList<ObjectDescriptor>();
+ 
+                for(int i = 0; i < 10; i++){
+                    String id = "object"+i;
+                    objectDescriptors.add(new ObjectDescriptor(id));
+                }
+                
+                
+                AptrustPackageDetail ps =
+                    new AptrustPackageDetail("package1",
+                                       "Test Package",
+                                       new Date(),
+                                       108,
+                                       "Udacity",
+                                       new HealthCheckInfo(new Date(), true), objectDescriptors);
+                
+                return ps;
+
+            }
+            
+            @Override
+            public AptrustObjectDetail getObjectDetail(String institutionId,
+                                                       String packageId,
+                                                       String objectId)
+                throws AptrustException {
+                return new AptrustObjectDetail(objectId);
             }
         };
     }
