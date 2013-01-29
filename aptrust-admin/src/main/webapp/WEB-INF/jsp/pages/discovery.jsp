@@ -17,7 +17,7 @@ Page: Package Discovery
     name="content"
     cascade="true">
     <div>
-      <form:form modelAttribute="searchParams">
+      <form:form modelAttribute="searchParams" method="POST">
         <form:input placeholder="enter search terms" path="query" type="search" />
       </form:form>
     </div>

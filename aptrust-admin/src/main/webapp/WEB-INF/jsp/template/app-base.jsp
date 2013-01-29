@@ -2,6 +2,9 @@
 <%@include file="../include/libraries.jsp"%>
 
 <tiles:importAttribute name="institution" scope="request"/>
+<c:url var="institutionBaseUrl" value="/html/${institution.id}"/>
+<c:set var="discoveryUrl" value="${institutionBaseUrl}/discovery"/>
+
 <header role="banner">
   <hgroup>
     <h1>AP Trust</h1>
@@ -12,7 +15,7 @@
       Welcome, Thomas Jefferson! <a href="#">Sign Out</a>
     </p>
     <form
-      action=""
+      action="${discoveryUrl}"
       method="get"
       accept-charset="utf-8">
       <input
@@ -28,10 +31,9 @@
   id="primary-nav"
   role="navigation">
   
-  <c:url var="institutionBaseUrl" value="/html/${institution.id}"/>
   <ul>
     <li><a href="${institutionBaseUrl}">Dashboard</a></li>
-    <li><a href="${institutionBaseUrl}/discovery">Discovery</a></li>
+    <li><a href="${discoveryUrl}">Discovery</a></li>
   </ul>
 </nav>
 <div role="main">

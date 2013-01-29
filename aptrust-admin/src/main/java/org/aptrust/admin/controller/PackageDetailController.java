@@ -39,6 +39,7 @@ public class PackageDetailController {
         get(@PathVariable String institutionId,
             @PathVariable String packageId,
             @RequestParam(required=false) String objectId,
+            @RequestParam(required=false) String filter,
             Model model) throws AptrustException {
         
         log.debug("calling institutionId = {}, packageId = {}, objectId = {}",
@@ -52,6 +53,7 @@ public class PackageDetailController {
         log.debug("adding package detail to map: {}", packageDetail);
         
         model.addAttribute("packageDetail", packageDetail);
+        model.addAttribute("filter", filter);
 
         if (objectId == null) {
             objectId = packageDetail.getObjectDescriptors().get(0).getId();
