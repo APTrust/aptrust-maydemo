@@ -48,3 +48,4 @@ target/
 
 # Local configuration files to ignore
 client-config.properties
+ingest-client-config.properties

@@ -31,11 +31,29 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
-
     <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+      <version>1.0.1</version>
     </dependency>
-      
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.aptrust</groupId>
+      <artifactId>aptrust-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>storeclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.yourmediashelf.fedora.client</groupId>
+      <artifactId>fedora-client-core</artifactId>
+      <version>0.3</version>
+    </dependency>  
   </dependencies>
  </project>
