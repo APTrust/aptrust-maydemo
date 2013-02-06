@@ -9,3 +9,7 @@ Once you've built the whole project: you can run the web admin by simply running
 on the command line and then open your browser to 
 
   http://localhost:8888/aptrust-admin/
+
+try uva-admin/password  to login.
+other usernames with the same password will also work: 
+ncsu-admin and jhu-admin
