@@ -49,6 +49,17 @@ public class ServiceConfig {
             }
 
             @Override
+            public List<InstitutionInfo> getInstitutions()
+                throws AptrustException {
+                return Arrays.asList(new InstitutionInfo[]{
+                    new InstitutionInfo("uva", "University of Virginia"),
+                    new InstitutionInfo("ncsu", "North Carolina State University"),
+                    new InstitutionInfo("jhu", "Johns Hopkins University")
+                });
+            }
+
+            
+            @Override
             public InstitutionInfo getInstitutionInfo(String institutionId)
                 throws AptrustException {
                 return new InstitutionInfo(institutionId, "Institution ("

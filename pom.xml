@@ -13,6 +13,7 @@
     <module>aptrust-common</module>
     <module>aptrust-ingest</module>
     <module>aptrust-client</module>
+    <module>aptrust-security</module>
     <module>aptrust-admin</module>
   </modules>
 
@@ -169,6 +170,12 @@
         <version>${org.springframework.version}</version>
       </dependency>
 
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+      <version>${org.springframework.version}</version>
+    </dependency>
+
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-beans</artifactId>
@@ -263,6 +270,12 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>1.6.12</version>
       </dependency>
 
       <dependency>

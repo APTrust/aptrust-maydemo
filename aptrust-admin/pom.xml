@@ -322,6 +322,27 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>spring-webflow</artifactId>
     </dependency>
@@ -380,6 +401,12 @@
     <dependency>
       <groupId>org.aptrust</groupId>
       <artifactId>aptrust-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.aptrust</groupId>
+      <artifactId>aptrust-security</artifactId>
       <version>${project.version}</version>
     </dependency>
 

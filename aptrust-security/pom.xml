@@ -9,32 +9,20 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>aptrust-client</artifactId>
+  <artifactId>aptrust-security</artifactId>
 
   <packaging>jar</packaging>
 
-  <name>AP Trust Client</name>
+  <name>AP Trust Security</name>
 
   <version>0.1.0-SNAPSHOT</version>
 
   <build>
   </build>
   <dependencies>
-
-    <dependency>
-      <groupId>org.aptrust</groupId>
-      <artifactId>aptrust-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.solr</groupId>
-      <artifactId>solr-solrj</artifactId>
     </dependency>
 
     <dependency>
@@ -46,30 +34,15 @@
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.6</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.yourmediashelf.fedora.client</groupId>
-      <artifactId>fedora-client-core</artifactId>
-      <version>0.3</version>
     </dependency>
 
   </dependencies>

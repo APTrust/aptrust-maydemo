@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.aptrust.client.impl.AptrustPackageDetail;
 import org.aptrust.common.exception.AptrustException;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Defines a client interface that exposes methods to get information about
@@ -24,6 +25,13 @@ public interface AptrustClient {
      * @return A Collection of institution ids
      */
     public Collection<String> getInstitutionIds() throws AptrustException;
+
+    /**
+     * 
+     * @return
+     * @throws AptrustException
+     */
+    List<InstitutionInfo> getInstitutions() throws AptrustException;
 
     /**
      * Returns information about the institution with the given id.
@@ -45,6 +53,7 @@ public interface AptrustClient {
      * @return
      * @throws AptrustException
      */
+    @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public Summary getSummary(String institutionId) throws AptrustException;
 
     /**
@@ -60,12 +69,21 @@ public interface AptrustClient {
      * @return
      * @throws AptrustException
      */
+    @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     List<IngestProcessSummary> findIngestProcesses(String institutionId,
                                                    Date startDate,
                                                    String name,
                                                    IngestStatus status)
         throws AptrustException;
 
+    /**
+     * 
+     * @param institutionId
+     * @param searchParams
+     * @return
+     * @throws AptrustException
+     */
+    @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public PackageSummaryQueryResponse findPackageSummaries(String institutionId,
                                                      SearchParams searchParams)
         throws AptrustException;
@@ -77,6 +95,7 @@ public interface AptrustClient {
      * @return
      * @throws AptrustException
      */
+    @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public AptrustPackageDetail getPackageDetail(String institutionId, String packageId)
         throws AptrustException;
 
@@ -88,7 +107,9 @@ public interface AptrustClient {
      * @return
      * @throws AptrustException
      */
+    @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public AptrustObjectDetail getObjectDetail(String institutionId, String packageId, String objectId)
         throws AptrustException;
+
 
 }

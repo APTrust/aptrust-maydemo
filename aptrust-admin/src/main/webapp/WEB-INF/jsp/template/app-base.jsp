@@ -5,14 +5,17 @@
 <c:url var="institutionBaseUrl" value="/html/${institution.id}"/>
 <c:set var="discoveryUrl" value="${institutionBaseUrl}/discovery"/>
 
+<sec:authentication property="principal" var="principal"  />
+
 <header role="banner">
   <hgroup>
     <h1>AP Trust</h1>
-    <h2>University of Virginia</h2>
+    <h2>${institution.fullName }</h2>
   </hgroup>
   <div id="courtesy">
+    <sec:authorize access="hasAnyRole('ROLE_ROOT','ROLE_USER')" >
     <p>
-      Welcome, Thomas Jefferson! <a href="#">Sign Out</a>
+      Welcome, ${principal.username } ! <a href="${pageContext.request.contextPath}/j_spring_security_logout">Sign Out</a>
     </p>
     <form
       action="${discoveryUrl}"
@@ -25,6 +28,8 @@
         placeholder="enter search terms"
         value=""/>
     </form>
+    </sec:authorize>
+    
   </div>
 </header>
 <nav

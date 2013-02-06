@@ -24,7 +24,7 @@ public class ViewConfig{
     public ViewResolver viewResolver(){
         UrlBasedViewResolver r = new UrlBasedViewResolver();
         r.setViewClass(TilesView.class);
-        r.setOrder(1);
+        r.setOrder(2);
         return r;
     }
 

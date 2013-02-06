@@ -1,0 +1,71 @@
+<beans:beans
+  xmlns="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.1.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+
+
+  <http pattern="/**"
+        auto-config="false"
+        access-denied-page="/access-denied"
+        use-expressions="true">
+        <form-login login-page="/login" authentication-failure-url="/login?error=true"/>
+        <logout/>
+    <intercept-url pattern="/html/**" access="hasRole('ROLE_USER')"  />
+  </http>
+
+  <!-- AuthN Manager -->
+  <authentication-manager alias="authenticationManager" >
+    <authentication-provider user-service-ref="userService" />
+  </authentication-manager>
+
+
+  <beans:bean id="userService" class="org.aptrust.security.UserDetailsServiceImpl">
+    <beans:constructor-arg>
+      <beans:list>
+        <beans:bean  class="org.aptrust.security.AptrustUser">
+          <beans:constructor-arg value="uva-admin"/>
+          <beans:constructor-arg value="password"/>
+          <beans:constructor-arg value="ROLE_USER"/>
+          <beans:constructor-arg value="uva"/>
+        </beans:bean>
+        <beans:bean  class="org.aptrust.security.AptrustUser">
+          <beans:constructor-arg value="ncsu-admin"/>
+          <beans:constructor-arg value="password"/>
+          <beans:constructor-arg value="ROLE_USER"/>
+          <beans:constructor-arg value="ncsu"/>
+        </beans:bean>
+        <beans:bean  class="org.aptrust.security.AptrustUser">
+          <beans:constructor-arg value="jhu-admin"/>
+          <beans:constructor-arg value="password"/>
+          <beans:constructor-arg value="ROLE_USER"/>
+          <beans:constructor-arg value="jhu"/>
+        </beans:bean>
+
+     </beans:list>
+    </beans:constructor-arg>
+  </beans:bean>
+  
+
+  <global-method-security
+    pre-post-annotations="enabled"
+    authentication-manager-ref="authenticationManager">
+      <expression-handler ref="expressionHandler"/>
+    </global-method-security>
+    
+
+  <beans:bean id="expressionHandler" class=
+    "org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+       <beans:property name="permissionEvaluator" ref="aptrustPermissionEvaluator"/>
+  </beans:bean>    
+
+  <beans:bean id="aptrustPermissionEvaluator" class="org.aptrust.security.AptrustPermissionEvaluator"  />
+</beans:beans>

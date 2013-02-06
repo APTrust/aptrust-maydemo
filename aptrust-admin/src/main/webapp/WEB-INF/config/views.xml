@@ -29,8 +29,10 @@
   <definition name="institution-page" preparer="institutionPreparer"/>
  <!-- global views -->
   <definition name="login" template="/WEB-INF/jsp/pages/login.jsp" />
+  <definition name="access-denied" template="/WEB-INF/jsp/pages/access-denied.jsp" />
   <definition name="exception" template="/WEB-INF/jsp/pages/exception.jsp" />
-  <definition name="home"  template="/WEB-INF/jsp/pages/home.jsp" extends="institution-page"/>
+  <definition name="home"  template="/WEB-INF/jsp/pages/home.jsp" />
+  <definition name="dashboard"  template="/WEB-INF/jsp/pages/dashboard.jsp" extends="institution-page"/>
   <definition name="discovery"  template="/WEB-INF/jsp/pages/discovery.jsp" extends="institution-page"/>
   <definition name="package"  template="/WEB-INF/jsp/pages/package.jsp" extends="institution-page"/>
   

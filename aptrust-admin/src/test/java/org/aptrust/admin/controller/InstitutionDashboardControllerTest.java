@@ -19,7 +19,7 @@ import org.springframework.ui.ExtendedModelMap;
  * @author Daniel Bernstein
  * 
  */
-public class HomeControllerTest {
+public class InstitutionDashboardControllerTest {
 
     @Before
     public void setUp() throws Exception {
@@ -42,7 +42,7 @@ public class HomeControllerTest {
                 .andReturn(new ArrayList<IngestProcessSummary>());
 
         EasyMock.replay(client);
-        HomeController c = new HomeController(client);
+        InstitutionDashboardController c = new InstitutionDashboardController(client);
         Assert.assertNotNull(c.getHome("1", new ExtendedModelMap()));
         EasyMock.verify(client);
     }

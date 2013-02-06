@@ -187,4 +187,9 @@ public class AptrustClientImpl implements AptrustClient {
         throw new NotImplementedException();
 
     }
+    
+    @Override
+    public List<InstitutionInfo> getInstitutions() throws AptrustException {
+        throw new NotImplementedException();
+    }
 }
