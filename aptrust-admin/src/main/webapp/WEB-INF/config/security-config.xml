@@ -19,7 +19,7 @@
         use-expressions="true">
         <form-login login-page="/login" authentication-failure-url="/login?error=true"/>
         <logout/>
-    <intercept-url pattern="/html/**" access="hasRole('ROLE_USER')"  />
+    <intercept-url pattern="/html/**" access="hasAnyRole('ROLE_USER','ROLE_ROOT')"  />
   </http>
 
   <!-- AuthN Manager -->
@@ -48,6 +48,12 @@
           <beans:constructor-arg value="password"/>
           <beans:constructor-arg value="ROLE_USER"/>
           <beans:constructor-arg value="jhu"/>
+        </beans:bean>
+        <beans:bean  class="org.aptrust.security.AptrustUser">
+          <beans:constructor-arg value="aptrust-admin"/>
+          <beans:constructor-arg value="password"/>
+          <beans:constructor-arg value="ROLE_ROOT"/>
+          <beans:constructor-arg value="all"/>
         </beans:bean>
 
      </beans:list>

@@ -13,3 +13,5 @@ on the command line and then open your browser to
 try uva-admin/password  to login.
 other usernames with the same password will also work: 
 ncsu-admin and jhu-admin
+
+for super user access:   aptrust-admin/password
