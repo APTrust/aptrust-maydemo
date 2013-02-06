@@ -169,10 +169,6 @@
                   <name>jetty.port</name>
                   <value>${jetty.port}</value>
                 </systemProperty>
-                <systemProperty>
-                  <name>jsse.enableSNIExtension</name>
-                  <value>false</value>
-                </systemProperty>
               </systemProperties>
             </configuration>
           </execution>
@@ -220,18 +216,18 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <version>0.29.1</version>
-	<extensions>true</extensions>
+        <extensions>true</extensions>
         <executions>
-	  <execution>
-	    <goals>
-	      <goal>exec</goal>
-	    </goals>
-	    <phase>compile</phase>
-	  </execution>
-	</executions>
-	<configuration>
-	  <execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/webapp</execArgs>
-	</configuration>
+          <execution>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/webapp</execArgs>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
