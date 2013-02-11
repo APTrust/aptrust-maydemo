@@ -28,7 +28,7 @@ public class PackageIndexer {
 
     public static void main(String args[]) throws HttpException, IOException {
         if (args.length < 3) {
-            System.out.println("Usage: IndexAPTrustPackage [fedora-url] [solr-update-url] [pid] ...");
+            System.out.println("Usage: PackageIndexer [fedora-url] [solr-update-url] [pid] ...");
             return;
         }
 
