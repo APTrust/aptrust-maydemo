@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+
 import org.aptrust.ingest.api.IngestManifest;
 import org.aptrust.ingest.api.IngestPackage;
 
@@ -39,8 +41,9 @@ public class LocalFedoraRepository {
      * @return an IngestManifest of all the materials in the repository.
      * @throws FedoraClientException 
      * @throws IOException 
+     * @throws JAXBException 
      */
-    public IngestManifest generateManifest(String label) throws FedoraClientException, IOException {
+    public IngestManifest generateManifest(String label, String username) throws FedoraClientException, IOException, JAXBException {
         // get the fedora version
         String version = FedoraClient.describeRepository().execute(fc).getRepositoryVersion();
         
@@ -61,7 +64,7 @@ public class LocalFedoraRepository {
         } finally {
             reader.close();
         }
-        return new IngestManifest(label, packages);
+        return new IngestManifest(label, username, packages);
     }
 
 }

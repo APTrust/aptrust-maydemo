@@ -11,13 +11,17 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
@@ -68,11 +72,11 @@ public class IngestClient {
             IngestClientConfiguration c = new PropertiesIngestClientConfiguration(p);
 
             if (a.isPrepackagedFedora()) {
-                System.out.println("Beginning ingest of packages defined in fedora.");
+                System.out.println("Beginning ingest of packages defined in fedora." + (a.isDryRun() ? " (dry-run)" : ""));
                 
                 try {
                     LocalFedoraRepository r = new LocalFedoraRepository(a.getFedoraUrl(), a.getFedoraUsername(), a.getFedoraPassword());
-                    IngestManifest m = r.generateManifest("All local packages.");
+                    IngestManifest m = r.generateManifest("All local packages.", c.getDuraCloudUsername());
                     System.out.println("  " + m.listPackagesToSubmit().size() + " packages detected.");
                     
                     IngestClient client = new IngestClient(c, a);
@@ -90,10 +94,6 @@ public class IngestClient {
                     System.exit(-1);
                 } catch (ContentStoreException ex) {
                     System.err.println("Unable to transfer manifest!");
-                    ex.printStackTrace();
-                    System.exit(-1);
-                } catch (XMLStreamException ex) {
-                    System.err.println("Error generating manifest!");
                     ex.printStackTrace();
                     System.exit(-1);
                 } catch (Exception ex) {
@@ -177,9 +177,10 @@ public class IngestClient {
      * @throws ContentStoreException if an error occurs while storing the
      * manifest file
      * @throws IOException if any error occurs while reading/writing data
-     * @throws XMLStreamException if the manifest serialization fails
+     * @throws JAXBException if the manifest serialization fails
+     * @throws JAXBException 
      */
-    private String  transferManifest(IngestManifest m) throws ContentStoreException, IOException, XMLStreamException {
+    private String  transferManifest(IngestManifest m) throws ContentStoreException, IOException, JAXBException {
         // Step one, generate an ID
         String id = getRandomString(10);
         String contentId = "ingest-manifest-" + id + ".xml";
@@ -187,17 +188,24 @@ public class IngestClient {
         // Step two, generate the manifest and compute its size and hash
         File manifestFile = getLocalManifestFile(contentId);
         HashOutputStream hos = new HashOutputStream(new FileOutputStream(manifestFile));
-        m.writeOutXML(hos, configuration.getDuraCloudUsername());
+        JAXBContext jc = JAXBContext.newInstance(IngestManifest.class);
+        Marshaller marshaller = jc.createMarshaller();
+        marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE);
+        marshaller.marshal(m, hos);
         hos.close();
         
         // Step two, transfer the manifest
-        InputStream is = new FileInputStream(manifestFile);
-        try {
-            ContentStore cs = new ContentStoreImpl(configuration.getDuraCloudUrl(), StorageProviderType.valueOf(configuration.getDuraCloudProviderName()), configuration.getDuraCloudProviderId(), new RestHttpHelper(new Credential(configuration.getDuraCloudUsername(), configuration.getDuraCloudPassword())));
-            // TODO: ensure uniqueness of content id, or at least prevent overwrites
-            cs.addContent(configuration.getDuraCloudSpaceId(), contentId, is, manifestFile.length(), "text/xml", hos.getMD5Hash(), null);
-        } finally {
-            is.close();
+        if (!arguments.isDryRun()) {
+            InputStream is = new FileInputStream(manifestFile);
+            try {
+                ContentStore cs = new ContentStoreImpl(configuration.getDuraCloudUrl(), StorageProviderType.valueOf(configuration.getDuraCloudProviderName()), configuration.getDuraCloudProviderId(), new RestHttpHelper(new Credential(configuration.getDuraCloudUsername(), configuration.getDuraCloudPassword())));
+                // TODO: ensure uniqueness of content id, or at least prevent overwrites
+                cs.addContent(configuration.getDuraCloudSpaceId(), contentId, is, manifestFile.length(), "text/xml", hos.getMD5Hash(), null);
+            } finally {
+                is.close();
+            }
+        } else {
+            System.out.println("Skipping manifest transfer (dry-run).");
         }
 
         // Step three, return the ID
@@ -217,112 +225,116 @@ public class IngestClient {
      * manifest, no task or object set records will be created in CloudSync.
      */
     private void queueDataTransfer(IngestManifest m, String id) throws Exception {
-        RestHttpHelper rest = new RestHttpHelper(new Credential(configuration.getCloudSyncUsername(), configuration.getCloudSyncPassword()));
-        DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        XPath xpath = XPathFactory.newInstance().newXPath();
-
-        // Determine if there's an Object Set defined for this ingest manifest
-        // based on the id, and creates one if not
-        String name = "APTRUST - " + id;
-        String url = configuration.getCloudSyncURL() + "objectSets.xml";
-        HttpResponse response = rest.get(url);
-        Document setsDoc = parser.parse(response.getResponseStream());
-        String setUri = (String) xpath.evaluate("objectSets/objectSet[name='" + name + "']/uri", setsDoc);
-        if ("".equals(setUri)) {
-            StringBuffer pidList = new StringBuffer();
-            for (IngestPackage p : m.listPackagesToSubmit()) {
-                for (DigitalObject o : p.getDigitalObjects()) {
-                    if (o.getType().equals(DigitalObject.Type.FEDORA)) { 
-                        if (pidList.length() > 0) {
-                            pidList.append("\\n");
+        if (!arguments.isDryRun()) {
+            RestHttpHelper rest = new RestHttpHelper(new Credential(configuration.getCloudSyncUsername(), configuration.getCloudSyncPassword()));
+            DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            XPath xpath = XPathFactory.newInstance().newXPath();
+    
+            // Determine if there's an Object Set defined for this ingest manifest
+            // based on the id, and creates one if not
+            String name = "APTRUST - " + id;
+            String url = configuration.getCloudSyncURL() + "objectSets.xml";
+            HttpResponse response = rest.get(url);
+            Document setsDoc = parser.parse(response.getResponseStream());
+            String setUri = (String) xpath.evaluate("objectSets/objectSet[name='" + name + "']/uri", setsDoc);
+            if ("".equals(setUri)) {
+                StringBuffer pidList = new StringBuffer();
+                for (IngestPackage p : m.listPackagesToSubmit()) {
+                    for (DigitalObject o : p.getDigitalObjects()) {
+                        if (o.getType().equals(DigitalObject.Type.FEDORA)) { 
+                            if (pidList.length() > 0) {
+                                pidList.append("\\n");
+                            }
+                            pidList.append(o.getId());
                         }
-                        pidList.append(o.getId());
                     }
                 }
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/vnd.fcrepo-cloudsync.objectset+json");
+                headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.objectset+json; charset=UTF-8");
+                String json = "{\"objectSet\":{\"name\":\"" + name + "\",\"type\":\"pidList\",\"data\":\"" + pidList.toString() + "\"}}";
+                HttpResponse r = rest.post(configuration.getCloudSyncURL() + "objectSets.xml", json, headers);
+                if (r.getStatusCode() / 100 != 2) {
+                    throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "objectSets.xml (" + json + ")");
+                }
+                setUri = xpath.evaluate("objectSet/uri", parser.parse(r.getResponseStream()));
             }
-            Map<String, String> headers = new HashMap<String, String>();
-            headers.put("Accept", "application/vnd.fcrepo-cloudsync.objectset+json");
-            headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.objectset+json; charset=UTF-8");
-            String json = "{\"objectSet\":{\"name\":\"" + name + "\",\"type\":\"pidList\",\"data\":\"" + pidList.toString() + "\"}}";
-            HttpResponse r = rest.post(configuration.getCloudSyncURL() + "objectSets.xml", json, headers);
-            if (r.getStatusCode() / 100 != 2) {
-                throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "objectSets.xml (" + json + ")");
+    
+            // Determine if there's an object store defined for the local fedora
+            // repository and creates one if there is not.
+            name = "APTRUST (local fedora)- " + HashOutputStream.getMD5Hash(arguments.getFedoraUrl() + arguments.getFedoraUsername() + arguments.getFedoraPassword());
+            url = configuration.getCloudSyncURL() + "objectStores.xml";
+            response = rest.get(url);
+            Document storesDoc = parser.parse(response.getResponseStream());
+            String fedoraStoreUri = (String) xpath.evaluate("objectStores/objectStore[name='" + name + "']/uri", storesDoc);
+            if ("".equals(fedoraStoreUri)) {
+                String fedoraObjectStoreJSON = "{\"objectStore\":{\"name\":\"" + name + "\",\"type\":\"fedora\",\"data\":\"{\\\"url\\\":\\\"" + arguments.getFedoraUrl() + "\\\",\\\"username\\\":\\\"" + arguments.getFedoraUsername() + "\\\",\\\"password\\\":\\\"" + arguments.getFedoraPassword() + "\\\"}\"}}";
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/vnd.fcrepo-cloudsync.objectstore+json");
+                headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.objectstore+json; charset=UTF-8");
+                HttpResponse r = rest.post(configuration.getCloudSyncURL() + "objectStores.xml", fedoraObjectStoreJSON, headers);
+                if (r.getStatusCode() / 100 != 2) {
+                    throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "objectStores.xml (" + fedoraObjectStoreJSON + ")");
+                }
+                fedoraStoreUri = xpath.evaluate("objectStore/uri", parser.parse(r.getResponseStream()));
             }
-            setUri = xpath.evaluate("objectSet/uri", parser.parse(r.getResponseStream()));
-        }
-
-        // Determine if there's an object store defined for the local fedora
-        // repository and creates one if there is not.
-        name = "APTRUST (local fedora)- " + HashOutputStream.getMD5Hash(arguments.getFedoraUrl() + arguments.getFedoraUsername() + arguments.getFedoraPassword());
-        url = configuration.getCloudSyncURL() + "objectStores.xml";
-        response = rest.get(url);
-        Document storesDoc = parser.parse(response.getResponseStream());
-        String fedoraStoreUri = (String) xpath.evaluate("objectStores/objectStore[name='" + name + "']/uri", storesDoc);
-        if ("".equals(fedoraStoreUri)) {
-            String fedoraObjectStoreJSON = "{\"objectStore\":{\"name\":\"" + name + "\",\"type\":\"fedora\",\"data\":\"{\\\"url\\\":\\\"" + arguments.getFedoraUrl() + "\\\",\\\"username\\\":\\\"" + arguments.getFedoraUsername() + "\\\",\\\"password\\\":\\\"" + arguments.getFedoraPassword() + "\\\"}\"}}";
-            Map<String, String> headers = new HashMap<String, String>();
-            headers.put("Accept", "application/vnd.fcrepo-cloudsync.objectstore+json");
-            headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.objectstore+json; charset=UTF-8");
-            HttpResponse r = rest.post(configuration.getCloudSyncURL() + "objectStores.xml", fedoraObjectStoreJSON, headers);
-            if (r.getStatusCode() / 100 != 2) {
-                throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "objectStores.xml (" + fedoraObjectStoreJSON + ")");
+    
+            // Determine if there's an object store defined for the staging area 
+            // and creates one if there is not
+            name = "APTRUST (staging)- " + HashOutputStream.getMD5Hash(configuration.getDuraCloudUrl() + configuration.getDuraCloudSpaceId() + configuration.getDuraCloudProviderId() + configuration.getDuraCloudUsername() + configuration.getDuraCloudPassword());
+            String stagingStoreUri = (String) xpath.evaluate("objectStores/objectStore[name='" + name + "']/uri", storesDoc);
+            if ("".equals(stagingStoreUri)) {
+                String fedoraObjectStoreJSON = "{\"objectStore\":{\"name\":\"" + name + "\",\"type\":\"duracloud\",\"data\":\"{\\\"url\\\":\\\"" + configuration.getDuraCloudUrl() + "\\\",\\\"username\\\":\\\"" + configuration.getDuraCloudUsername() + "\\\",\\\"password\\\":\\\"" + configuration.getDuraCloudPassword() + "\\\",\\\"providerId\\\":\\\"" + configuration.getDuraCloudProviderId() + "\\\",\\\"providerName\\\":\\\"" + configuration.getDuraCloudProviderName() + "\\\",\\\"space\\\":\\\"" + configuration.getDuraCloudSpaceId() + "\\\",\\\"prefix\\\":\\\"\\\"}\"}}";
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/vnd.fcrepo-cloudsync.objectstore+json");
+                headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.objectstore+json; charset=UTF-8");
+                HttpResponse r = rest.post(configuration.getCloudSyncURL() + "objectStores.xml", fedoraObjectStoreJSON, headers);
+                if (r.getStatusCode() / 100 != 2) {
+                    throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "objectStores.xml (" + fedoraObjectStoreJSON + ")");
+                }
+                stagingStoreUri = xpath.evaluate("objectStore/uri", parser.parse(r.getResponseStream()));
             }
-            fedoraStoreUri = xpath.evaluate("objectStore/uri", parser.parse(r.getResponseStream()));
-        }
-
-        // Determine if there's an object store defined for the staging area 
-        // and creates one if there is not
-        name = "APTRUST (staging)- " + HashOutputStream.getMD5Hash(configuration.getDuraCloudUrl() + configuration.getDuraCloudSpaceId() + configuration.getDuraCloudProviderId() + configuration.getDuraCloudUsername() + configuration.getDuraCloudPassword());
-        String stagingStoreUri = (String) xpath.evaluate("objectStores/objectStore[name='" + name + "']/uri", storesDoc);
-        if ("".equals(stagingStoreUri)) {
-            String fedoraObjectStoreJSON = "{\"objectStore\":{\"name\":\"" + name + "\",\"type\":\"duracloud\",\"data\":\"{\\\"url\\\":\\\"" + configuration.getDuraCloudUrl() + "\\\",\\\"username\\\":\\\"" + configuration.getDuraCloudUsername() + "\\\",\\\"password\\\":\\\"" + configuration.getDuraCloudPassword() + "\\\",\\\"providerId\\\":\\\"" + configuration.getDuraCloudProviderId() + "\\\",\\\"providerName\\\":\\\"" + configuration.getDuraCloudProviderName() + "\\\",\\\"space\\\":\\\"" + configuration.getDuraCloudSpaceId() + "\\\",\\\"prefix\\\":\\\"\\\"}\"}}";
-            Map<String, String> headers = new HashMap<String, String>();
-            headers.put("Accept", "application/vnd.fcrepo-cloudsync.objectstore+json");
-            headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.objectstore+json; charset=UTF-8");
-            HttpResponse r = rest.post(configuration.getCloudSyncURL() + "objectStores.xml", fedoraObjectStoreJSON, headers);
-            if (r.getStatusCode() / 100 != 2) {
-                throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "objectStores.xml (" + fedoraObjectStoreJSON + ")");
+    
+            // Determines if there's a task resource defined for this ingest 
+            // manifest based on the id, and creates one if not.
+            name = "APTRUST - " + id;
+            url = configuration.getCloudSyncURL() + "tasks.xml";
+            response = rest.get(url);
+            Document tasksDoc = parser.parse(response.getResponseStream());
+            String taskUri = (String) xpath.evaluate("tasks/task[name='" + name + "']/uri", tasksDoc);
+            if ("".equals(taskUri)) {
+                String fedoraTaskJSON = "{\"task\":{\"name\":\"" + name + "\",\"type\":\"copy\",\"state\":\"Idle\",\"data\":\"{\\\"setUri\\\":\\\"" + setUri.replace(".xml", "") + "\\\",\\\"queryStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"sourceStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"destStoreUri\\\":\\\"" + stagingStoreUri.replace(".xml", "") + "\\\",\\\"overwrite\\\":\\\"false\\\",\\\"includeManaged\\\":\\\"true\\\",\\\"copyExternal\\\":\\\"true\\\",\\\"copyRedirect\\\":\\\"true\\\"}\"}}";
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/vnd.fcrepo-cloudsync.task+json");
+                headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.task+json; charset=UTF-8");
+                HttpResponse r = rest.post(configuration.getCloudSyncURL() + "tasks.xml", fedoraTaskJSON, headers);
+                if (r.getStatusCode() / 100 != 2) {
+                    throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "tasks.xml (" + fedoraTaskJSON + ")");
+                }
+                taskUri = xpath.evaluate("task/uri", parser.parse(r.getResponseStream()));
             }
-            stagingStoreUri = xpath.evaluate("objectStore/uri", parser.parse(r.getResponseStream()));
-        }
-
-        // Determines if there's a task resource defined for this ingest 
-        // manifest based on the id, and creates one if not.
-        name = "APTRUST - " + id;
-        url = configuration.getCloudSyncURL() + "tasks.xml";
-        response = rest.get(url);
-        Document tasksDoc = parser.parse(response.getResponseStream());
-        String taskUri = (String) xpath.evaluate("tasks/task[name='" + name + "']/uri", tasksDoc);
-        if ("".equals(taskUri)) {
-            String fedoraTaskJSON = "{\"task\":{\"name\":\"" + name + "\",\"type\":\"copy\",\"state\":\"Idle\",\"data\":\"{\\\"setUri\\\":\\\"" + setUri.replace(".xml", "") + "\\\",\\\"queryStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"sourceStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"destStoreUri\\\":\\\"" + stagingStoreUri.replace(".xml", "") + "\\\",\\\"overwrite\\\":\\\"false\\\",\\\"includeManaged\\\":\\\"true\\\",\\\"copyExternal\\\":\\\"true\\\",\\\"copyRedirect\\\":\\\"true\\\"}\"}}";
-            Map<String, String> headers = new HashMap<String, String>();
-            headers.put("Accept", "application/vnd.fcrepo-cloudsync.task+json");
-            headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.task+json; charset=UTF-8");
-            HttpResponse r = rest.post(configuration.getCloudSyncURL() + "tasks.xml", fedoraTaskJSON, headers);
-            if (r.getStatusCode() / 100 != 2) {
-                throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from POST to " + configuration.getCloudSyncURL() + "tasks.xml (" + fedoraTaskJSON + ")");
+    
+            // Determine if the task is running, start it if not
+            response = rest.get(taskUri);
+            Document taskDoc = parser.parse(response.getResponseStream());
+            String state = (String) xpath.evaluate("task/state", taskDoc);
+            if ("Idle".equals(state)) {
+                // Start the task
+                String fedoraTaskJSON = "{\"task\":{\"name\":\"" + name + "\",\"type\":\"copy\",\"state\":\"Starting\",\"data\":\"{\\\"setUri\\\":\\\"" + setUri.replace(".xml", "") + "\\\",\\\"queryStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"sourceStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"destStoreUri\\\":\\\"" + stagingStoreUri.replace(".xml", "") + "\\\",\\\"overwrite\\\":\\\"false\\\",\\\"includeManaged\\\":\\\"true\\\",\\\"copyExternal\\\":\\\"true\\\",\\\"copyRedirect\\\":\\\"true\\\"}\"}}";
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/vnd.fcrepo-cloudsync.task+json");
+                headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.task+json; charset=UTF-8");
+                //headers.put(" X-HTTP-Method-Override", "PATCH"); // this didn't seem to work...
+                HttpResponse r = rest.post(taskUri.replace(".xml", "") + "?_method=PATCH", fedoraTaskJSON, headers);
+                if (r.getStatusCode() / 100 != 2) {
+                    throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from PATCH to " + taskUri.replace(".xml", "") + ". (" + fedoraTaskJSON + ")");
+                }
+                System.out.println("Initiated ingest of content...");
+            } else {
+                System.out.println("Ingest is already in progress... (" + state + ")");
             }
-            taskUri = xpath.evaluate("task/uri", parser.parse(r.getResponseStream()));
-        }
-
-        // Determine if the task is running, start it if not
-        response = rest.get(taskUri);
-        Document taskDoc = parser.parse(response.getResponseStream());
-        String state = (String) xpath.evaluate("task/state", taskDoc);
-        if ("Idle".equals(state)) {
-            // Start the task
-            String fedoraTaskJSON = "{\"task\":{\"name\":\"" + name + "\",\"type\":\"copy\",\"state\":\"Starting\",\"data\":\"{\\\"setUri\\\":\\\"" + setUri.replace(".xml", "") + "\\\",\\\"queryStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"sourceStoreUri\\\":\\\"" + fedoraStoreUri.replace(".xml", "") + "\\\",\\\"destStoreUri\\\":\\\"" + stagingStoreUri.replace(".xml", "") + "\\\",\\\"overwrite\\\":\\\"false\\\",\\\"includeManaged\\\":\\\"true\\\",\\\"copyExternal\\\":\\\"true\\\",\\\"copyRedirect\\\":\\\"true\\\"}\"}}";
-            Map<String, String> headers = new HashMap<String, String>();
-            headers.put("Accept", "application/vnd.fcrepo-cloudsync.task+json");
-            headers.put("Content-Type", "application/vnd.fcrepo-cloudsync.task+json; charset=UTF-8");
-            //headers.put(" X-HTTP-Method-Override", "PATCH"); // this didn't seem to work...
-            HttpResponse r = rest.post(taskUri.replace(".xml", "") + "?_method=PATCH", fedoraTaskJSON, headers);
-            if (r.getStatusCode() / 100 != 2) {
-                throw new RuntimeException("HTTP Status code " + r.getStatusCode() + " returned from PATCH to " + taskUri.replace(".xml", "") + ". (" + fedoraTaskJSON + ")");
-            }
-            System.out.println("Initiated ingest of content...");
         } else {
-            System.out.println("Ingest is already in progress... (" + state + ")");
+            System.out.println("Skipping ingest (dry-run).");
         }
     }
 
@@ -360,17 +372,43 @@ public class IngestClient {
         private String fedoraPassword;
 
         private String errorMessage;
+        
+        private boolean dryRun;
 
-        public CommandLineArguments(String [] args) {
-            if (args.length > 0 && args[0].equals("--fedora-packages") && args.length == 4) {
-                fedoraUrl = args[1];
-                fedoraUsername = args[2];
-                fedoraPassword = args[3];
+        public CommandLineArguments(String [] originalArgs) {
+            dryRun = false;
+            List<String> args = processFlags(originalArgs);
+            if (args.size() > 0 && args.get(0).equals("--fedora-packages") && args.size() == 4) {
+                fedoraUrl = args.get(1);
+                fedoraUsername = args.get(2);
+                fedoraPassword = args.get(3);
                 valid = true;
             } else {
                 valid = false;
             }
-            
+        }
+
+        /**
+         * Walks through the arguments and pulls out any flags that may have
+         * be included.  The current implementation only identifies "--dry-run"
+         * @param args the command line arguments
+         * @return an updated list of command line arguments that excludes any
+         * flags that were identified/processed.
+         */
+        private List<String> processFlags(String [] args) {
+            ArrayList<String> newArgs = new ArrayList<String>();
+            for (String arg : args) {
+                if (arg.equals("--dry-run")) {
+                    dryRun = true;
+                } else {
+                    newArgs.add(arg);
+                }
+            }
+            return newArgs;
+        }
+
+        public boolean isDryRun() {
+            return dryRun;
         }
 
         public boolean isValid() {
@@ -410,6 +448,7 @@ public class IngestClient {
 
         public String getArgumentUsage() {
             return " --fedora-packages [fedora-url] [fedora-username] [fedora-password]\n" 
+                    + "  Optional Flags:\n    --dry-run (performs all local operations but writes nothing to remote systems)\n"
                     + "Currently this AP Trust ingest client only supports ingest of pacakged materials in a local fedora repository."
                     + (errorMessage != null ? "\n" + errorMessage : "");
         }
