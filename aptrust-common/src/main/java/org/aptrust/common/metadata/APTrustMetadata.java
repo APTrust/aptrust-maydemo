@@ -3,6 +3,8 @@ package org.aptrust.common.metadata;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.aptrust.common.fedora.APTrustFedoraConstants;
+
 
 /**
  * A data structure to encapsulate the metadata for materials participating in
@@ -20,7 +22,7 @@ public class APTrustMetadata {
 
     protected boolean dpnBound;
 
-    @XmlAttribute(name="about", namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#", required=true)
+    @XmlAttribute(name="about", namespace=APTrustFedoraConstants.APTRUST_URI_PREFIX, required=true)
     public String getId() {
         return id;
     }
@@ -29,7 +31,7 @@ public class APTrustMetadata {
         this.id = id;
     }
 
-    @XmlElement(name="title", namespace="http://www.aptrust.org/relationships#", required=true)
+    @XmlElement(name="title", namespace=APTrustFedoraConstants.APTRUST_URI_PREFIX, required=true)
     public String getTitle() {
         return title;
     }
@@ -38,7 +40,7 @@ public class APTrustMetadata {
         this.title = title;
     }
 
-    @XmlElement(name="hasOwningInstitution", namespace="http://www.aptrust.org/relationships#", required=true)
+    @XmlElement(name="hasOwningInstitution", namespace=APTrustFedoraConstants.APTRUST_URI_PREFIX, required=true)
     public String getInstitution() {
         return institution;
     }
@@ -47,7 +49,7 @@ public class APTrustMetadata {
         this.institution = institution;
     }
 
-    @XmlElement(name="hasAccessControlPolicy", namespace="http://www.aptrust.org/relationships#", required=true)
+    @XmlElement(name="hasAccessControlPolicy", namespace=APTrustFedoraConstants.APTRUST_URI_PREFIX, required=true)
     public String getAccessConditions() {
         return accessConditions;
     }
@@ -60,7 +62,7 @@ public class APTrustMetadata {
         }
     }
 
-    @XmlElement(name="isDPNBound", namespace="http://www.aptrust.org/relationships#", required=true)
+    @XmlElement(name="isDPNBound", namespace=APTrustFedoraConstants.APTRUST_URI_PREFIX, required=true)
     public boolean isDPNBound() {
         return dpnBound;
     }
