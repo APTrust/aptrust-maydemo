@@ -14,6 +14,10 @@
     </header>
 
     <div role="main">
+      <nav id="primary-nav" role="navigation">
+        
+      </nav>
+    
       <h2>Select an institution:</h2>
       <ul>
         <c:forEach var="i" items="${institutions}">

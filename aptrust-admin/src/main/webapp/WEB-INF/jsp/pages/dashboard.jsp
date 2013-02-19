@@ -26,7 +26,7 @@ Page: Home page placeholder.
       <p>
         ${institution.fullName} has <strong>${summary.packageCount}
           packages</strong> containing <strong>${summary.objectCount}
-          objects</strong>, using <strong>${summary.bytesUsed} of storage</strong>.
+          objects</strong>, <br/>using <strong><fmt:formatNumber value="${summary.bytesUsed /( 1024*1024*1024)}" minFractionDigits="1" maxFractionDigits="1"/> GBs of storage</strong>.
       </p>
       <ul>
         <li><a href="${discoveryUrl}">${summary.dpnBoundPackageCount}
