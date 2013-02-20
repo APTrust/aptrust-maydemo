@@ -12,11 +12,11 @@ This project depends on building the root project. See aptrust/README.md for mor
 Running the Web Admin in Development
 ====================================
 
-Once you've built the whole project: you can run the web admin by simply running the following:
+Once you've built the whole project: you can run the web admin by simply running the following from the aptrust-admin directory
 
   mvn clean jetty:run
 
-on the command line and then open your browser to 
+and then open your browser to 
 
   http://localhost:8888/aptrust-admin/
 
