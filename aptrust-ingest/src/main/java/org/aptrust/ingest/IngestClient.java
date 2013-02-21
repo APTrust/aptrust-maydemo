@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.aptrust.common.metadata.APTrustMetadata;
 import org.aptrust.ingest.api.DigitalObject;
 import org.aptrust.ingest.api.IngestClientConfiguration;
 import org.aptrust.ingest.api.IngestManifest;
@@ -188,7 +189,7 @@ public class IngestClient {
         // Step two, generate the manifest and compute its size and hash
         File manifestFile = getLocalManifestFile(contentId);
         HashOutputStream hos = new HashOutputStream(new FileOutputStream(manifestFile));
-        JAXBContext jc = JAXBContext.newInstance(IngestManifest.class);
+        JAXBContext jc = JAXBContext.newInstance(IngestManifest.class, IngestPackage.class, DigitalObject.class, APTrustMetadata.class);
         Marshaller marshaller = jc.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE);
         marshaller.marshal(m, hos);

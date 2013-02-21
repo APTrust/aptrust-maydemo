@@ -1,10 +1,13 @@
 package org.aptrust.ingest.api;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -21,7 +24,7 @@ public class IngestManifest {
     private List<IngestPackage> submit;
 
     public IngestManifest() {
-        
+        submit = new ArrayList<IngestPackage>();
     }
 
     /**
@@ -56,7 +59,8 @@ public class IngestManifest {
         description = d;
     }
 
-    @XmlElement(name="packages")
+    @XmlElementWrapper(name="packages")
+    @XmlAnyElement
     public List<IngestPackage> getPackagesToSubmit() {
         return submit;
     }

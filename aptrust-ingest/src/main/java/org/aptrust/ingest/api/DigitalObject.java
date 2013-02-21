@@ -2,11 +2,13 @@ package org.aptrust.ingest.api;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A class that can be used to specify a Digital Object from either Fedora
  * or DSpace in an ingest package.
  */
+@XmlRootElement(name="digitalObject")
 public class DigitalObject {
 
     public enum Type {

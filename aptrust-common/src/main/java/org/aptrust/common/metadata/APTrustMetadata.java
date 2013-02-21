@@ -2,6 +2,7 @@ package org.aptrust.common.metadata;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.aptrust.common.fedora.APTrustFedoraConstants;
 
@@ -10,6 +11,7 @@ import org.aptrust.common.fedora.APTrustFedoraConstants;
  * A data structure to encapsulate the metadata for materials participating in
  * the AP Trust repository.
  */
+@XmlRootElement
 public class APTrustMetadata {
 
     protected String id;
