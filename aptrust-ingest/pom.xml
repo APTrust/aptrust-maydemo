@@ -42,6 +42,45 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.aptrust</groupId>
+      <artifactId>aptrust-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+        <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+    <dependency>
+      <artifactId>solr-core</artifactId>
+      <groupId>org.apache.solr</groupId>
+      <version>3.6.1</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.2.1</version>
+      <exclusions>
+         <exclusion>
+           <artifactId>commons-logging</artifactId>
+           <groupId>commons-logging</groupId>
+         </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.2.1</version>
+      <exclusions>
+         <exclusion>
+           <artifactId>commons-logging</artifactId>
+           <groupId>commons-logging</groupId>
+         </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>storeclient</artifactId>
     </dependency>

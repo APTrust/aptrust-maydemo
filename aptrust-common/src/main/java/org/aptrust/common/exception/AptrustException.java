@@ -12,6 +12,10 @@ public class AptrustException extends Exception {
         super(rootCause);
     }
 
+    public AptrustException(String message) {
+        super(message);
+    }
+
     public AptrustException(String message, Throwable rootCause) {
         super(message, rootCause);
     }

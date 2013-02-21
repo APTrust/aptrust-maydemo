@@ -4,29 +4,25 @@ import java.util.Properties;
 
 /**
  * An extension of ClientConfig that loads all required and optional properties
- * from a provided Properties object.  The following properties must be 
- * specified:
+ * from a provided Properties object.
  * <ul>
+ *   <li>duracloud-url</li>
+ *   <li>duracloud-username</li>
+ *   <li>duracloud-password</li>
+ *   <li>duracloud-providerid</li>
+ *   <li>duracloud-providername</li>
  *   <li>solr-url</li>
- *   <li>institution_id</li>
- *    <li>record_type</li>
- *    <li>dpn_bound</li>
- *    <li>access_control_policy</li>
- *    <li>failed_health_check</li>
- *    <li>operation_status</li>
  * </ul>
  */
 public class PropertiesClientConfig extends ClientConfig {
 
     public PropertiesClientConfig(Properties p) {
+        duracloudUrl = getRequiredProperty(p, "duracloud-url");
+        duracloudUsername = getRequiredProperty(p, "duracloud-username");
+        duracloudPassword = getRequiredProperty(p, "duracloud-password");
+        duracloudProviderId = getRequiredProperty(p, "duracloud-providerid");
+        duracloudProviderName = getRequiredProperty(p, "duracloud-providername");
         solrUrl = getRequiredProperty(p, "solr-url");
-        solrFieldConfig = new SolrFieldConfig();
-        solrFieldConfig.institutionIdField = getRequiredProperty(p, "institution_id");
-        solrFieldConfig.recordTypeField = getRequiredProperty(p, "record_type");
-        solrFieldConfig.dpnBoundField = getRequiredProperty(p, "dpn_bound");
-        solrFieldConfig.accessControlPolicyField = getRequiredProperty(p, "access_control_policy");
-        solrFieldConfig.failedHealthCheckField = getRequiredProperty(p, "failed_health_check");
-        solrFieldConfig.operationStatusField = getRequiredProperty(p, "operation_status");
     }
 
     /**

@@ -77,7 +77,7 @@ public class IngestClient {
                 try {
                     LocalFedoraRepository r = new LocalFedoraRepository(a.getFedoraUrl(), a.getFedoraUsername(), a.getFedoraPassword());
                     IngestManifest m = r.generateManifest("All local packages.", c.getDuraCloudUsername());
-                    System.out.println("  " + m.listPackagesToSubmit().size() + " packages detected.");
+                    System.out.println("  " + m.getPackagesToSubmit().size() + " packages detected.");
                     
                     IngestClient client = new IngestClient(c, a);
                     System.out.println("  initiating ingest");
@@ -147,8 +147,8 @@ public class IngestClient {
         // TODO: add some code to ensure that two operations aren't running 
         // at once.
         validateOperation(m);
-        String id = transferManifest(m);
-        queueDataTransfer(m, id);
+        m.setId(transferManifest(m));
+        queueDataTransfer(m);
     }
 
     /**
@@ -224,7 +224,10 @@ public class IngestClient {
      * after the Manifest id.  So if subsequent attempts are made to ingest a 
      * manifest, no task or object set records will be created in CloudSync.
      */
-    private void queueDataTransfer(IngestManifest m, String id) throws Exception {
+    private void queueDataTransfer(IngestManifest m) throws Exception {
+        if (m.getId() == null) {
+            throw new IllegalStateException("Manifeset must have an id before it may be transferred.");
+        }
         if (!arguments.isDryRun()) {
             RestHttpHelper rest = new RestHttpHelper(new Credential(configuration.getCloudSyncUsername(), configuration.getCloudSyncPassword()));
             DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -232,14 +235,14 @@ public class IngestClient {
     
             // Determine if there's an Object Set defined for this ingest manifest
             // based on the id, and creates one if not
-            String name = "APTRUST - " + id;
+            String name = "APTRUST - " + m.getId();
             String url = configuration.getCloudSyncURL() + "objectSets.xml";
             HttpResponse response = rest.get(url);
             Document setsDoc = parser.parse(response.getResponseStream());
             String setUri = (String) xpath.evaluate("objectSets/objectSet[name='" + name + "']/uri", setsDoc);
             if ("".equals(setUri)) {
                 StringBuffer pidList = new StringBuffer();
-                for (IngestPackage p : m.listPackagesToSubmit()) {
+                for (IngestPackage p : m.getPackagesToSubmit()) {
                     for (DigitalObject o : p.getDigitalObjects()) {
                         if (o.getType().equals(DigitalObject.Type.FEDORA)) { 
                             if (pidList.length() > 0) {
@@ -297,7 +300,7 @@ public class IngestClient {
     
             // Determines if there's a task resource defined for this ingest 
             // manifest based on the id, and creates one if not.
-            name = "APTRUST - " + id;
+            name = "APTRUST - " + m.getId();
             url = configuration.getCloudSyncURL() + "tasks.xml";
             response = rest.get(url);
             Document tasksDoc = parser.parse(response.getResponseStream());

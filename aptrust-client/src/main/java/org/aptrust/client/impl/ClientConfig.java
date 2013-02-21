@@ -10,9 +10,37 @@ package org.aptrust.client.impl;
  */
 public class ClientConfig {
 
+    String duracloudUrl;
+
+    String duracloudUsername;
+
+    String duracloudPassword;
+
+    String duracloudProviderId;
+
+    String duracloudProviderName;
+
     String solrUrl;
 
-    SolrFieldConfig solrFieldConfig;
+    public String getDuracloudUrl() {
+        return duracloudUrl;
+    }
+
+    public String getDuracloudUsername() {
+        return duracloudUsername;
+    }
+
+    public String getDuracloudPassword() {
+        return duracloudPassword;
+    }
+
+    public String getDuraCloudProviderId() {
+        return duracloudProviderId;
+    }
+
+    public String getDuraCloudProviderName() {
+        return duracloudProviderName;
+    }
 
     public String getSolrUrl() {
         return solrUrl;
@@ -21,13 +49,4 @@ public class ClientConfig {
     public void setSolrUrl(String value) {
         solrUrl = value;
     }
-
-    public SolrFieldConfig getSolrFieldConfig() {
-        return solrFieldConfig;
-    }
-
-    public void setSolrFieldConfig(SolrFieldConfig solrFieldConfig) {
-        this.solrFieldConfig = solrFieldConfig;
-    }
-
 }

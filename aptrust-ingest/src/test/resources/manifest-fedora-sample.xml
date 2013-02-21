@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ingestManifest xmlns:ns2="http://www.aptrust.org/relationships#" xmlns:ns3="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <description>
+        <ingestInitated>2013-02-11T13:37:10.960-05:00</ingestInitated>
+        <name>All local packages.</name>
+        <suppliedUsername>mdurbin</suppliedUsername>
+    </description>
+    <packages>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602146</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602179</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602193</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602135</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602156</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602149</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602136</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602147</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602138</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602148</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602137</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602166</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602155</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602139</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602200</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602190</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602180</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602191</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602182</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602192</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602181</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602113</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602141</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602142</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602140</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602120</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602224</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602144</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602176</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602184</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602188</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602145</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602189</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602185</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602183</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602187</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602143</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602186</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602223</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602222</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602219</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602131</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602130</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602172</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602150</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602152</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602151</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602132</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602153</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602197</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602175</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602173</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602133</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602195</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602177</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602199</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602196</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602174</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602198</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602134</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602178</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602154</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602194</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602158</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602169</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602159</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602231</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602157</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602168</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602170</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602160</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602171</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602162</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602161</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602167</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602163</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602165</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602164</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602203</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602210</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602116</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602209</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602121</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602128</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602129</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602228</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602127</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602230</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602126</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602125</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602202</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602124</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602123</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602215</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602122</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602201</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602234</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602214</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602208</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602206</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602207</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602204</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602205</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602213</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602216</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602218</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602217</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602212</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602211</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602233</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602227</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602226</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602225</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602229</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602221</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602220</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602118</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602235</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602232</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602117</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602114</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602115</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:602119</pid>
+        </digitalObjects>
+        <metadata ns3:about="info:fedora/aptrust:3">
+            <ns2:hasAccessControlPolicy>world</ns2:hasAccessControlPolicy>
+            <ns2:isDPNBound>true</ns2:isDPNBound>
+            <ns2:hasOwningInstitution>uva</ns2:hasOwningInstitution>
+            <ns2:title>Novvelles inventions povr bien bastir et a petits fraiz, trovvees n'Agveres .</ns2:title>
+        </metadata>
+    </packages>
+    <packages>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:1229365</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:1308642</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:1308643</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:1308644</pid>
+        </digitalObjects>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>uva-lib:1308645</pid>
+        </digitalObjects>
+        <metadata ns3:about="info:fedora/aptrust:1">
+            <ns2:hasAccessControlPolicy>world</ns2:hasAccessControlPolicy>
+            <ns2:isDPNBound>true</ns2:isDPNBound>
+            <ns2:hasOwningInstitution>uva</ns2:hasOwningInstitution>
+            <ns2:title>A map of the British and French dominions in North America. With the roads, distances, limits, and extent of the settlements.</ns2:title>
+        </metadata>
+    </packages>
+    <packages>
+        <digitalObjects type="FEDORA" version="3.5">
+            <size>-1</size>
+            <pid>test:1</pid>
+        </digitalObjects>
+        <metadata ns3:about="info:fedora/aptrust:4">
+            <ns2:hasAccessControlPolicy>world</ns2:hasAccessControlPolicy>
+            <ns2:isDPNBound>true</ns2:isDPNBound>
+            <ns2:hasOwningInstitution>uva</ns2:hasOwningInstitution>
+            <ns2:title>Large video object</ns2:title>
+        </metadata>
+    </packages>
+</ingestManifest>

@@ -22,6 +22,9 @@ public class DigitalObject {
 
     private long approximateSize;
     
+    public DigitalObject() {
+    }
+
     public DigitalObject(String id, Type type, String version, long approximateSize) {
         this.id = id;
         this.type = type;

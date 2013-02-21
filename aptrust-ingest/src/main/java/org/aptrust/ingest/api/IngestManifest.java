@@ -14,16 +14,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class IngestManifest {
 
-    @XmlElement
+    private String id;
+
     private Description description;
 
-    @XmlElement(name="packages")
     private List<IngestPackage> submit;
 
     public IngestManifest() {
         
     }
-    
+
     /**
      * Instantiates a simple manifest with the given label and list of packages
      * to submit.
@@ -38,8 +38,31 @@ public class IngestManifest {
         this.submit = submit;
     }
 
-    public List<IngestPackage> listPackagesToSubmit() {
+    @XmlElement
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @XmlElement
+    public Description getDescription() {
+        return description;
+    }
+
+    public void setDescription(Description d) {
+        description = d;
+    }
+
+    @XmlElement(name="packages")
+    public List<IngestPackage> getPackagesToSubmit() {
         return submit;
+    }
+
+    public void setPackagesToSubmit(List<IngestPackage> p) {
+        submit = p;
     }
 
     /**
@@ -49,7 +72,7 @@ public class IngestManifest {
         return Collections.emptyList();
     }
 
-    private static class Description {
+    public static class Description {
 
         private String name;
 
