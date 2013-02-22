@@ -82,7 +82,7 @@ public class IngestManifest {
 
         private String suppliedUsername;
 
-        private Date ingestInitated = new Date();
+        private Date ingestInitiated = new Date();
 
         @XmlElement
         public String getName() {
@@ -103,12 +103,12 @@ public class IngestManifest {
         }
 
         @XmlElement
-        public Date getIngestInitated() {
-            return ingestInitated;
+        public Date getIngestInitiated() {
+            return ingestInitiated;
         }
 
-        public void setIngestInitated(Date ingestInitated) {
-            this.ingestInitated = ingestInitated;
+        public void setIngestInitiated(Date ingestInitated) {
+            this.ingestInitiated = ingestInitated;
         }
     }
 

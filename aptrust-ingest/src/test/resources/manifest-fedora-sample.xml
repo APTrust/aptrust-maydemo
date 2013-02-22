@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ingestManifest xmlns:ns2="http://www.aptrust.org/relationships#">
+<ingestManifest xmlns:ns2="http://www.aptrust.org/relationships#" xmlns:ns3="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <description>
-        <ingestInitated>2013-02-21T14:51:13.409-05:00</ingestInitated>
+        <ingestInitiated>2013-02-22T10:48:06.490-05:00</ingestInitiated>
         <name>All local packages.</name>
         <suppliedUsername>mdurbin</suppliedUsername>
     </description>
@@ -501,7 +501,7 @@
                     <pid>uva-lib:602119</pid>
                 </digitalObject>
             </digitalObjects>
-            <metadata>
+            <metadata ns3:about="info:fedora/aptrust:3">
                 <ns2:hasAccessControlPolicy>world</ns2:hasAccessControlPolicy>
                 <ns2:isDPNBound>true</ns2:isDPNBound>
                 <ns2:hasOwningInstitution>uva</ns2:hasOwningInstitution>
@@ -531,7 +531,7 @@
                     <pid>uva-lib:1308645</pid>
                 </digitalObject>
             </digitalObjects>
-            <metadata>
+            <metadata ns3:about="info:fedora/aptrust:1">
                 <ns2:hasAccessControlPolicy>world</ns2:hasAccessControlPolicy>
                 <ns2:isDPNBound>true</ns2:isDPNBound>
                 <ns2:hasOwningInstitution>uva</ns2:hasOwningInstitution>
@@ -545,7 +545,7 @@
                     <pid>test:1</pid>
                 </digitalObject>
             </digitalObjects>
-            <metadata>
+            <metadata ns3:about="info:fedora/aptrust:4">
                 <ns2:hasAccessControlPolicy>world</ns2:hasAccessControlPolicy>
                 <ns2:isDPNBound>true</ns2:isDPNBound>
                 <ns2:hasOwningInstitution>uva</ns2:hasOwningInstitution>

@@ -121,7 +121,7 @@ public class IngestSolrDocument {
  
     @SolrField(name=AptrustSolrDocument.OPERATION_START_DATE)
     public Date getStartDate() {
-        return m.getDescription().getIngestInitated();
+        return m.getDescription().getIngestInitiated();
     }
 
     @SolrField(name=AptrustSolrDocument.OPERATION_END_DATE)

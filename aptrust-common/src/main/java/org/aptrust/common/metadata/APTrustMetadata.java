@@ -24,7 +24,7 @@ public class APTrustMetadata {
 
     protected boolean dpnBound;
 
-    @XmlAttribute(name="about", namespace=APTrustFedoraConstants.APTRUST_URI_PREFIX, required=true)
+    @XmlAttribute(name="about", namespace=APTrustFedoraConstants.RDF_URI_PREFIX, required=true)
     public String getId() {
         return id;
     }
