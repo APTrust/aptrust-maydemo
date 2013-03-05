@@ -46,8 +46,7 @@
             id="login-button">Login</button>
         </fieldset>
       </form>
-
-      <div role="main"></div>
+    </div>
   </tiles:putAttribute>
 </tiles:insertDefinition>
 

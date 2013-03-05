@@ -25,7 +25,7 @@
         </c:forEach>
       
       </ul>
-
+    </div>
   </tiles:putAttribute>
 </tiles:insertDefinition>
 

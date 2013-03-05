@@ -35,7 +35,6 @@
 <nav
   id="primary-nav"
   role="navigation">
-  
   <ul>
     <li><a href="${institutionBaseUrl}">Dashboard</a></li>
     <li><a href="${discoveryUrl}">Discovery</a></li>

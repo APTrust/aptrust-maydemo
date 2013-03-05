@@ -124,6 +124,37 @@ header[role="banner"] {
   }
 }
 
+footer {
+	border-top: 1px solid $default-color-lightest;
+	margin-top:rhythm(1);
+	  @include pad(1,1);
+	  @include clearfix;
+	
+	hgroup {
+	 @include span-columns(6,12);
+	}
+	
+	ul {
+		margin:0;
+	}
+	
+		
+	li {
+		font-size: 12px;
+		list-style: none;
+		display: inline;
+		margin:0
+	}
+	
+	li:after {
+		content: "|";
+	}
+	
+	li:first-child:after {
+		content: "";
+	}
+}
+
 #primary-nav {
   @include clearfix;
   @include pad(1,1);
