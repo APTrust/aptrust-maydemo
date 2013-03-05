@@ -24,5 +24,13 @@
 <body>
   <tiles:insertAttribute name="body" />
 
+<footer role="banner">
+<hgroup>
+<ul>
+  <li>APTrust Admin v.<spring:message code="version"/> rev.<spring:message code="revision"/></li>
+</ul>
+</hgroup>
+
+</footer>
 </body>
 </html>

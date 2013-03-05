@@ -98,7 +98,8 @@ Page: Home page placeholder.
       </table>
 
       <h3>Data Streams</h3>
-
+      <c:choose>
+        <c:when test="${not empty objectDetail.datastreamProfiles}">
       <table class="data-streams">
         <thead>
           <tr>
@@ -110,29 +111,25 @@ Page: Home page placeholder.
           </tr>
         </thead>
         <tbody>
+          <c:forEach var="ds" items="${objectDetail.datastreamProfiles}">
           <tr>
-            <td>Dublin Core Record</td>
-            <td>2004-12-10T00:21:50.000Z</td>
-            <td>text/xml</td>
-            <td>488</td>
-            <td><a href="#">Open</a></td>
-          </tr>
-          <tr>
-            <td>Fedora Object-to-Object</td>
-            <td>2004-12-10T00:21:50.000Z</td>
-            <td>text/xml</td>
-            <td>752</td>
-            <td><a href="#">Open</a></td>
-          </tr>
-          <tr>
-            <td>Image of Pavilion III, University of Virginia</td>
-            <td>2004-12-10T00:21:50.000Z</td>
-            <td>image/x-mrsid-image</td>
-            <td>752</td>
-            <td><a href="#">Open</a></td>
-          </tr>
+            <td>${ds.dsLabel}</td>
+            <td>${ds.dsCreateDate}</td>
+            <td>${ds.dsMIME}</td>
+            <td>${ds.dsSize}</td>
+                  <td><a
+                    href="#"
+                    onclick="alert('this feature is not yet implemented.')">Open</a></td>
+                </tr>
+          </c:forEach>
         </tbody>
       </table>
+
+        </c:when>
+        <c:otherwise>
+          <p>There are no datastreams associated with this object.</p>
+        </c:otherwise>        
+      </c:choose>
     </div>
   </tiles:putAttribute>
 </tiles:insertDefinition>
