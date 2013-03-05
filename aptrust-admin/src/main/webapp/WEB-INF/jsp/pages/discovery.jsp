@@ -16,15 +16,19 @@ Page: Package Discovery
   <tiles:putAttribute
     name="content"
     cascade="true">
-    <div>
-      <form:form modelAttribute="searchParams" method="POST">
-        <form:input placeholder="enter search terms" path="query" type="search" />
-      </form:form>
-    </div>
-    <h1>Search Results</h1>
     <c:set var="facets" value="${queryResponse.facetFields}"/>
     <c:if test="${not empty facets}">
       <div id="facets">
+          <div class="facet">
+            <h3>Creation Date (Range)</h3>
+          <form>
+            <fieldset >
+                <input id="startDate" placeholder="Start: e.g. 01/01/1999"/>
+                <input id="startDate" placeholder="End: e.g. 12/31/2012"/>
+            </fieldset>
+          </form>
+        </div>
+      
         <c:forEach
           var="facet"
           items="${facets}">
@@ -35,21 +39,48 @@ Page: Package Discovery
               <c:forEach
                 var="value"
                 items="${facet.values}">
-                <li><a
-                  href="?${results.queryString}&facet.${facet.name}=${value.name}">${value.name}
-                    (${value.count})</a></li>
-
+                <li>
+                  <a href="?${searchParams.toQueryStringWithConstraint(facet.name, value.name)}">
+                   ${value.name}(${value.count})
+                  </a>
+                </li>
               </c:forEach>
             </ul>
-
           </div>
-
         </c:forEach>
       </div>
     </c:if>
 
 
     <div id="results">
+      <div >
+        <form:form modelAttribute="searchParams" method="GET">
+          <form:input id="search-text-field" placeholder="enter search terms" path="query"  />
+        </form:form>
+      </div>
+      
+      <c:if test="${not empty searchParams.constraints}">
+        <div id="filters">
+            <h3>Filters:</h3> 
+            <ul>
+            <c:forEach items="${searchParams.constraints}" var="c"> 
+              <li>
+                <div>
+                <a href="?${searchParams.toQueryStringWithout(c)}">
+                <div>${c.name}</div>
+                <div>
+                ${c.value}
+                <span class="x">X</span>
+                </div>
+                </a>
+                </div>
+                
+              </li>
+            </c:forEach>
+            </ul>
+        </div>
+      </c:if>
+          
       <c:set var="packages" value="${queryResponse.packageSummaries}"/>
       <c:choose>
         <c:when test="${not empty packages}">
