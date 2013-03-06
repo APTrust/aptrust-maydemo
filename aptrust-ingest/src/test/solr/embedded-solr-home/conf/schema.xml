@@ -900,6 +900,7 @@
    <field name="operation_end_date" type="tdate" indexed="true" stored="true" multiValued="false" />
    <field name="ingest_date" type="tdate" indexed="true" stored="true" multiValued="false" />
    <field name="object_count" type="int" indexed="true" stored="true" multiValued="false" />
+   <field name="completed_object_count" type="int" indexed="true" stored="true" multiValued="false" />
    <field name="modified_date" type="tdate" indexed="true" stored="true" multiValued="false" />
    <field name="dpn_bound" type="boolean" indexed="true" stored="true" multiValued="false" />
    <field name="institution_id" type="string" indexed="true" stored="true" multiValued="false" />
@@ -909,11 +910,10 @@
    <field name="last_heath_check_date" type="date" indexed="true" stored="true" multiValued="false" />
    <field name="failed_health_check" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="submitting_user" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="progress" type="int" indexed="false" stored="true" multiValued="false" />
    <field name="message" type="string" indexed="false" stored="true" multiValued="false" />
    <field name="package_id" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="date_sort" type="tdate" indexed="true" stored="false" multiValued="false" />
-   <field name="included_pid" type="string" indexed="true" stored="false" multivalued="true" />
+   <field name="included_pid" type="string" indexed="true" stored="false" multiValued="true" />
 
    <field name="text" type="string" indexed="true" stored="false" multiValued="true" />
 

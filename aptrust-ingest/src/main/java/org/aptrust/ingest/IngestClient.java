@@ -78,7 +78,7 @@ public class IngestClient {
                 try {
                     LocalFedoraRepository r = new LocalFedoraRepository(a.getFedoraUrl(), a.getFedoraUsername(), a.getFedoraPassword());
                     IngestManifest m = r.generateManifest("All local packages.", c.getDuraCloudUsername());
-                    System.out.println("  " + m.getPackagesToSubmit().size() + " packages detected.");
+                    System.out.println("  " + m.getPackagesToSubmit().length + " packages detected.");
                     
                     IngestClient client = new IngestClient(c, a);
                     System.out.println("  initiating ingest");
@@ -201,7 +201,9 @@ public class IngestClient {
             try {
                 ContentStore cs = new ContentStoreImpl(configuration.getDuraCloudUrl(), StorageProviderType.valueOf(configuration.getDuraCloudProviderName()), configuration.getDuraCloudProviderId(), new RestHttpHelper(new Credential(configuration.getDuraCloudUsername(), configuration.getDuraCloudPassword())));
                 // TODO: ensure uniqueness of content id, or at least prevent overwrites
-                cs.addContent(configuration.getDuraCloudSpaceId(), contentId, is, manifestFile.length(), "text/xml", hos.getMD5Hash(), null);
+                Map<String, String> properties = new HashMap<String, String>();
+                properties.put("tags", "aptrust_manifest");
+                cs.addContent(configuration.getDuraCloudSpaceId(), contentId, is, manifestFile.length(), "text/xml", hos.getMD5Hash(), properties);
             } finally {
                 is.close();
             }

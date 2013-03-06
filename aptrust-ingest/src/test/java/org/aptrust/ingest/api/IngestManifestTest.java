@@ -23,8 +23,9 @@ public class IngestManifestTest {
 
         Unmarshaller u = jc.createUnmarshaller();
         IngestManifest manifest = (IngestManifest) u.unmarshal(originalExampleFile);
-        Assert.assertEquals(3, manifest.getPackagesToSubmit().size());
-
+        Assert.assertEquals(3, manifest.getPackagesToSubmit().length);
+        Assert.assertEquals("Novvelles inventions povr bien bastir et a petits fraiz, trovvees n'Agveres .", manifest.getPackagesToSubmit()[0].getMetadata().getTitle());
+        
         Marshaller m = jc.createMarshaller();
         m.setProperty("jaxb.formatted.output", Boolean.TRUE);
         m.marshal(manifest, new FileOutputStream(outputFile));

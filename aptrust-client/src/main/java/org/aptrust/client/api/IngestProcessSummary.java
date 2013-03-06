@@ -16,24 +16,22 @@ public class IngestProcessSummary {
     private String name;
     private String initiatingUser;
     private IngestStatus status;
-    private int progress;
+    private int totalObjectCount;
+    private int ingestedObjectCount;
     private Date startDate;
     private Date endDate;
     private String message;
-    
-    /**
-     * @param progress an integer between 0 and 100 representing the percent
-     * complete.
-     */
+
     public IngestProcessSummary(
             String institutionId, String name, String initiatingUser,
-            IngestStatus status, int progress, Date startDate, Date endDate, String message) {
+            IngestStatus status, int ingestedObjectCount, int totalObjectCount, Date startDate, Date endDate, String message) {
         super();
         this.institutionId = institutionId;
         this.name = name;
         this.initiatingUser = initiatingUser;
         this.status = status;
-        setProgress(progress);
+        this.ingestedObjectCount = ingestedObjectCount;
+        this.totalObjectCount = totalObjectCount;
         this.startDate = startDate;
         this.endDate = endDate;
         this.message = message;
@@ -78,16 +76,26 @@ public class IngestProcessSummary {
         status = s;
     }
 
-    public int getProgress() {
-        return progress;
+    public int getTotalObjectCount() {
+        return totalObjectCount;
     }
 
-    @SolrField(name=AptrustSolrDocument.PROGRESS)
-    public void setProgress(int progress) {
-        if (progress > 100 || progress < 0) {
-            throw new IllegalArgumentException("Progress is expected to be between 0 and 100 and represents percentage points.");
-        }
-        this.progress = progress;
+    @SolrField(name=AptrustSolrDocument.OBJECT_COUNT)
+    public void setTotalObjectCount(int count) {
+        totalObjectCount = count;
+    }
+
+    public int getIngestedObjectCount() {
+        return ingestedObjectCount;
+    }
+
+    @SolrField(name=AptrustSolrDocument.COMPLETED_OBJECT_COUNT)
+    public void setIngestedObjectCount(int count) {
+        ingestedObjectCount = count;
+    }
+
+    public int getProgress() {
+        return Math.round((100 * (float) ingestedObjectCount) / (float) totalObjectCount);
     }
 
     public Date getStartDate() {

@@ -71,6 +71,6 @@ public class FedoraIngestPackage extends IngestPackage {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        setDigitalObjects(objects);
+        setDigitalObjects(objects.toArray(new DigitalObject[0]));
     }
 }

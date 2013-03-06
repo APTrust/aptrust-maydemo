@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.bind.JAXBException;
 
 import org.aptrust.ingest.api.IngestManifest;
@@ -48,7 +46,7 @@ public class LocalFedoraRepository {
         String version = FedoraClient.describeRepository().execute(fc).getRepositoryVersion();
         
         // identify packages
-        List<IngestPackage> packages = new ArrayList<IngestPackage>();
+        ArrayList<IngestPackage> packages = new ArrayList<IngestPackage>();
         String packageItqlQuery = "select $object from <#ri> " 
                 + "where $object <info:fedora/fedora-system:def/model#hasModel>"
                 + " <info:fedora/aptrust:package>";
@@ -64,7 +62,7 @@ public class LocalFedoraRepository {
         } finally {
             reader.close();
         }
-        return new IngestManifest(label, username, packages);
+        return new IngestManifest(label, username, packages.toArray(new IngestPackage[0]));
     }
 
 }

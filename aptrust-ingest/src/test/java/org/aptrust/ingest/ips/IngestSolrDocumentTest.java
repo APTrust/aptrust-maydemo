@@ -59,14 +59,22 @@ public class IngestSolrDocumentTest {
         m.setId("test:1");
         
         IngestSolrDocument ingest = IngestSolrDocument.newIngest("test", m);
-        SolrInputDocument doc = AptrustSolrDocument.createValidIngestDocument(ingest);
+        SolrInputDocument doc = AptrustSolrDocument.createValidSolrDocument(ingest);
         
         server.add(doc);
         server.commit();
         
         ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set("q", "record_type:ingest");
+        params.set("q", AptrustSolrDocument.RECORD_TYPE + ":ingest");
         SolrDocumentList results = server.query(params).getResults();
         assertEquals(results.getNumFound(), (long) 1);
+        
+        params.set("q", AptrustSolrDocument.INCLUDED_PID + ":\"uva-lib:602138\"");
+        results = server.query(params).getResults();
+        assertEquals(results.getNumFound(), (long) 1);
+        
+        params.set("q", AptrustSolrDocument.INCLUDED_PID + ":\"test:fake\"");
+        results = server.query(params).getResults();
+        assertEquals(results.getNumFound(), (long) 0);
     }
 }

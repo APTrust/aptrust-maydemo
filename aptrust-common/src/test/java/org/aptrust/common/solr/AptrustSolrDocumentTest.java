@@ -11,7 +11,7 @@ public class AptrustSolrDocumentTest {
     public void testInvalidDocument() {
         try {
             SolrInputDocument doc
-                = AptrustSolrDocument.createValidIngestDocument("just a string, no annotations");
+                = AptrustSolrDocument.createValidSolrDocument("just a string, no annotations");
             assertFalse(true);
         } catch (IllegalArgumentException ex) {
             assertTrue(true);

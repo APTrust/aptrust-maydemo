@@ -95,6 +95,7 @@ public class ServiceConfig {
                                              "admin",
                                              IngestStatus.IN_PROGRESS,
                                              50,
+                                             100,
                                              new Date(),
                                              null,
                                              null),
@@ -103,6 +104,7 @@ public class ServiceConfig {
                                              "admin",
                                              IngestStatus.FAILED,
                                              50,
+                                             100,
                                              new Date(),
                                              null,
                                              "1/4 packages failed") });

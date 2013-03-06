@@ -1,9 +1,5 @@
 package org.aptrust.ingest.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,12 +15,8 @@ public class IngestPackage {
  
     private APTrustMetadata metadata;
 
-    private List<DigitalObject> objects;
+    private DigitalObject[] objects;
 
-    public IngestPackage() {
-        objects = new ArrayList<DigitalObject>();
-    }
-    
     /**
      * Gets the AP Trust required submission metadata that should be applied
      * to all of the digital objects in this package.
@@ -43,12 +35,12 @@ public class IngestPackage {
      * inclusion in AP Trust.
      */
     @XmlElementWrapper(name="digitalObjects")
-    @XmlAnyElement
-    public List<DigitalObject> getDigitalObjects() {
+    @XmlElement(name="digitalObject")
+    public DigitalObject[] getDigitalObjects() {
         return objects;
     }
 
-    public void setDigitalObjects(List<DigitalObject> o) {
+    public void setDigitalObjects(DigitalObject[] o) {
         objects = o;
     }
 }

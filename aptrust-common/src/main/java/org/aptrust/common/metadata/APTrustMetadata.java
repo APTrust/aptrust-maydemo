@@ -1,5 +1,8 @@
 package org.aptrust.common.metadata;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,7 +32,8 @@ public class APTrustMetadata {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(String id) throws URISyntaxException {
+        URI uri = new URI(id);
         this.id = id;
     }
 

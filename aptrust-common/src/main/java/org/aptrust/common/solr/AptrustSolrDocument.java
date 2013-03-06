@@ -23,7 +23,8 @@ import org.apache.solr.common.SolrInputDocument;
  *       <li>title</li>
  *       <li>submitting_user</li>
  *       <li>operation_status</li>
- *       <li>progress</li>
+ *       <li>object_count</li>
+ *       <li>completed_object_count</li>
  *       <li>operation_start_date</li>
  *       <li>operation_end_date</li>
  *       <li>message</li>
@@ -115,11 +116,12 @@ public class AptrustSolrDocument {
 
     /**
      * The field name within Solr for the field containing the progress (in
-     * percentage points) of the ingest operation.  This field  is only present
-     * in Solr documents with the "record_type" of "ingest" and is likely only
-     * useful for those with the "operation_status" value of "IN_PROGRESS".
+     * number of objects ingested) of the ingest operation.  This field  is
+     * only present in Solr documents with the "record_type" of "ingest" and is
+     * likely only useful for those with the "operation_status" value of
+     * "IN_PROGRESS".
      */
-    public static final String PROGRESS = "progress";
+    public static final String COMPLETED_OBJECT_COUNT = "completed_object_count";
 
     /**
      * The field name within Solr for the field containing the date at which
@@ -171,8 +173,9 @@ public class AptrustSolrDocument {
 
     /**
      * The field name within Solr for the field containing the number of 
-     * objects contained within a package.  This field is only present in
-     * Solr documents with the "record_type" of "package".
+     * objects contained within a package or in all the packages of a given 
+     * ingest operation.  This field is only present in Solr documents with the
+     * "record_type" of "package" or "ingest".
      */
     public static final String OBJECT_COUNT = "object_count";
 
@@ -211,7 +214,7 @@ public class AptrustSolrDocument {
      * @param o an object with methods annotated with the SolrField annotation
      * @return a SolrInputDocument with fields from the passed object
      */
-    public static SolrInputDocument createValidIngestDocument(Object o) {
+    public static SolrInputDocument createValidSolrDocument(Object o) {
         // Step One: Add all fields based on SolrField annotations
         Method[] methods = o.getClass().getMethods();
         SolrInputDocument doc = new SolrInputDocument();
@@ -246,7 +249,8 @@ public class AptrustSolrDocument {
             assertRequiredField(OPERATION_START_DATE, doc, o, Date.class);
             String status = (String) doc.getField(OPERATION_STATUS).getValue();
             if (status.equals("IN_PROGRESS")) {
-                assertRequiredField(PROGRESS, doc, o, Integer.class);
+                assertRequiredField(OBJECT_COUNT, doc, o, Integer.class);
+                assertRequiredField(COMPLETED_OBJECT_COUNT, doc, o, Integer.class);
             } else if (status.equals("FAILED")) {
                 assertRequiredField(MESSAGE, doc, o, String.class);
             } else if (status.equals("COMPLETED")) {
@@ -256,7 +260,7 @@ public class AptrustSolrDocument {
         } else if (recordType.equals("package")) {
             assertRequiredField(DPN_BOUND, doc, o, String.class);
             assertRequiredField(ACCESS_CONTROL_POLICY, doc, o, String.class);
-            assertRequiredField(OBJECT_COUNT, doc, o, String.class);
+            assertRequiredField(OBJECT_COUNT, doc, o, Integer.class);
             assertRequiredField(TITLE, doc, o, String.class);
             // all other fields are optional
         } else if (recordType.equals("object")) {

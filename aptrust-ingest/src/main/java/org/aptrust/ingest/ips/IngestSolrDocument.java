@@ -1,18 +1,22 @@
 package org.aptrust.ingest.ips;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.aptrust.client.api.IngestStatus;
 import org.aptrust.common.solr.AptrustSolrDocument;
 import org.aptrust.common.solr.SolrField;
+import org.aptrust.ingest.api.DigitalObject;
 import org.aptrust.ingest.api.IngestManifest;
+import org.aptrust.ingest.api.IngestPackage;
 
 /**
  * A simple class that wraps an IngestManfiest and other member variables and
  * exposes annotated methods that allow for easy creation of Solr Documents for
  * "ingest" operations.
  * 
- * @see org.aptrust.common.solr.AptrustSolrDocument#createValidIngestDocument(Object)
+ * @see org.aptrust.common.solr.AptrustSolrDocument#createValidSolrDocument(Object)
  */
 public class IngestSolrDocument {
 
@@ -23,6 +27,8 @@ public class IngestSolrDocument {
     private IngestStatus operationStatus;
 
     private int progress;
+
+    private int total;
 
     private Date endDate;
 
@@ -40,6 +46,10 @@ public class IngestSolrDocument {
         d.institutionId = institutionId;
         d.m = m;
         d.progress = 0;
+        d.total = 0;
+        for (IngestPackage p : m.getPackagesToSubmit()) {
+            d.total += p.getDigitalObjects().length;
+        }
         d.operationStatus = IngestStatus.IN_PROGRESS;
         return d;
     }
@@ -52,6 +62,10 @@ public class IngestSolrDocument {
         IngestSolrDocument d = new IngestSolrDocument();
         d.institutionId = institutionId;
         d.m = m;
+        d.total = 0;
+        for (IngestPackage p : m.getPackagesToSubmit()) {
+            d.total += p.getDigitalObjects().length;
+        }
         d.progress = progress;
         d.operationStatus = IngestStatus.IN_PROGRESS;
         return d;
@@ -114,9 +128,14 @@ public class IngestSolrDocument {
         return operationStatus.name();
     }
 
-    @SolrField(name=AptrustSolrDocument.PROGRESS)
-    public int getProgress() {
+    @SolrField(name=AptrustSolrDocument.COMPLETED_OBJECT_COUNT)
+    public int getIngestedObjects() {
         return progress;
+    }
+
+    @SolrField(name=AptrustSolrDocument.OBJECT_COUNT)
+    public int getTotalObjects() {
+        return total;
     }
  
     @SolrField(name=AptrustSolrDocument.OPERATION_START_DATE)
@@ -132,5 +151,16 @@ public class IngestSolrDocument {
     @SolrField(name=AptrustSolrDocument.MESSAGE)
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    @SolrField(name=AptrustSolrDocument.INCLUDED_PID)
+    public List<String> getIncludedPids() {
+        List<String> values = new ArrayList<String>();
+        for (IngestPackage p : m.getPackagesToSubmit()){
+            for (DigitalObject o : p.getDigitalObjects()) {
+                values.add(o.getId());
+            }
+        }
+        return values;
     }
 }

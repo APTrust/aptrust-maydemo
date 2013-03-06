@@ -1,11 +1,9 @@
 package org.aptrust.ingest.api;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,10 +19,9 @@ public class IngestManifest {
 
     private Description description;
 
-    private List<IngestPackage> submit;
+    private IngestPackage[] submit;
 
     public IngestManifest() {
-        submit = new ArrayList<IngestPackage>();
     }
 
     /**
@@ -34,7 +31,7 @@ public class IngestManifest {
      * @param username the name/id of the user creating this manifest
      * @param submit a list of packages to submit
      */
-    public IngestManifest(String label, String username, List<IngestPackage> submit) {
+    public IngestManifest(String label, String username, IngestPackage[] submit) {
         description = new Description();
         description.setName(label);
         description.setSuppliedUsername(username);
@@ -60,12 +57,25 @@ public class IngestManifest {
     }
 
     @XmlElementWrapper(name="packages")
-    @XmlAnyElement
-    public List<IngestPackage> getPackagesToSubmit() {
+    @XmlElement(name="package")
+    public IngestPackage[] getPackagesToSubmit() {
         return submit;
     }
 
-    public void setPackagesToSubmit(List<IngestPackage> p) {
+    /**
+     *  Walks through the packages and counts the total number of objects 
+     *  referenced.
+     * @return the total number of objects in all the packages combined
+     */
+    public int getTotalObjectsToSubmit() {
+        int result = 0;
+        for (IngestPackage p : submit) {
+            result += p.getDigitalObjects().length;
+        }
+        return result;
+    }
+
+    public void setPackagesToSubmit(IngestPackage[] p) {
         submit = p;
     }
 
@@ -111,5 +121,4 @@ public class IngestManifest {
             this.ingestInitiated = ingestInitated;
         }
     }
-
 }
