@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 
  */
 @Controller
-public class PackageDetailController {
+public class PackageDetailController extends BaseController{
     private static Logger log =
         LoggerFactory.getLogger(PackageDetailController.class);
 
@@ -34,7 +34,7 @@ public class PackageDetailController {
         this.client = client;
     }
 
-    @RequestMapping(value = "/html/{institutionId}/package/{packageId}")
+    @RequestMapping(value = INSTITUTION_ROOT_PATH+"/package/{packageId}")
     public String
         get(@PathVariable String institutionId,
             @PathVariable String packageId,

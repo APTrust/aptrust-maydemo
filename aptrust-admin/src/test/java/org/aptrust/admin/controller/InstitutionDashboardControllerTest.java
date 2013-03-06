@@ -30,7 +30,7 @@ public class InstitutionDashboardControllerTest {
     }
 
     @Test
-    public void testGetHome() throws Exception {
+    public void testGetDashboards() throws Exception {
         AptrustClient client = EasyMock.createMock(AptrustClient.class);
         Summary summary = EasyMock.createMock(Summary.class);
         EasyMock.expect(client.getSummary(EasyMock.isA(String.class)))

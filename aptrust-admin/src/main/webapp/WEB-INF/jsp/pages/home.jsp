@@ -19,7 +19,7 @@
       </nav>
     
       <h2>Select an institution:</h2>
-      <ul>
+      <ul id="institution-list">
         <c:forEach var="i" items="${institutions}">
         <li><a href="${pageContext.request.contextPath}/html/${i.id}">${i.fullName}</a></li>
         </c:forEach>

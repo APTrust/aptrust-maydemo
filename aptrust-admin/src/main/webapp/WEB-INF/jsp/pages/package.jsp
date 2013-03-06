@@ -84,7 +84,7 @@ Page: Home page placeholder.
 
     <div id="object">
       <em class="kicker">Object in "${packageDetail.name}"</em>
-      <h2>${objectDetail.title}</h2>
+      <h2 id="object-title">${objectDetail.title}</h2>
 
       <h3>Object Properties</h3>
       <table
@@ -92,9 +92,10 @@ Page: Home page placeholder.
         cellpadding="0"
         cellspacing="0">
         <tr>
-          <th>Property Name</th>
-          <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit</td>
+          <th>Object ID</th>
+          <td id="${objectDetail.objectId}">${objectDetail.objectId}</td>
         </tr>
+
       </table>
 
       <h3>Data Streams</h3>

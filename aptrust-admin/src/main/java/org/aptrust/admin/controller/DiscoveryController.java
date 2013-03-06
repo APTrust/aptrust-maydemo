@@ -5,6 +5,7 @@
 package org.aptrust.admin.controller;
 
 
+import org.aptrust.admin.domain.WebSearchParams;
 import org.aptrust.client.api.AptrustClient;
 import org.aptrust.client.api.PackageSummaryQueryResponse;
 import org.aptrust.client.api.SearchConstraint;
@@ -26,10 +27,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 
  */
 @Controller
-public class DiscoveryController {
+public class DiscoveryController extends BaseController {
     private static Logger log =
         LoggerFactory.getLogger(DiscoveryController.class);
 
+    static String QUERY_RESPONSE_KEY = "queryResponse";
+    static final String SEARCH_PARAMS_KEY = "searchParams";
+    
     private AptrustClient client;
 
     @Autowired
@@ -48,7 +52,7 @@ public class DiscoveryController {
         return new Constraints();
     }
 
-    @RequestMapping("/html/{institutionId}/discovery")
+    @RequestMapping(INSTITUTION_ROOT_PATH+"/discovery")
     public String get(@PathVariable @ModelAttribute String institutionId,
                       @ModelAttribute WebSearchParams searchParams,
                       Model model) throws AptrustException {
@@ -57,9 +61,10 @@ public class DiscoveryController {
 
         PackageSummaryQueryResponse response =
             client.findPackageSummaries(institutionId, searchParams);
-        model.addAttribute("queryResponse", response);
-        model.addAttribute("searchParams", searchParams);
+        model.addAttribute(QUERY_RESPONSE_KEY, response);
+        model.addAttribute(SEARCH_PARAMS_KEY, searchParams);
 
         return "discovery";
     }
+
 }

@@ -19,6 +19,11 @@
       </nav>
     
       <h2>Sign In</h2>
+      <c:if test="${not empty pageContext.request.parameterMap['error']}">
+      <div class="error">
+        The username and/or password is invalid. Please try again.
+      </div>
+      </c:if>
 
       <form
         id="loginForm"

@@ -15,11 +15,12 @@ import org.junit.Test;
 public class TestHomePage extends BaseSeleniumTest {
 
     @Test
-    public void testGet() {
-        sc.open(getAppRoot() + "/html/1");
-        Assert.assertTrue(isTextPresent("Welcome"));
-        Assert.assertTrue(isElementPresent("id=institutional-activity"));
-        Assert.assertTrue(isElementPresent("id=recent-ingests"));
-
+    public void testHomePage() {
+        sc.open(getAppRoot() + "/");
+        Assert.assertTrue(isElementPresent("css=#institution-list a"));
+        clickAndWait("css=#institution-list a");
+        Assert.assertTrue(isElementPresent("id=loginForm"));
+        
+        
     }
 }

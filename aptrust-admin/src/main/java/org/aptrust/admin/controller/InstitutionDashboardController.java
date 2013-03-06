@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 
  */
 @Controller
-public class InstitutionDashboardController {
+public class InstitutionDashboardController extends BaseController {
     private static Logger log = LoggerFactory.getLogger(InstitutionDashboardController.class);
 
     private AptrustClient client;
