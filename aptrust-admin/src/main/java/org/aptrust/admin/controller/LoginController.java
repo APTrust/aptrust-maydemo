@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 
  */
 @Controller
-public class LoginController {
+public class LoginController extends BaseController {
     private static Logger log = LoggerFactory.getLogger(LoginController.class);
     @RequestMapping("/login")
     public String getLogin() throws AptrustException {

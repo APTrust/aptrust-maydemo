@@ -1,4 +1,4 @@
-package org.aptrust.admin.controller;
+package org.aptrust.admin.domain;
 
 import java.util.List;
 

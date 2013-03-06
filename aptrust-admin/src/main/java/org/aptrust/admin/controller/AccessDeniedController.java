@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 
  */
 @Controller
-public class AccessDeniedController {
+public class AccessDeniedController extends BaseController{
     private static Logger log = LoggerFactory.getLogger(AccessDeniedController.class);
     @RequestMapping("/access-denied")
     public String getLogin() throws AptrustException {

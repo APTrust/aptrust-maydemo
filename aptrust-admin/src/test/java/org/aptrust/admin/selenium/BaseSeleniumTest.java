@@ -78,11 +78,19 @@ public abstract class BaseSeleniumTest {
         log.info("stopped selenium client");
     }
 
-    protected boolean isTextPresent(String pattern) {
+    protected boolean isTextPresent(Selenium sc, String pattern) {
         return sc.isTextPresent(pattern);
     }
 
+    protected boolean isTextPresent(String pattern) {
+      return isTextPresent(sc,pattern);
+    }
+
     protected boolean isElementPresent(String locator) {
+        return isElementPresent(sc, locator);
+    }
+
+    protected boolean isElementPresent(Selenium sc, String locator) {
         return sc.isElementPresent(locator);
     }
 
@@ -108,6 +116,24 @@ public abstract class BaseSeleniumTest {
     }
 
     
+    protected void login(String username, String password){
+        sc.open(getAppRoot() + "/login");
+        sc.type("id=username", username);
+        sc.type("id=password", password);
+        clickAndWait("css=button");
+    }
+
+    protected void loginAsUva() {
+        login("uva-admin", "password");
+    }
+
+    protected String getInstitutionRoot(String institutionId) {
+        return getAppRoot()+"/html/"+ institutionId;
+    }
+
+    protected void loginAsRoot() {
+        login("aptrust-admin","password");
+    }
 
     /**
      * @param sc

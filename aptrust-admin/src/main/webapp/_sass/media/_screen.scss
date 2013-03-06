@@ -109,6 +109,10 @@ header[role="banner"] {
     font-weight:bold;
     color:rgba(0,0,0,0.5);
   }
+  
+  h2 {
+  	margin:0;
+  }
 
   hgroup {
     @include span-columns(6,12);
@@ -322,10 +326,10 @@ section {
 }
 
 #chart {
-  height: 200px;
-  background: #eee;
-  margin-top:rhythm(0.5);
+  background: #999;
+/*  margin-top:rhythm(0.5);*/
 }
+
 
 
 .ingests {
@@ -375,5 +379,55 @@ label {
     width: 5em;  
     margin-right: 1em;
     
+}
+
+.chart {
+  height:200px;
+  width:500px;
+  display:inline-block;
+}
+
+table{
+ 	margin-bottom: 1em;
+}
+ 
+.legend {
+  display:block;
+  color: #EEE;
+  padding:5px; 
+  width: 150px;
+
+  table {
+    border: 1px solid #555;
+  }
+
+  .legendLabel{
+    color: #EEE;
+  }
+  
+  td {
+    padding:  4px 5px 4px 5px;
+    vertical-align:middle;
+  }
+
+}
+         
+.error {
+	border: 1px solid rgba(255,0,0,0.7);
+	color: rgba(255,0,0,0.7);
+	background-color: rgba(255,0,0,0.2);
+	padding: 10px;
+	margin-bottom: 10px;
+	
+}
+
+#monthly-activity {
+  padding:10px; 
+  background-color:#999;
+  
+  h2 {
+    margin-bottom: 1em;
+    color: $default-color-lightest;
+  }
 }
 
