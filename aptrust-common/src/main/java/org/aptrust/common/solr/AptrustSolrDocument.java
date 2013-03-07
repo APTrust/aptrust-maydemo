@@ -258,7 +258,7 @@ public class AptrustSolrDocument {
             }
             // all other fields are optional
         } else if (recordType.equals("package")) {
-            assertRequiredField(DPN_BOUND, doc, o, String.class);
+            assertRequiredField(DPN_BOUND, doc, o, Boolean.class);
             assertRequiredField(ACCESS_CONTROL_POLICY, doc, o, String.class);
             assertRequiredField(OBJECT_COUNT, doc, o, Integer.class);
             assertRequiredField(TITLE, doc, o, String.class);
@@ -275,7 +275,7 @@ public class AptrustSolrDocument {
         if (doc.getField(field) == null) {
             throw new IllegalArgumentException("Object " + o.getClass().getName() + " is not annotated with the required \"" + field + "\" field!");
         } else if (!(doc.getField(field).getValue().getClass().isAssignableFrom(c))) {
-            throw new IllegalArgumentException("The method annotated with the SolrField named \"" + field + "\" on object " + o.getClass().getName() + " must have a return type of \"" + c.getName() + "\". (has \"" + c.getName() + "\" instead)");
+            throw new IllegalArgumentException("The method annotated with the SolrField named \"" + field + "\" on object " + o.getClass().getName() + " must have a return type of \"" + c.getName() + "\". (has \"" + doc.getField(field).getValue().getClass() + "\" instead)");
         }
     }
 

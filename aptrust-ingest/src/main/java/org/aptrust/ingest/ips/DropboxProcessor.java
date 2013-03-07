@@ -201,6 +201,7 @@ public class DropboxProcessor {
                     logger.trace("created package object {}", packagePid);
                     packagePids.add(packagePid);
                     p.getMetadata().setId(packagePid);
+                    p.getMetadata().setInstitution(institutionId);
                     PackageRELSEXT.Description d = new PackageRELSEXT.Description(p.getMetadata());
                     d.setId("info:fedora/" + packagePid);
                     d.setContentModelURIs(new PackageRELSEXT.ResourceDesignator[] { new PackageRELSEXT.ResourceDesignator("info:fedora/" + PACKAGE_CMODEL_PID) });
@@ -230,14 +231,21 @@ public class DropboxProcessor {
             // 3. move the manifest to the production space
             contentStore.moveContent(stagingSpaceId, e.getContentId(), productionSpaceId, pid);
 
-            // 4. write that manifest to Solr (which will be an "in-progress" 
+            // 4. store the updated manifest in fedora
+            Marshaller m = JAXBContext.newInstance(IngestManifest.class, IngestPackage.class, DigitalObject.class, APTrustMetadata.class).createMarshaller();
+            m.marshal(manifest, manifestFile);
+            FedoraClient.addDatastream(pid, MANIFEST_DSID).content(manifestFile).execute(fc);
+            logger.trace("updated manifest in ingest operation object {}", pid);
+
+            
+            // 5. write that manifest to Solr (which will be an "in-progress" 
             //    operation
             IngestSolrDocument d = IngestSolrDocument.newIngest(institutionId, manifest);
             solr.add(AptrustSolrDocument.createValidSolrDocument(d));
             solr.commit();
             logger.info("wrote manifest {} to solr", manifest.getId() );
 
-            // 5. see if any of the referenced objects have already arrived and 
+            // 6. see if any of the referenced objects have already arrived and 
             //    process them
             long ingestedObjectCount = 0;
             for (String oPid : objectPids) {

@@ -71,9 +71,13 @@ public class IngestProcessSummary {
         return status;
     }
 
-    @SolrField(name=AptrustSolrDocument.OPERATION_STATUS)
     public void setStatus(IngestStatus s) {
         status = s;
+    }
+
+    @SolrField(name=AptrustSolrDocument.OPERATION_STATUS)
+    public void setStatus(String s) {
+        status = IngestStatus.valueOf(s);
     }
 
     public int getTotalObjectCount() {

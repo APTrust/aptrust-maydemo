@@ -133,8 +133,13 @@ public class AptrustClientImpl implements AptrustClient {
             DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             XPath xpath = XPathFactory.newInstance().newXPath();
             Document report = parser.parse(response.getResponseStream());
-            long totalBytes = Long.parseLong((String) xpath.evaluate("storageReport/storageMetrics/storageProviderMetrics/storageProvider[@id='" + config.getDuraCloudProviderId() + "']/spaceMetrics/space[@name='" + institutionId + "']/totalSize", report, XPathConstants.STRING));
-            s.setBytesUsed(totalBytes);
+            try {
+                long totalBytes = Long.parseLong((String) xpath.evaluate("storageReport/storageMetrics/storageProviderMetrics/storageProvider[@id='" + config.getDuraCloudProviderId() + "']/spaceMetrics/space[@name='" + institutionId + "']/totalSize", report, XPathConstants.STRING));
+                s.setBytesUsed(totalBytes);
+            } catch (NumberFormatException ex) {
+                // no bytes stored
+                s.setBytesUsed((long) 0);
+            }
         } catch (Exception ex) {
             throw new AptrustException("Error extracting storage usage from the  DuraCloud storage report!", ex);
         }
@@ -258,7 +263,6 @@ public class AptrustClientImpl implements AptrustClient {
         List<IngestProcessSummary> results = new ArrayList<IngestProcessSummary>();
 
         ModifiableSolrParams params = new ModifiableSolrParams();
-        System.out.println(query.toString());
         params.set("q", query.toString());
         try {
             QueryResponse response = solr.query(params);
