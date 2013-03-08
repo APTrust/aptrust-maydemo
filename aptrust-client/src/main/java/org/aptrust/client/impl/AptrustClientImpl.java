@@ -40,6 +40,8 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -48,6 +50,8 @@ import org.w3c.dom.Document;
  */
 public class AptrustClientImpl implements AptrustClient {
 
+    private final Logger logger = LoggerFactory.getLogger(AptrustClientImpl.class);
+    
     protected ClientConfig config;
 
     protected SolrServer solr;
@@ -264,6 +268,7 @@ public class AptrustClientImpl implements AptrustClient {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
+        logger.debug(query.toString());
         try {
             QueryResponse response = solr.query(params);
             SolrDocumentList page = response.getResults();
@@ -300,13 +305,17 @@ public class AptrustClientImpl implements AptrustClient {
         SolrQueryClause packageRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "package");
         SolrQueryClause currentInstitution = new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
 
-        SolrQueryClause query =  packageRecords.and(currentInstitution).and(SolrQueryClause.parseUserQuery(searchParams.getQuery()));
+        SolrQueryClause query =  packageRecords.and(currentInstitution);
+        if (searchParams.getQuery() != null && !searchParams.getQuery().equals("")) {
+            query = query.and(SolrQueryClause.parseUserQuery(searchParams.getQuery()));
+        }
         List<PackageSummary> packages = new ArrayList<PackageSummary>();
 
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
         params.set("facet", "true");
         params.set("f.field", AptrustSolrDocument.DPN_BOUND);
+        logger.debug("findPackageSummaries: " + query.toString());
         try {
             QueryResponse response = solr.query(params);
             SolrDocumentList page = response.getResults();
@@ -352,6 +361,7 @@ public class AptrustClientImpl implements AptrustClient {
         
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
+        logger.debug("getPackageDetail: " + query.toString());
 
         try {
             QueryResponse response = solr.query(params);
@@ -411,6 +421,7 @@ public class AptrustClientImpl implements AptrustClient {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
+        logger.debug("getObjectDetail(): " + query.toString());
         try {
             QueryResponse response = solr.query(params);
             if (response.getResults().getNumFound() == 1) {
