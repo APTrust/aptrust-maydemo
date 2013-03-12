@@ -12,7 +12,9 @@ This project depends on building the root project. See aptrust/README.md for mor
 Running the Web Admin in Development
 ====================================
 
-Once you've built the whole project: you can run the web admin by simply running the following from the aptrust-admin directory
+Once you've built the whole project: there's just a few more steps in order to run the web admin application.
+
+You must set up a configuration file with credentials to access to DuraCloud in aptrust-admin/src/main/resources/client-config.properties.  A sample file may be found in aptrust-client/src/test/resources/client-config-example.properties.  Then you just need to run:
 
   mvn clean jetty:run
 
