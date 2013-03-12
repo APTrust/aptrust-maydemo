@@ -651,14 +651,14 @@ public class DropboxProcessor {
     
             // 2.  move the content to production
             for (RecognizedContentReference ref : idToContentMap.get(pid)) {
-                contentStore.moveContent(stagingSpaceId, ref.getContentId(), productionSpaceId, ref.getContentId());
+                contentStore.copyContent(stagingSpaceId, ref.getContentId(), productionSpaceId, ref.getContentId());
                 logger.info("Copied content {} from staging to production.", ref.getContentId());
             }
 
-            //for (RecognizedContentReference ref : idToContentMap.get(pid)) {
-            //    contentStore.deleteContent(stagingSpaceId, productionSpaceId);
-            //    logger.info("Copied content {} from staging to production.", ref.getContentId());
-            //}
+            for (RecognizedContentReference ref : idToContentMap.get(pid)) {
+                contentStore.deleteContent(stagingSpaceId, ref.getContentId());
+                logger.info("Deleted content {} from staging.", ref.getContentId());
+            }
 
             // 3.  update the manifest in Solr
             ingestedObjectCount ++;
