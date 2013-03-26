@@ -16,6 +16,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
@@ -118,4 +120,8 @@ public class AppConfig extends WebMvcConfigurationSupport {
         return new DefaultConversionService(defaultFormattingConversionService());
     }
 
+    @Bean
+    MultipartResolver multipartResolver() {
+        return new CommonsMultipartResolver();
+    }
 }

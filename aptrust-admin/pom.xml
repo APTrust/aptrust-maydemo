@@ -143,6 +143,11 @@
               <name>jetty.port</name>
               <value>${jetty.port}</value>
             </systemProperty>
+            <systemProperty>
+              <name>client.config.file</name>
+              <value>${client.config.file}</value>
+            </systemProperty>
+
           </systemProperties>
           <webApp>
             <contextPath>/${project.artifactId}</contextPath>
@@ -382,6 +387,12 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.2.2</version>
     </dependency>
 
     <dependency>

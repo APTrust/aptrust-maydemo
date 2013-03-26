@@ -16,10 +16,14 @@
   <http pattern="/**"
         auto-config="false"
         access-denied-page="/access-denied"
-        use-expressions="true">
+        use-expressions="true" 
+        >
+        <http-basic/>
         <form-login login-page="/login" authentication-failure-url="/login?error=true"/>
         <logout/>
+        
     <intercept-url pattern="/html/**" access="hasAnyRole('ROLE_USER','ROLE_ROOT')"  />
+    <intercept-url pattern="/init" access="hasAnyRole('ROLE_ROOT')"  />
   </http>
 
   <!-- AuthN Manager -->

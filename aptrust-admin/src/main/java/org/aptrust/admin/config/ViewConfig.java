@@ -3,8 +3,14 @@
  */
 package org.aptrust.admin.config;
 
+import org.aptrust.admin.controller.DiscoveryController;
+import org.aptrust.admin.controller.HomeController;
+import org.aptrust.admin.controller.InstitutionDashboardController;
+import org.aptrust.admin.controller.PackageDetailController;
+import org.aptrust.client.api.AptrustClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
