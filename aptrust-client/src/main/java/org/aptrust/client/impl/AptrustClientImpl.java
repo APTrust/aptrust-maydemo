@@ -1,5 +1,8 @@
 package org.aptrust.client.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -38,7 +41,9 @@ import org.duracloud.client.ContentStoreImpl;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.NotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,10 +157,10 @@ public class AptrustClientImpl implements AptrustClient {
 
     /**
      * Gets all institutions registered with AP Trust.  For an institution to
-     * be registered there must be a Space in the APTrust DuraCloud instance 
-     * with the "type" property set to "preservation_store".  The id for that
-     * space is the Institution id, the "institution_display_name" property 
-     * value is the display name.  
+     * be recognized there must be two spaces one with the id "x" and another
+     * with the id "xstaging".  The value of "x" is the institution id.  Within
+     * the production space there must be a file "institution-info.txt" that 
+     * contains a single line of text with the institution's full name.
      */
     public List<InstitutionInfo> getInstitutions() throws AptrustException {
         ContentStore cs = new ContentStoreImpl(config.getDuracloudUrl() + "durastore", 
@@ -164,19 +169,36 @@ public class AptrustClientImpl implements AptrustClient {
                 new RestHttpHelper(
                         new Credential(config.getDuracloudUsername(), 
                                        config.getDuracloudPassword())));
+
         List<InstitutionInfo> institutions = new ArrayList<InstitutionInfo>();
         try {
-            for (String spaceId : cs.getSpaces()) {
-                Map<String, String> properties = cs.getSpaceProperties(spaceId);
-                if ("preservation_store".equals(properties.get("type"))) {
-                    institutions.add(new InstitutionInfo(spaceId,
-                            properties.get("institution_display_name")));
+            List<String> spaces = cs.getSpaces();
+            for (String spaceId : spaces) {
+                if (spaces.contains(spaceId + "staging")) {
+                    try {
+                        Content c = cs.getContent(spaceId, "institution-info.txt");
+                        BufferedReader r = new BufferedReader(new InputStreamReader(c.getStream()));
+                        try {
+                            institutions.add(new InstitutionInfo(spaceId, r.readLine()));
+                        } catch (IOException ex) {
+                            logger.error("Error reading first line of " + c.getId() + " from space \"" + spaceId + "\".");
+                            throw new AptrustException(ex);
+                        } finally {
+                            try {
+                                r.close();
+                            } catch (IOException ex) {
+                                throw new AptrustException(ex);
+                            }
+                        }
+                    } catch (NotFoundException ex) {
+                        logger.warn("\"" + spaceId + "\" and \"" + spaceId + "staging\" look like institutional staging and productions spaces, but \"" + spaceId + "\" does not contain institution-info.txt.");
+                    }
                 }
             }
-            return institutions;
         } catch (ContentStoreException ex) {
             throw new AptrustException(ex);
         }
+        return institutions;
     }
 
     /**
