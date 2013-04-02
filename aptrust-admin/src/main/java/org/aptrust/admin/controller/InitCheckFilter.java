@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  * This filter checks that the application has been initialized before allowing requests into the app.
  * Requests will be passed down the chain as long as the app has been initialized or the request is for the 
  * initialization end point (/init).
- * @author danny
+ * @author Daniel Bernstein
  *
  */
 @Component

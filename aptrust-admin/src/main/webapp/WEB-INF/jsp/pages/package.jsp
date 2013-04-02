@@ -55,8 +55,8 @@ Page: Home page placeholder.
     <div id="package">
 
       <ul class="dates">
-        <li>Ingested ${packageDetail.ingestDate} by ??</li>
-        <li>Modified ?? by ??</li>
+        <li>Ingested ${packageDetail.ingestDate} by ${packageDetail.ingestedBy}</li>
+        <li>Modified ${packageDetail.modifiedDate} by ${packageDetail.modifiedBy}</li>
       </ul>
 
       <div id="package-items">

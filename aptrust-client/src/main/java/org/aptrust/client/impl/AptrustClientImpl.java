@@ -55,8 +55,9 @@ import org.w3c.dom.Document;
  */
 public class AptrustClientImpl implements AptrustClient {
 
-    private final Logger logger = LoggerFactory.getLogger(AptrustClientImpl.class);
-    
+    private final Logger logger =
+        LoggerFactory.getLogger(AptrustClientImpl.class);
+
     protected ClientConfig config;
 
     protected SolrServer solr;
@@ -71,10 +72,10 @@ public class AptrustClientImpl implements AptrustClient {
     }
 
     /**
-     * Gets a summary of the status of content from the institution specified
-     * by the institutionId parameter.  The current implementation makes use of
-     * the Solr index as well as the "duraboss" REST API on the DuraSpace 
-     * instance referenced in the configuration.
+     * Gets a summary of the status of content from the institution specified by
+     * the institutionId parameter. The current implementation makes use of the
+     * Solr index as well as the "duraboss" REST API on the DuraSpace instance
+     * referenced in the configuration.
      */
     public Summary getSummary(String institutionId) throws AptrustException {
         Summary s = new Summary();
@@ -85,15 +86,19 @@ public class AptrustClientImpl implements AptrustClient {
         SolrQueryClause objectRecords =
             new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "object");
         SolrQueryClause currentInstitution =
-            new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
+            new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID,
+                                institutionId);
         SolrQueryClause dpnBound =
             new SolrQueryClause(AptrustSolrDocument.DPN_BOUND, "true");
         SolrQueryClause isPublic =
-            new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY, "world");
+            new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY,
+                                "world");
         SolrQueryClause isPrivate =
-            new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY, "private");
+            new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY,
+                                "private");
         SolrQueryClause isInstitutionOnly =
-            new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY, "institution");
+            new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY,
+                                "institution");
         SolrQueryClause failedHealthCheck =
             new SolrQueryClause(AptrustSolrDocument.FAILED_HEATH_CHECK, "true");
 
@@ -122,35 +127,43 @@ public class AptrustClientImpl implements AptrustClient {
                                        ex);
         }
 
-        // Get the total usage.  DuraCloud doesn't expose a quick query for
-        // total space used.  The current implementation fetches the storage
-        // report (which may not be up-to-the-minute) and reports the usage 
-        // from that report.  If we need real-time storage usage, we should
+        // Get the total usage. DuraCloud doesn't expose a quick query for
+        // total space used. The current implementation fetches the storage
+        // report (which may not be up-to-the-minute) and reports the usage
+        // from that report. If we need real-time storage usage, we should
         // consider maintaining a value in SOLR that is updated in response to
         // file updates/removals.
-        RestHttpHelper rest = new RestHttpHelper(
-                new Credential(config.getDuracloudUsername(), 
-                        config.getDuracloudPassword()));
+        RestHttpHelper rest =
+            new RestHttpHelper(new Credential(config.getDuracloudUsername(),
+                                              config.getDuracloudPassword()));
         try {
             String url = config.getDuracloudUrl() + "duraboss/report/storage";
             HttpResponse response = rest.get(url);
             if (response.getStatusCode() / 100 != 2) {
-                throw new RuntimeException("HTTP Status code " 
-                        + response.getStatusCode() + " returned from GET of "
-                        + url);
+                throw new RuntimeException("HTTP Status code "
+                    + response.getStatusCode() + " returned from GET of " + url);
             }
-            DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilder parser =
+                DocumentBuilderFactory.newInstance().newDocumentBuilder();
             XPath xpath = XPathFactory.newInstance().newXPath();
             Document report = parser.parse(response.getResponseStream());
             try {
-                long totalBytes = Long.parseLong((String) xpath.evaluate("storageReport/storageMetrics/storageProviderMetrics/storageProvider[@id='" + config.getDuraCloudProviderId() + "']/spaceMetrics/space[@name='" + institutionId + "']/totalSize", report, XPathConstants.STRING));
+                long totalBytes =
+                    Long.parseLong((String) xpath.evaluate("storageReport/storageMetrics/storageProviderMetrics/storageProvider[@id='"
+                                                               + config.getDuraCloudProviderId()
+                                                               + "']/spaceMetrics/space[@name='"
+                                                               + institutionId
+                                                               + "']/totalSize",
+                                                           report,
+                                                           XPathConstants.STRING));
                 s.setBytesUsed(totalBytes);
             } catch (NumberFormatException ex) {
                 // no bytes stored
                 s.setBytesUsed((long) 0);
             }
         } catch (Exception ex) {
-            throw new AptrustException("Error extracting storage usage from the  DuraCloud storage report!", ex);
+            throw new AptrustException("Error extracting storage usage from the  DuraCloud storage report!",
+                                       ex);
         }
         return s;
     }
@@ -216,7 +229,8 @@ public class AptrustClientImpl implements AptrustClient {
                     fetchFacetPage(AptrustSolrDocument.INSTITUTION_ID,
                                    institutionIds.size(),
                                    100);
-                FacetField f = r.getFacetField(AptrustSolrDocument.INSTITUTION_ID);
+                FacetField f =
+                    r.getFacetField(AptrustSolrDocument.INSTITUTION_ID);
                 for (Count c : f.getValues()) {
                     institutionIds.add(c.getName());
                 }
@@ -228,29 +242,30 @@ public class AptrustClientImpl implements AptrustClient {
     }
 
     /**
-     * Queries DuraCloud for an institution with the given identifier.  The 
-     * current implementation assumes that for every registered institution 
-     * there is a space with that institution's id which has a property 
-     * "institution_display_name" that contains the full name of that 
+     * Queries DuraCloud for an institution with the given identifier. The
+     * current implementation assumes that for every registered institution
+     * there is a space with that institution's id which has a property
+     * "institution_display_name" that contains the full name of that
      * institution.
+     * 
      * @return an InstitutionInfo for the given institutionId, or null if none
-     * can be found
-     * @throws AptrustException wrapping any exception caught while querying 
-     * the DuraCloud API.
+     *         can be found
+     * @throws AptrustException
+     *             wrapping any exception caught while querying the DuraCloud
+     *             API.
      */
     public InstitutionInfo getInstitutionInfo(String institutionId)
         throws AptrustException {
-        ContentStore cs = new ContentStoreImpl(
-                config.getDuracloudUrl() + "durastore", 
-                StorageProviderType.valueOf(config.getDuraCloudProviderName()),
-                config.getDuraCloudProviderId(), 
-                new RestHttpHelper(
-                        new Credential(config.getDuracloudUsername(), 
-                                       config.getDuracloudPassword())));
+        ContentStore cs =
+            new ContentStoreImpl(config.getDuracloudUrl() + "durastore",
+                                 StorageProviderType.valueOf(config.getDuraCloudProviderName()),
+                                 config.getDuraCloudProviderId(),
+                                 new RestHttpHelper(new Credential(config.getDuracloudUsername(),
+                                                                   config.getDuracloudPassword())));
         try {
-            return new InstitutionInfo(
-                    institutionId,cs.getSpaceProperties(institutionId).get(
-                            "institution_display_name"));
+            return new InstitutionInfo(institutionId,
+                                       cs.getSpaceProperties(institutionId)
+                                         .get("institution_display_name"));
         } catch (NullPointerException ex) {
             return null;
         } catch (ContentStoreException ex) {
@@ -259,34 +274,50 @@ public class AptrustClientImpl implements AptrustClient {
     }
 
     /**
-     * Queries Solr for ingest processes from a given institution that match
-     * the provided criteria.
-     * <br />
+     * Queries Solr for ingest processes from a given institution that match the
+     * provided criteria. <br />
      * TODO: This method should force paging of results, this method might
      * return an extremely large number of results!
      * 
-     * @param institutionId (required) specifies the institution to which all
-     * of the returned IngestProcessSummary objects pertain
-     * @param startDate the date after which all the results must have begun
-     * @param name the user-assigned title of all returned operations
-     * @param status the status all returned operations must have
+     * @param institutionId
+     *            (required) specifies the institution to which all of the
+     *            returned IngestProcessSummary objects pertain
+     * @param startDate
+     *            the date after which all the results must have begun
+     * @param name
+     *            the user-assigned title of all returned operations
+     * @param status
+     *            the status all returned operations must have
      */
     public List<IngestProcessSummary> findIngestProcesses(String institutionId,
-            Date startDate, String name, IngestStatus status) throws AptrustException {
-        SolrQueryClause ingestRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "ingest");
-        SolrQueryClause currentInstitution = new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
+                                                          Date startDate,
+                                                          String name,
+                                                          IngestStatus status)
+        throws AptrustException {
+        SolrQueryClause ingestRecords =
+            new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "ingest");
+        SolrQueryClause currentInstitution =
+            new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID,
+                                institutionId);
 
-        SolrQueryClause query =  ingestRecords.and(currentInstitution);
+        SolrQueryClause query = ingestRecords.and(currentInstitution);
         if (status != null) {
-            query = query.and(new SolrQueryClause(AptrustSolrDocument.OPERATION_STATUS, status.toString()));
+            query =
+                query.and(new SolrQueryClause(AptrustSolrDocument.OPERATION_STATUS,
+                                              status.toString()));
         }
         if (name != null) {
-            query = query.and(new SolrQueryClause(AptrustSolrDocument.TITLE, name));
+            query =
+                query.and(new SolrQueryClause(AptrustSolrDocument.TITLE, name));
         }
         if (startDate != null) {
-            query = query.and(SolrQueryClause.dateRange(AptrustSolrDocument.OPERATION_START_DATE, startDate, null));
+            query =
+                query.and(SolrQueryClause.dateRange(AptrustSolrDocument.OPERATION_START_DATE,
+                                                    startDate,
+                                                    null));
         }
-        List<IngestProcessSummary> results = new ArrayList<IngestProcessSummary>();
+        List<IngestProcessSummary> results =
+            new ArrayList<IngestProcessSummary>();
 
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
@@ -294,7 +325,7 @@ public class AptrustClientImpl implements AptrustClient {
         try {
             QueryResponse response = solr.query(params);
             SolrDocumentList page = response.getResults();
-            for (long i = 0; i < page.getNumFound(); i ++) {
+            for (long i = 0; i < page.getNumFound(); i++) {
                 int pageOffset = (int) (i - page.getStart());
                 SolrDocument doc = page.get(pageOffset);
                 IngestProcessSummary s = new IngestProcessSummary();
@@ -313,8 +344,8 @@ public class AptrustClientImpl implements AptrustClient {
     }
 
     /**
-     * Performs a query against Solr for packages from the given institute
-     * that match the given SearchParams.
+     * Performs a query against Solr for packages from the given institute that
+     * match the given SearchParams.
      * 
      * TODO: This method should force paging of results, this method might
      * return an extremely large number of results!
@@ -322,14 +353,20 @@ public class AptrustClientImpl implements AptrustClient {
     public PackageSummaryQueryResponse
         findPackageSummaries(String institutionId, SearchParams searchParams)
             throws AptrustException {
-        
-        String institutionName = getInstitutionInfo(institutionId).getFullName();
-        SolrQueryClause packageRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "package");
-        SolrQueryClause currentInstitution = new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
 
-        SolrQueryClause query =  packageRecords.and(currentInstitution);
-        if (searchParams.getQuery() != null && !searchParams.getQuery().equals("")) {
-            query = query.and(SolrQueryClause.parseUserQuery(searchParams.getQuery()));
+        String institutionName =
+            getInstitutionInfo(institutionId).getFullName();
+        SolrQueryClause packageRecords =
+            new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "package");
+        SolrQueryClause currentInstitution =
+            new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID,
+                                institutionId);
+
+        SolrQueryClause query = packageRecords.and(currentInstitution);
+        if (searchParams.getQuery() != null
+            && !searchParams.getQuery().equals("")) {
+            query =
+                query.and(SolrQueryClause.parseUserQuery(searchParams.getQuery()));
         }
         List<PackageSummary> packages = new ArrayList<PackageSummary>();
 
@@ -341,7 +378,7 @@ public class AptrustClientImpl implements AptrustClient {
         try {
             QueryResponse response = solr.query(params);
             SolrDocumentList page = response.getResults();
-            for (long i = 0; i < page.getNumFound(); i ++) {
+            for (long i = 0; i < page.getNumFound(); i++) {
                 int pageOffset = (int) (i - page.getStart());
                 SolrDocument doc = page.get(pageOffset);
                 PackageSummary s = new PackageSummary();
@@ -349,11 +386,11 @@ public class AptrustClientImpl implements AptrustClient {
                 // populate the easily-mapped field
                 AptrustSolrDocument.populateFromSolrDocument(s, doc);
 
-                // there's a couple complex fields that must be populated 
+                // there's a couple complex fields that must be populated
                 // from data not simply stored in the Solr record
                 s.setInstitutionName(institutionName);
                 if (doc.containsKey(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE)) {
-                    s.setHealthCheckInfo(new HealthCheckInfo((Date) doc.getFieldValue(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE), !Boolean.TRUE.equals(doc.getFieldValue(AptrustSolrDocument.FAILED_HEATH_CHECK))));
+                    s.setHealthCheckInfo(parseHealthCheck(doc));
                 }
 
                 packages.add(s);
@@ -363,24 +400,37 @@ public class AptrustClientImpl implements AptrustClient {
                     response = solr.query(params);
                 }
             }
-            return new PackageSummaryQueryResponse(packages, response.getFacetFields());
+            return new PackageSummaryQueryResponse(packages,
+                                                   response.getFacetFields());
         } catch (SolrServerException ex) {
             throw new AptrustException(ex);
         }
+    }
+
+    protected HealthCheckInfo parseHealthCheck(SolrDocument doc) {
+        Date last =
+            (Date) doc.getFieldValue(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE);
+        boolean success =
+            !Boolean.TRUE.equals(doc.getFieldValue(AptrustSolrDocument.FAILED_HEATH_CHECK));
+        return new HealthCheckInfo(last, success);
     }
 
     /**
      * Builds a complete AptrustPackageDetail through queries to the Solr
      * server.
      */
-    public AptrustPackageDetail getPackageDetail(String institutionId, String packageId)
+    public AptrustPackageDetail getPackageDetail(String institutionId,
+                                                 String packageId)
         throws AptrustException {
-        String institutionName = getInstitutionInfo(institutionId).getFullName();
-        SolrQueryClause packageRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "package");
-        SolrQueryClause idClause = new SolrQueryClause(AptrustSolrDocument.ID, packageId);
+        String institutionName =
+            getInstitutionInfo(institutionId).getFullName();
+        SolrQueryClause packageRecords =
+            new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "package");
+        SolrQueryClause idClause =
+            new SolrQueryClause(AptrustSolrDocument.ID, packageId);
 
-        SolrQueryClause query =  packageRecords.and(idClause);
-        
+        SolrQueryClause query = packageRecords.and(idClause);
+
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
         logger.debug("getPackageDetail: " + query.toString());
@@ -390,7 +440,8 @@ public class AptrustClientImpl implements AptrustClient {
             if (response.getResults().getNumFound() == 0) {
                 return null;
             } else if (response.getResults().getNumFound() > 1) {
-                throw new AptrustException("Multiple fields found with same id (" + packageId + ")!");
+                throw new AptrustException("Multiple fields found with same id ("
+                    + packageId + ")!");
             } else {
                 SolrDocument doc = response.getResults().get(0);
                 AptrustPackageDetail p = new AptrustPackageDetail();
@@ -401,16 +452,23 @@ public class AptrustClientImpl implements AptrustClient {
                 // populate complex fields
                 p.setInstitutionName(institutionName);
                 if (doc.containsKey(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE)) {
-                    p.setHealthCheckInfo(new HealthCheckInfo((Date) doc.getFieldValue(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE), !Boolean.TRUE.equals(doc.getFieldValue(AptrustSolrDocument.FAILED_HEATH_CHECK))));
+                    p.setHealthCheckInfo(parseHealthCheck(doc));
                 }
 
                 // query to populate object details
-                List<ObjectDescriptor> objects = new ArrayList<ObjectDescriptor>();
-                ModifiableSolrParams objectQueryParams = new ModifiableSolrParams();
-                objectQueryParams.set("q", new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "object").and(new SolrQueryClause(AptrustSolrDocument.PACKAGE_ID, p.getId())).getQueryString());
+                List<ObjectDescriptor> objects =
+                    new ArrayList<ObjectDescriptor>();
+                ModifiableSolrParams objectQueryParams =
+                    new ModifiableSolrParams();
+                objectQueryParams.set("q",
+                                      new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE,
+                                                          "object").and(new SolrQueryClause(AptrustSolrDocument.PACKAGE_ID,
+                                                                                            p.getId()))
+                                                                   .getQueryString());
 
-                SolrDocumentList page = solr.query(objectQueryParams).getResults();
-                for (long i = 0; i < page.getNumFound(); i ++) {
+                SolrDocumentList page =
+                    solr.query(objectQueryParams).getResults();
+                for (long i = 0; i < page.getNumFound(); i++) {
                     int pageOffset = (int) (i - page.getStart());
                     SolrDocument d = page.get(pageOffset);
                     ObjectDescriptor o = new ObjectDescriptor();
@@ -423,7 +481,10 @@ public class AptrustClientImpl implements AptrustClient {
                     }
                 }
                 p.setObjectDescriptors(objects);
-
+                // TODO Set these values from SOLR index
+                p.setIngestedBy("Not Available");
+                p.setModifiedBy("Not Available");
+                p.setModifiedDate(null);
                 return p;
             }
         } catch (SolrServerException ex) {
@@ -435,9 +496,14 @@ public class AptrustClientImpl implements AptrustClient {
      * Builds a complete AptrustObject detail through queries to the Solr
      * server.
      */
-    public AptrustObjectDetail getObjectDetail(String institutionId, String packageId, String objectId) throws AptrustException {
-        SolrQueryClause objectRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "object");
-        SolrQueryClause idClause = new SolrQueryClause(AptrustSolrDocument.ID, objectId);
+    public AptrustObjectDetail getObjectDetail(String institutionId,
+                                               String packageId,
+                                               String objectId)
+        throws AptrustException {
+        SolrQueryClause objectRecords =
+            new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "object");
+        SolrQueryClause idClause =
+            new SolrQueryClause(AptrustSolrDocument.ID, objectId);
 
         SolrQueryClause query = objectRecords.and(idClause);
 
@@ -449,10 +515,13 @@ public class AptrustClientImpl implements AptrustClient {
             if (response.getResults().getNumFound() == 1) {
                 SolrDocument doc = response.getResults().get(0);
                 AptrustObjectDetail d = new AptrustObjectDetail();
+                // TODO datastream info is not yet being populated.
+                // d.setDatastreamProfiles(datastreamProfiles);
                 AptrustSolrDocument.populateFromSolrDocument(d, doc);
                 return d;
             } else if (response.getResults().getNumFound() > 1) {
-                throw new AptrustException("Solr Configuration Error: Solr has more than one record with id " + objectId + "!");
+                throw new AptrustException("Solr Configuration Error: Solr has more than one record with id "
+                    + objectId + "!");
             } else {
                 return null;
             }
