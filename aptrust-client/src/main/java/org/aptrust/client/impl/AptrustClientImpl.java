@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +14,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -382,7 +387,7 @@ public class AptrustClientImpl implements AptrustClient {
                 int pageOffset = (int) (i - page.getStart());
                 SolrDocument doc = page.get(pageOffset);
                 PackageSummary s = new PackageSummary();
-
+                s.setInstitutionName(institutionName);
                 // populate the easily-mapped field
                 AptrustSolrDocument.populateFromSolrDocument(s, doc);
 
@@ -544,5 +549,33 @@ public class AptrustClientImpl implements AptrustClient {
         params.set("facet.limit", max);
         params.set("facet.offset", offset);
         return solr.query(params);
+    }
+    
+    @Override
+    public String getStorageReport(String institutionId, boolean staging) throws AptrustException {
+        try {
+            String spaceId = institutionId;
+            if(staging){
+                spaceId +="staging";
+            }
+            
+            String storeId = this.config.getDuraCloudProviderId();
+            
+            String url = this.config.getDuracloudUrl()
+                + "duradmin/storagereport/summaries?storeId=" + storeId
+                + "&spaceId=" + spaceId;
+
+            String username = this.config.getDuracloudUsername();
+            String password = this.config.getDuracloudPassword();
+
+            RestHttpHelper helper = new RestHttpHelper(new Credential(username, password));
+            
+            HttpResponse response = helper.get(url);
+
+            return response.getResponseBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AptrustException(e);
+        }
     }
 }

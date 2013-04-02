@@ -1,5 +1,6 @@
 package org.aptrust.admin.controller;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 
@@ -36,9 +39,14 @@ public class InstitutionDashboardController extends BaseController {
                           @ModelAttribute 
                           String institutionId,
                           Model model) throws AptrustException {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+        c.add(Calendar.MONTH, -2);
+        Date sinceDate = c.getTime();
+        
         List<IngestProcessSummary> recentIngests =
             this.client.findIngestProcesses(institutionId,
-                                            new Date(),
+                                            sinceDate,
                                             null,
                                             null);
         model.addAttribute("recentIngests", recentIngests);
@@ -46,4 +54,15 @@ public class InstitutionDashboardController extends BaseController {
         log.debug("displaying home...");
         return "dashboard";
     }
+    
+    @RequestMapping("/storage-report/{institutionId}")
+    @ResponseBody
+    public String getHome(@PathVariable 
+                          @ModelAttribute 
+                          String institutionId, 
+                          @RequestParam(required=false) String staging) throws AptrustException {
+
+        return this.client.getStorageReport(institutionId, Boolean.valueOf(staging));
+    }
+
 }

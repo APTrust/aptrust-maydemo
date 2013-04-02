@@ -110,6 +110,17 @@ public interface AptrustClient {
     @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public AptrustObjectDetail getObjectDetail(String institutionId, String packageId, String objectId)
         throws AptrustException;
+    
+    /**
+     * 
+     * @param institutionId The institution identifieer
+     * @param staging Set to true to indicate staging report.  Otherwise processing space storage info is returned.
+     * @return
+     * @throws AptrustException
+     */
+    @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
+    public String getStorageReport(String institutionId, boolean staging)
+        throws AptrustException;
 
 
 }
