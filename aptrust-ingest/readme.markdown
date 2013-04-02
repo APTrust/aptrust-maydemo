@@ -20,4 +20,17 @@ This application, run at partner institutions moves content into the DuraCloud s
 Early design documentation can be found on the AP Trust development wiki here: https://wiki.duraspace.org/display/aptrust/Ingest+Client
 
 ## Ingest Processing Service
-This service, running in the cloud, will respond to the addition or modification of files in any of the AP Trust staging spaces and process them.  Early design documentation can be found on the AP Trust development wiki here: https://wiki.duraspace.org/display/aptrust/Ingest+Processing+Service
+This service listens to will respond to the addition or modification of files in any of the AP Trust staging spaces.  Early design documentation can be found on the AP Trust development wiki here: https://wiki.duraspace.org/display/aptrust/Ingest+Processing+Service
+
+To build and run this service:
+    mvn clean package
+
+To install the service:
+1. Extract the distribution.tar.gz that was created in the target directory
+2. Add a ingest-client-config.properties file that points to the appropriate servers
+
+To start or stop the service on linux:
+    bin/ips start
+    bin/ips stop
+
+*Warning* - The first thing the IPS does when it successfully connects to DuraCloud is to process any files present in the staging spaces.  If there are many files, this may take a long time.

@@ -1,0 +1,1 @@
+This directory will contain log files from the running Ingest Processing Service.

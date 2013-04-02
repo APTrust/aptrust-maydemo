@@ -1,0 +1,43 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+  <id>IPS distribution</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <files>
+    <file>
+      <source>${project.basedir}/src/main/resources/ingest-client-config-example.properties</source>
+      <fileMode>0640</fileMode>
+    </file>
+  </files>
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.directory}/jsw/ips/bin</directory>
+      <fileMode>0755</fileMode>
+      <directoryMode>0755</directoryMode>
+      <outputDirectory>bin</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.build.directory}/jsw/ips/lib</directory>
+      <fileMode>0644</fileMode>
+      <directoryMode>0755</directoryMode>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.build.directory}/jsw/ips/conf</directory>
+      <fileMode>0644</fileMode>
+      <directoryMode>0755</directoryMode>
+      <outputDirectory>conf</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/src/assemble</directory>
+      <directoryMode>0755</directoryMode>
+      <fileMode>0644</fileMode>
+      <outputDirectory>logs</outputDirectory>
+      <includes>
+        <include>*.txt</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>
+

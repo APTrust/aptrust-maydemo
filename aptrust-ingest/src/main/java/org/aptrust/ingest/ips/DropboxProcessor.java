@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -124,7 +125,7 @@ public class DropboxProcessor {
      */
     private Map<String, DuraChunkManifest> contentIdToChunkManifestMap;
 
-    public DropboxProcessor(String spaceId, FedoraClient fc, SolrServer solr, ContentStore cs) throws ContentStoreException, AptrustException {
+    public DropboxProcessor(String spaceId, FedoraClient fc, SolrServer solr, ContentStore cs) throws ContentStoreException, AptrustException, IOException {
         contentStore = cs;
         this.fc = fc;
         stagingSpaceId = spaceId;
@@ -138,6 +139,12 @@ public class DropboxProcessor {
         idToContentMap = new HashMap<String, List<RecognizedContentReference>>();
         foxmlCache = new HashMap<String, FedoraObject>();
         contentIdToChunkManifestMap = new HashMap<String, DuraChunkManifest>();
+
+        // walk through all present content
+        Iterator<String> contentIdIt = cs.getSpaceContents(spaceId);
+        while (contentIdIt.hasNext()) {
+            notifyUpdate(new DuraCloudUpdateEvent(contentIdIt.next()));
+        }
     }
     
     public void notifyUpdate(DuraCloudUpdateEvent e) throws ContentStoreException, AptrustException, IOException {
@@ -150,6 +157,10 @@ public class DropboxProcessor {
             logger.trace("{} is not a manifest file", e.getContentId());
             processNonManifestFile(e);
         }
+    }
+    
+    public void notifyDelete(DuraCloudUpdateEvent e) {
+        logger.trace("notifyDelete({})", e.getContentId());
     }
 
     /**
