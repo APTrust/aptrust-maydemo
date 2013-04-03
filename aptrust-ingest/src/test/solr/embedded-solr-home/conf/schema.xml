@@ -915,7 +915,7 @@
    <field name="date_sort" type="tdate" indexed="true" stored="false" multiValued="false" />
    <field name="included_pid" type="string" indexed="true" stored="false" multiValued="true" />
 
-   <field name="text" type="string" indexed="true" stored="false" multiValued="true" />
+    <field name="text" type="text_general" indexed="true" stored="false" multiValued="true"/>
 
    <!-- Uncommenting the following will create a "timestamp" field using
         a default value of "NOW" to indicate when each document was indexed.
