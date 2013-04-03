@@ -20,7 +20,7 @@ public class DiscoveryControllerTest {
     public void testDiscovery() throws Exception {
         AptrustClient client = EasyMock.createMock(AptrustClient.class);
         PackageSummaryQueryResponse psqr = EasyMock.createMock(PackageSummaryQueryResponse.class);
-        EasyMock.expect(client.findPackageSummaries(EasyMock.isA(String.class), EasyMock.isA(SearchParams.class)))
+        EasyMock.expect(client.findPackageSummaries(EasyMock.isA(String.class), EasyMock.isA(SearchParams.class), EasyMock.isA(String.class), EasyMock.isA(String.class), EasyMock.isA(String.class)))
                 .andReturn(psqr);
 
         WebSearchParams sp = new WebSearchParams();

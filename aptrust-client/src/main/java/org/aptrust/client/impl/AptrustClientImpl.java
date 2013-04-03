@@ -14,12 +14,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -356,7 +350,7 @@ public class AptrustClientImpl implements AptrustClient {
      * return an extremely large number of results!
      */
     public PackageSummaryQueryResponse
-        findPackageSummaries(String institutionId, SearchParams searchParams)
+        findPackageSummaries(String institutionId, SearchParams searchParams, String ... facetFields)
             throws AptrustException {
 
         String institutionName =
@@ -378,7 +372,9 @@ public class AptrustClientImpl implements AptrustClient {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
         params.set("facet", "true");
-        params.set("f.field", AptrustSolrDocument.DPN_BOUND);
+        if (facetFields != null) {
+            params.set("facet.field", facetFields);
+        }
         logger.debug("findPackageSummaries: " + query.toString());
         try {
             QueryResponse response = solr.query(params);

@@ -10,6 +10,7 @@ import org.aptrust.client.api.AptrustClient;
 import org.aptrust.client.api.PackageSummaryQueryResponse;
 import org.aptrust.client.api.SearchConstraint;
 import org.aptrust.common.exception.AptrustException;
+import org.aptrust.common.solr.AptrustSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class DiscoveryController extends BaseController {
         
 
         PackageSummaryQueryResponse response =
-            client.findPackageSummaries(institutionId, searchParams);
+            client.findPackageSummaries(institutionId, searchParams, AptrustSolrDocument.DPN_BOUND, AptrustSolrDocument.ACCESS_CONTROL_POLICY, AptrustSolrDocument.FAILED_HEATH_CHECK);
         model.addAttribute(QUERY_RESPONSE_KEY, response);
         model.addAttribute(SEARCH_PARAMS_KEY, searchParams);
 

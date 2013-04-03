@@ -80,12 +80,14 @@ public interface AptrustClient {
      * 
      * @param institutionId
      * @param searchParams
+     * @param facetFields
      * @return
      * @throws AptrustException
      */
     @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public PackageSummaryQueryResponse findPackageSummaries(String institutionId,
-                                                     SearchParams searchParams)
+                                                     SearchParams searchParams,
+                                                     String ... facetFields)
         throws AptrustException;
 
     /**
