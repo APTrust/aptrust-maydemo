@@ -29,6 +29,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.aptrust.client.api.IngestStatus;
 import org.aptrust.client.impl.SolrQueryClause;
+import org.aptrust.common.duracloud.StubbornContentStore;
 import org.aptrust.common.exception.AptrustException;
 import org.aptrust.common.metadata.APTrustMetadata;
 import org.aptrust.common.solr.AptrustSolrDocument;
@@ -126,7 +127,7 @@ public class DropboxProcessor {
     private Map<String, DuraChunkManifest> contentIdToChunkManifestMap;
 
     public DropboxProcessor(String spaceId, FedoraClient fc, SolrServer solr, ContentStore cs) throws ContentStoreException, AptrustException, IOException {
-        contentStore = cs;
+        contentStore = new StubbornContentStore(cs);
         this.fc = fc;
         stagingSpaceId = spaceId;
         if (!isStagingSpace(spaceId)) {
@@ -630,7 +631,7 @@ public class DropboxProcessor {
     private long getContentSize(String contentId) throws ContentStoreException {
         return Long.parseLong(contentStore.getContent(stagingSpaceId, contentId).getProperties().get("content-size"));
     }
-    
+
     /**
      * Completes the ingest of a single object.  This breaks any possibility
      * for package-based transactions, but is acceptable given that the
