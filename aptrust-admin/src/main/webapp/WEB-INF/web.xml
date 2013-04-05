@@ -1,6 +1,6 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
-  <display-name>DfR Sync Web Application</display-name>
+  <display-name>AP Trust Web Application</display-name>
   
   <!--  The context loader listener uses annotation based configuration and is currently responsible
         for loading all components.  The contextConfigLocation below points to a package 
