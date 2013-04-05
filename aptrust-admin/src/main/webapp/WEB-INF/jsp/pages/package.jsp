@@ -75,7 +75,7 @@ Page: Home page placeholder.
                  <c:if test="${objectDetail.objectId == objectDescriptor.id}">
                   selected="true"
                  </c:if>
-             >${objectDescriptor.title}</option>
+             >${objectDescriptor.id}</option>
           </c:forEach>
         </select>
         </form>
