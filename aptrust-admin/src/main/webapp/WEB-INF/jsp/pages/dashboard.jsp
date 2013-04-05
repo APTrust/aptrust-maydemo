@@ -145,14 +145,14 @@ Page: Home page placeholder.
                     });
                 };
                 
-                $.when(_getSummaries('${institution.id}', true)).done(function(result) {
+                $.when(_getSummaries(true)).done(function(result) {
                     var summaries = result.summaries;
                     _initTimeSeriesGraph(summaries, "chart-staging", "legend-staging");
                 }).fail(function(err) {
                     alert("failed to retrieve time series");
                 });
 
-                $.when(_getSummaries('${institution.id}')).done(function(result) {
+                $.when(_getSummaries()).done(function(result) {
                     var summaries = result.summaries;
                     _initTimeSeriesGraph(summaries, "chart", "legend");
                 }).fail(function(err) {
