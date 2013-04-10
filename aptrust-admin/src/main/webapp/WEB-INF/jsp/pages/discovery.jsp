@@ -24,7 +24,7 @@ Page: Package Discovery
           <form>
             <fieldset >
                 <input id="startDate" placeholder="Start: e.g. 01/01/1999"/>
-                <input id="startDate" placeholder="End: e.g. 12/31/2012"/>
+                <input id="endDate" placeholder="End: e.g. 12/31/2012"/>
             </fieldset>
           </form>
         </div>
@@ -34,14 +34,14 @@ Page: Package Discovery
           items="${facets}">
 
           <div class="facet">
-            <h3>${facet.name}</h3>
+            <h3><spring:message code="${facet.name}" text="${facet.name}"/></h3>
             <ul>
               <c:forEach
                 var="value"
                 items="${facet.values}">
                 <li>
                   <a href="?${searchParams.toQueryStringWithConstraint(facet.name, value.name)}">
-                   ${value.name}(${value.count})
+                   <spring:message code="${value.name}" text="${value.name}"/> (${value.count})
                   </a>
                 </li>
               </c:forEach>
@@ -67,9 +67,9 @@ Page: Package Discovery
               <li>
                 <div>
                 <a href="?${searchParams.toQueryStringWithout(c)}">
-                <div>${c.name}</div>
+                <div><spring:message code="${c.name}" text="${c.name}"/></div>
                 <div>
-                ${c.value}
+                <spring:message code="${c.value}" text="${c.value}"/>
                 <span class="x">X</span>
                 </div>
                 </a>
