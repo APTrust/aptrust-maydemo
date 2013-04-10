@@ -32,7 +32,7 @@ Page: Package Discovery
         <c:forEach
           var="facet"
           items="${facets}">
-
+          <c:if test="${not empty facet.values}">
           <div class="facet">
             <h3><spring:message code="${facet.name}" text="${facet.name}"/></h3>
             <ul>
@@ -47,6 +47,7 @@ Page: Package Discovery
               </c:forEach>
             </ul>
           </div>
+          </c:if>
         </c:forEach>
       </div>
     </c:if>

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,6 +34,7 @@ import org.aptrust.client.api.IngestStatus;
 import org.aptrust.client.api.InstitutionInfo;
 import org.aptrust.client.api.PackageSummary;
 import org.aptrust.client.api.PackageSummaryQueryResponse;
+import org.aptrust.client.api.SearchConstraint;
 import org.aptrust.client.api.SearchParams;
 import org.aptrust.client.api.Summary;
 import org.aptrust.common.exception.AptrustException;
@@ -418,8 +420,22 @@ public class AptrustClientImpl implements AptrustClient {
                     response = solr.query(params);
                 }
             }
+            
+            List<FacetField> facets = response.getFacetFields();
+            for(SearchConstraint sc : searchParams.getConstraints()){
+               for(FacetField ff : response.getFacetFields()){
+                   if(ff.getName().equals(sc.getName())){
+                       List<Count> values = new LinkedList<Count>(ff.getValues());
+                       for(Count c : values){
+                           if(c.getName().equals(sc.getValue())){
+                               ff.getValues().remove(c);
+                           }
+                       }
+                   }
+               }
+            }
             return new PackageSummaryQueryResponse(packages,
-                                                   response.getFacetFields());
+                                                   facets);
         } catch (SolrServerException ex) {
             throw new AptrustException(ex);
         }
