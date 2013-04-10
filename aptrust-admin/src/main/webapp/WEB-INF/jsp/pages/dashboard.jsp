@@ -179,15 +179,15 @@ Page: Home page placeholder.
           objects</strong>, <br/>using <strong><fmt:formatNumber value="${summary.bytesUsed /( 1024*1024*1024)}" minFractionDigits="1" maxFractionDigits="1"/> GBs of storage</strong>.
       </p>
       <ul>
-        <li><a href="${discoveryUrl}">${summary.dpnBoundPackageCount}
+        <li><a href="${discoveryUrl}?constraints[0].name=dpn_bound&constraints[0].value=true">${summary.dpnBoundPackageCount}
             packages</a> are <strong>DPN Bound</strong></li>
-        <li><a href="${discoveryUrl}">${summary.publicPackageCount} packages</a>
+        <li><a href="${discoveryUrl}?constraints[0].name=access_control_policy&constraints[0].value=world">${summary.publicPackageCount} packages</a>
           are <strong>Public</strong></li>
-        <li><a href="${discoveryUrl}">${summary.privatePackageCount}
+        <li><a href="${discoveryUrl}constraints[0].name=access_control_policy&constraints[0].value=private">${summary.privatePackageCount}
             packages</a> are <strong>Private</strong></li>
-        <li><a href="${discoveryUrl}">${summary.institutionPackageCount}
+        <li><a href="${discoveryUrl}?constraints[0].name=institution_only&constraints[0].value=true">${summary.institutionPackageCount}
             packages</a> are <strong>Institution Only</strong></li>
-        <li><a href="${discoveryUrl}">${summary.failedPackageCount}
+        <li><a href="${discoveryUrl}?constraints[0].name=failed_health_check&constraints[0].value=true">${summary.failedPackageCount}
             packages</a> have <strong>Failed Health Checks</strong></li>
       </ul>
       <p>
