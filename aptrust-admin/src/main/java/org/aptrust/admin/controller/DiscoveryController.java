@@ -61,11 +61,17 @@ public class DiscoveryController extends BaseController {
         
 
         PackageSummaryQueryResponse response =
-            client.findPackageSummaries(institutionId, searchParams, AptrustSolrDocument.DPN_BOUND, AptrustSolrDocument.ACCESS_CONTROL_POLICY, AptrustSolrDocument.FAILED_HEATH_CHECK);
+            client.findPackageSummaries(institutionId,
+                                        searchParams,
+                                        AptrustSolrDocument.DPN_BOUND,
+                                        AptrustSolrDocument.ACCESS_CONTROL_POLICY,
+                                        AptrustSolrDocument.FAILED_HEATH_CHECK);
         model.addAttribute(QUERY_RESPONSE_KEY, response);
         model.addAttribute(SEARCH_PARAMS_KEY, searchParams);
 
         return "discovery";
     }
+    
+    
 
 }

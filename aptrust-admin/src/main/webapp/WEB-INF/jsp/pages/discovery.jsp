@@ -11,8 +11,16 @@ Page: Package Discovery
 <tiles:insertDefinition
   name="app-base"
   flush="true">
-
-
+  
+  <tiles:putAttribute
+    name="head-extension">
+    <script>
+    $(function() {
+      $( "#startDate, #endDate" ).datepicker("option", "dateFormat","mm/dd/yyyy");
+    });
+    </script>
+  
+  </tiles:putAttribute>
   <tiles:putAttribute
     name="content"
     cascade="true">
@@ -21,12 +29,19 @@ Page: Package Discovery
       <div id="facets">
           <div class="facet">
             <h3>Creation Date (Range)</h3>
-          <form>
-            <fieldset >
-                <input id="startDate" placeholder="Start: e.g. 01/01/1999"/>
-                <input id="endDate" placeholder="End: e.g. 12/31/2012"/>
+          <form:form  method="GET"  modelAttribute="searchParams" >
+            <fieldset>
+                <form:input id="startDate" path="startDate" placeholder="Start: e.g. 01/01/1999" />
+                <form:input id="endDate" path="endDate" placeholder="End: e.g. 12/31/2012"/>
+                <button type="submit">go</button>
+
+            <c:forEach items="${searchParams.constraints}" var="c" varStatus="status"> 
+              <input type="hidden" name="constraints[${status.index}].name" value="${c.name}"/>
+              <input type="hidden" name="constraints[${status.index}].value" value="${c.value}"/>
+            </c:forEach>
+
             </fieldset>
-          </form>
+          </form:form>
         </div>
       
         <c:forEach
@@ -66,6 +81,7 @@ Page: Package Discovery
             <ul>
             <c:forEach items="${searchParams.constraints}" var="c"> 
               <li>
+                
                 <div>
                 <a href="?${searchParams.toQueryStringWithout(c)}">
                 <div><spring:message code="${c.name}" text="${c.name}"/></div>
@@ -78,6 +94,33 @@ Page: Package Discovery
                 
               </li>
             </c:forEach>
+            <c:if test="${not empty searchParams.startDate}">
+              <li>
+                <div>
+                <a href="?${searchParams.toQueryStringWithout(null, true, false)}">
+                <div><spring:message code="after" text="After"/></div>
+                <div>
+                <fmt:formatDate pattern="MM/dd/yyyy" value="${searchParams.startDate}"/>
+                <span class="x">X</span>
+                </div>
+                </a>
+                </div>
+              </li>
+            </c:if>
+            <c:if test="${not empty searchParams.endDate}">
+              <li>
+                <div>
+                <a href="?${searchParams.toQueryStringWithout(null, false, true)}">
+                <div><spring:message code="before" text="Before"/></div>
+                <div>
+                <fmt:formatDate pattern="MM/dd/yyyy" value="${searchParams.endDate}"/>
+                <span class="x">X</span>
+                </div>
+                </a>
+                </div>
+              </li>
+            </c:if>
+
             </ul>
         </div>
       </c:if>

@@ -1,8 +1,13 @@
 package org.aptrust.admin.config;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.aptrust.client.api.SearchParams;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.service.DefaultConversionService;
@@ -74,6 +79,10 @@ public class AppConfig extends WebMvcConfigurationSupport {
                     // Trim strings before setting values on all form beans.
                     registry.registerCustomEditor(Object.class,
                                                   new StringTrimmerEditor(true));
+                    registry.registerCustomEditor(Date.class,
+                                                  new CustomDateEditor(new SimpleDateFormat(SearchParams.DATE_TIME_FORMAT),
+                                                                       true));
+
                 }
             };
 
