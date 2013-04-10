@@ -25,7 +25,7 @@ public class HomeController extends BaseController {
         this.client = client;
     }
 
-    @RequestMapping("/")
+    @RequestMapping(value={"/","/home"})
     public String getHome(Model model) throws AptrustException {
         log.debug("calling...");
         model.addAttribute("institutions", this.client.getInstitutions());

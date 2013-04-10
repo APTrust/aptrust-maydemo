@@ -1,3 +1,2 @@
-<%
-response.sendRedirect(request.getContextPath()+"/");
-%>
+<%@page session="false" %>
+<jsp:forward page="/home" />
