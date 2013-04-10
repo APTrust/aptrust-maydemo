@@ -83,7 +83,6 @@ Page: Home page placeholder.
     </div>
 
     <div id="object">
-      <em class="kicker">Object in "${packageDetail.name}"</em>
       <h2 id="object-title">${objectDetail.title}</h2>
 
       <h3>Object Properties</h3>
