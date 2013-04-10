@@ -2,11 +2,13 @@ package org.aptrust.client.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -253,22 +255,37 @@ public class AptrustClientImpl implements AptrustClient {
      *             wrapping any exception caught while querying the DuraCloud
      *             API.
      */
+    
     public InstitutionInfo getInstitutionInfo(String institutionId)
         throws AptrustException {
-        ContentStore cs =
-            new ContentStoreImpl(config.getDuracloudUrl() + "durastore",
-                                 StorageProviderType.valueOf(config.getDuraCloudProviderName()),
-                                 config.getDuraCloudProviderId(),
-                                 new RestHttpHelper(new Credential(config.getDuracloudUsername(),
-                                                                   config.getDuracloudPassword())));
+
         try {
             return new InstitutionInfo(institutionId,
-                                       cs.getSpaceProperties(institutionId)
-                                         .get("institution_display_name"));
+                                       getInstitutionDisplayName(institutionId));
         } catch (NullPointerException ex) {
             return null;
-        } catch (ContentStoreException ex) {
-            throw new AptrustException(ex);
+
+        }
+    }
+
+    /**
+     * FIXME The institution display name, which was formerly being pulled from
+     * Duracloud, is no longer available through that channel since Space
+     * Properties are no longer supported. Current work around is to map the
+     * institutionIds in a properties file.
+     * 
+     * @param institutionId
+     * @return
+     */
+    private String getInstitutionDisplayName(String institutionId) {
+        try {
+            Properties p = new Properties();
+            InputStream is = AptrustClientImpl.class.getResourceAsStream("/institutions.properties");
+            p.load(is);
+            return p.getProperty(institutionId, institutionId);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
