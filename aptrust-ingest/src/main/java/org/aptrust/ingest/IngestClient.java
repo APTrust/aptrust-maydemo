@@ -77,7 +77,7 @@ public class IngestClient {
                 
                 try {
                     LocalFedoraRepository r = new LocalFedoraRepository(a.getFedoraUrl(), a.getFedoraUsername(), a.getFedoraPassword());
-                    IngestManifest m = r.generateManifest("All local packages.", c.getDuraCloudUsername());
+                    IngestManifest m = r.generateManifest(a.getOperationName(), c.getDuraCloudUsername());
                     System.out.println("  " + m.getPackagesToSubmit().length + " packages detected.");
                     
                     IngestClient client = new IngestClient(c, a);
@@ -378,7 +378,9 @@ public class IngestClient {
         private String fedoraPassword;
 
         private String errorMessage;
-        
+
+        private String operationName = "Fedora Ingest Operation";
+
         private boolean dryRun;
 
         public CommandLineArguments(String [] originalArgs) {
@@ -397,15 +399,22 @@ public class IngestClient {
         /**
          * Walks through the arguments and pulls out any flags that may have
          * be included.  The current implementation only identifies "--dry-run"
+         * and "--name".
          * @param args the command line arguments
          * @return an updated list of command line arguments that excludes any
          * flags that were identified/processed.
          */
         private List<String> processFlags(String [] args) {
             ArrayList<String> newArgs = new ArrayList<String>();
+            boolean nextIsName = false;
             for (String arg : args) {
-                if (arg.equals("--dry-run")) {
+                if (nextIsName) {
+                    operationName = arg;
+                    nextIsName = false;
+                } else if (arg.equals("--dry-run")) {
                     dryRun = true;
+                } else if (arg.equals("--name")) {
+                    nextIsName = true;
                 } else {
                     newArgs.add(arg);
                 }
@@ -450,6 +459,10 @@ public class IngestClient {
 
         public String getFedoraPassword() {
             return fedoraPassword;
+        }
+
+        public String getOperationName() {
+            return operationName;
         }
 
         public String getArgumentUsage() {
