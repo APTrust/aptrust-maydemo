@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +37,12 @@ import org.aptrust.ingest.api.IngestManifest;
 import org.aptrust.ingest.api.IngestPackage;
 import org.aptrust.ingest.dspace.DSpaceAIPPackage;
 import org.aptrust.ingest.exceptions.UnrecognizedContentException;
+import org.aptrust.ingest.ips.solr.IngestSolrDocument;
+import org.aptrust.ingest.ips.solr.ObjectSolrDocument;
+import org.aptrust.ingest.ips.solr.PackageSolrDocument;
 import org.duracloud.client.ContentStore;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
-import org.duracloud.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -79,13 +80,13 @@ import com.yourmediashelf.fedora.client.FedoraClientException;
  *   only has to access them again when ready to complete the ingest.
  * </p>
  * <p>
- *   Currently not-supported is appropriate handling for cases where files may
- *   be deleted or overwritten by other applications after this class has been
- *   notified of their presence.  Furthermore, the semantics of package
- *   replacement or updates hasn't yet been implemented.
+ *   Currently not-supported: 
+ *   <ul>
+ *     <li>package/object replacement</li>
+ *   </ul>
  * </p>
  */
-public class DropboxProcessor {
+public class DropboxProcessor implements SpaceListener {
 
     private static final String INGEST_CMODEL_PID = "aptrust:ingest";
     private static final String MANIFEST_DSID = "manifest";
@@ -106,25 +107,7 @@ public class DropboxProcessor {
 
     private ContentStore contentStore;
 
-    private List<String> completeStagedPids;
-
-    /**
-     * A Map from pids (of fedora objects) to a list RecognizedContentReference
-     * objects for all known content Ids that are part of that fedora object.
-     */
-    private Map<String, List<RecognizedContentReference>> idToContentMap;
-
-    /**
-     * A Map from a pid to the parsed digital object (from the foxml) for all
-     * objects where FOXML content has been identified and processed.
-     */
-    private Map<String, FedoraObject> foxmlCache;
-
-    /**
-     * A Map from the contentId value that *would* be expected for a fedora
-     * datastream to the DuraChunkManifest that was actually found.
-     */
-    private Map<String, DuraChunkManifest> contentIdToChunkManifestMap;
+    private ContentAnalysisCache cache;
 
     public DropboxProcessor(String spaceId, FedoraClient fc, SolrServer solr, ContentStore cs) throws ContentStoreException, AptrustException, IOException {
         contentStore = new StubbornContentStore(cs);
@@ -136,32 +119,34 @@ public class DropboxProcessor {
         institutionId = getInstitutionIdFromStagingSpaceId(spaceId);
         productionSpaceId = institutionId;
         this.solr = solr;
-        completeStagedPids = new ArrayList<String>();
-        idToContentMap = new HashMap<String, List<RecognizedContentReference>>();
-        foxmlCache = new HashMap<String, FedoraObject>();
-        contentIdToChunkManifestMap = new HashMap<String, DuraChunkManifest>();
+        cache = new InMemoryContentAnalysisCache();
 
         // walk through all present content
         Iterator<String> contentIdIt = cs.getSpaceContents(spaceId);
         while (contentIdIt.hasNext()) {
-            notifyUpdate(new DuraCloudUpdateEvent(contentIdIt.next()));
+            processContentId(contentIdIt.next(), true);
         }
     }
-    
-    public void notifyUpdate(DuraCloudUpdateEvent e) throws ContentStoreException, AptrustException, IOException {
-        logger.trace("notifyUpdate({})", e.getContentId());
+
+    public void notifyUpdate(String contentId) throws ContentStoreException, AptrustException, IOException {
+        logger.trace("notifyUpdate({})", contentId);
+        processContentId(contentId, false);
+    }
+
+    public void processContentId(String contentId, boolean offline) throws ContentStoreException, AptrustException, IOException {
         // 1.  determine if it's a manifest or another file
-        if (isManifest(e)) {
-            logger.trace("{} is a manifest file", e.getContentId());
-            processNewManifest(e);
+        if (isManifest(contentId)) {
+            logger.trace("{} is a manifest file", contentId);
+            processNewManifest(contentId, offline);
         } else {
-            logger.trace("{} is not a manifest file", e.getContentId());
-            processNonManifestFile(e);
+            logger.trace("{} is not a manifest file", contentId);
+            processNonManifestFile(contentId, offline);
         }
     }
-    
-    public void notifyDelete(DuraCloudUpdateEvent e) {
-        logger.trace("notifyDelete({})", e.getContentId());
+
+    public void notifyDelete(String contentId) {
+        logger.trace("notifyDelete({})", contentId);
+        cache.forgetContentId(contentId);
     }
 
     /**
@@ -171,8 +156,8 @@ public class DropboxProcessor {
      * @throws ContentStoreException if an exception prevents this code from 
      * examining the tags for a contentId.
      */
-    private boolean isManifest(DuraCloudUpdateEvent e) throws ContentStoreException {
-        Map<String, String> p = contentStore.getContentProperties(stagingSpaceId, e.getContentId());
+    private boolean isManifest(String contentId) throws ContentStoreException {
+        Map<String, String> p = contentStore.getContentProperties(stagingSpaceId, contentId);
         return p.containsKey("tags") && parseTags(p.get("tags")).contains("aptrust_manifest");
     }
 
@@ -180,7 +165,7 @@ public class DropboxProcessor {
      * @param manifestFile the manifest xml file, exactly as it appeared when
      * discovered by the ingest processor.
      */
-    private void processNewManifest(DuraCloudUpdateEvent e) throws AptrustException {
+    private void processNewManifest(String contentId, boolean offline) throws AptrustException {
         File manifestFile = null;
         String pid = null;
         List<String> packagePids = null;
@@ -189,7 +174,7 @@ public class DropboxProcessor {
         try {
             manifestFile = File.createTempFile("manifest", ".xml");
             logger.trace("created manifest file \"{}\"", manifestFile.getName());
-            downloadContent(stagingSpaceId, e.getContentId(), manifestFile);
+            downloadContent(stagingSpaceId, contentId, manifestFile);
             logger.trace("downloaded manifest from DuraCloud");
 
             // 1. create a fedora object for the ingest operation
@@ -241,7 +226,7 @@ public class DropboxProcessor {
             }
 
             // 3. move the manifest to the production space
-            contentStore.moveContent(stagingSpaceId, e.getContentId(), productionSpaceId, pid);
+            contentStore.moveContent(stagingSpaceId, contentId, productionSpaceId, pid);
 
             // 4. store the updated manifest in fedora
             Marshaller m = JAXBContext.newInstance(IngestManifest.class, IngestPackage.class, DigitalObject.class, APTrustMetadata.class).createMarshaller();
@@ -261,8 +246,8 @@ public class DropboxProcessor {
             //    process them
             long ingestedObjectCount = 0;
             for (String oPid : objectPids) {
-                if (completeStagedPids.contains(oPid)) {
-                    ingestObject(pid, ingestedObjectCount ++, oPid);
+                if (cache.isObjectComplete(oPid)) {
+                    ingestObject(pid, ingestedObjectCount ++, oPid, offline);
                 }
             }
 
@@ -291,29 +276,27 @@ public class DropboxProcessor {
         }
     }
 
-    private void processNonManifestFile(DuraCloudUpdateEvent e) throws AptrustException {
+    private void processNonManifestFile(String contentId, boolean offline) throws AptrustException {
         // 1.  determine the PID represented by the file (if possible do this
         //     without reading the file
-        RecognizedContentReference ref = null;
+        String objectId = null;
         try {
-            ref = determineLocalId(e.getContentId());
+            objectId = determineObjectId(contentId);
         } catch (UnrecognizedContentException ex) {
             // log the error but do nothing... this object is unrecognized
             logger.info(ex.getContentId() + " was not recognized as a Fedoara or DSpace submission.");
             return;
         }
 
-        // 2.  determine if all of that object is present (currently only 
-        //     relevant for fedora objects)
+        // 2.  determine if all of that object is present
         try {
-            addRecognizedContent(ref);
-            if (ref.isFedoraObject() && !isFedoraObjectComplete(ref.getId())) {
-                return;
-            }
+            addRecognizedContent(contentId, objectId);
         } catch (Exception ex) {
-            // TODO: better handle this case... we don't want this file to be
-            //       ignored if it is important
             throw new RuntimeException(ex);
+        }
+
+        if (!cache.isObjectComplete(objectId)) {
+            return;
         }
 
         // 3.  query SOLR to determine if there's a manifest waiting for this
@@ -322,7 +305,7 @@ public class DropboxProcessor {
         SolrQueryClause ingestRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "ingest");
         SolrQueryClause currentInstitution = new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
         SolrQueryClause inProgress = new SolrQueryClause(AptrustSolrDocument.OPERATION_STATUS, IngestStatus.IN_PROGRESS.name());
-        SolrQueryClause hasPid = new SolrQueryClause(AptrustSolrDocument.INCLUDED_PID, ref.getId());
+        SolrQueryClause hasPid = new SolrQueryClause(AptrustSolrDocument.INCLUDED_PID, objectId);
         String query = ingestRecords.and(currentInstitution).and(inProgress).and(hasPid).getQueryString();
         params.set("q", query);
         QueryResponse solrResponse = null;
@@ -331,25 +314,24 @@ public class DropboxProcessor {
             solrResponse = solr.query(params);
             logger.trace(solrResponse.getResults().getNumFound() + " items found");
             if (solrResponse.getResults().getNumFound() > 1) {
-                throw new AptrustException("There are more than one manifest expecting the object " + ref.getId());
+                throw new AptrustException("There are more than one manifest expecting the object " + objectId);
             }
         } catch (SolrServerException ex) {
             throw new AptrustException(ex);
         }
 
-        // 3a. if not, make a note of this object's id so that it may be easily 
-        //     queried when the next manifest arrives
+        // 3a. if not, return.  When the manifest arrives it will be ingested.
         if (solrResponse.getResults().getNumFound() == 0) {
-            logger.trace("no manifest found for complete object " + ref.getId());
+            logger.trace("no manifest found for complete object " + objectId);
             return;
         } else {
             // 3b. if so, process this object and update the "ingest" record as
             //     well as the "package" and "object" records
             String manifestId = (String) solrResponse.getResults().get(0).getFieldValue(AptrustSolrDocument.ID); 
             try {
-                ingestObject(manifestId, ((Integer) solrResponse.getResults().get(0).getFieldValue(AptrustSolrDocument.COMPLETED_OBJECT_COUNT)).longValue(), ref.getId());
+                ingestObject(manifestId, ((Integer) solrResponse.getResults().get(0).getFieldValue(AptrustSolrDocument.COMPLETED_OBJECT_COUNT)).longValue(), objectId, offline);
             } catch (Exception ex) {
-                logger.error("Error ingesting object " + ref.getId(), ex);
+                logger.error("Error ingesting object " + objectId, ex);
                 // 4.  if any sort of error occurs while processing the file, update
                 //     the solr "ingest" record for the manifest to indicate the failure
                 //     (also this should be noted somewhere in the provenance record
@@ -396,185 +378,47 @@ public class DropboxProcessor {
      * @throws ParserConfigurationException 
      * @throws SAXException 
      */
-    private void addRecognizedContent(RecognizedContentReference ref) throws ContentStoreException, IOException, JAXBException, SAXException, ParserConfigurationException {
+    private void addRecognizedContent(String contentId, String objectId) throws ContentStoreException, IOException, JAXBException, SAXException, ParserConfigurationException {
         // parse and add it to the foxmlCache if appropriate
-        Matcher m = FOXML_CONTENTID_PATTERN.matcher(ref.getContentId());
+        Matcher m = FOXML_CONTENTID_PATTERN.matcher(contentId);
         if (m.matches()) {
-            Content foxml = contentStore.getContent(stagingSpaceId, ref.getId());
-            logger.debug("parsing and caching foxml for " + ref.getId());
+            Content foxml = contentStore.getContent(stagingSpaceId, contentId);
+            logger.debug("parsing and caching foxml for " +  objectId);
             FedoraObject o = new FOXMLReader().readObject(foxml.getStream());
-            foxmlCache.put(ref.getId(), o);
+            cache.assertObjectParts(getRequiredContentIdsFromFedoraObject(o), o.pid());
         }
 
         // parse and add it to the manifest cache if appropriate
-        if (ref.getContentId().endsWith(".dura-manifest")) {
-            Content manifest = contentStore.getContent(stagingSpaceId, ref.getContentId());
+        if (contentId.endsWith(".dura-manifest")) {
+            Content manifest = contentStore.getContent(stagingSpaceId, contentId);
             JAXBContext jc = JAXBContext.newInstance(DuraChunkManifest.class);
             Unmarshaller u = jc.createUnmarshaller();
             DuraChunkManifest chunkManifest = (DuraChunkManifest) u.unmarshal(manifest.getStream());
-            contentIdToChunkManifestMap.put(ref.getContentId().replace(".dura-manifest", ""), chunkManifest);
+            cache.notifyChunkManifest(contentId.replace(".dura-manifest", ""), chunkManifest);
         }
 
-        // add it to the idToContentMap
-        List<RecognizedContentReference> l = idToContentMap.get(ref.getId());
-        if (l == null) {
-            l = new ArrayList<RecognizedContentReference>();
-            idToContentMap.put(ref.getId(), l);
-        }
-        l.add(ref);
-
-        // add it to the completed list if possible
-        if ((ref.isFedoraObject() && isFedoraObjectComplete(ref.getId())) || ref.isDSpaceAIP()) {
-            completeStagedPids.add(ref.getId());
-            if (ref.isFedoraObject()) {
-                logger.info(ref.getContentId() + " was recognized as the final part of a Fedora object which will be ingested once referenced in a manifest.");
-            } else {
-                logger.info(ref.getContentId() + " was recognized as the final part of a DSpace object which will be ingested once referenced in a manifest.");
-            }
-        } else {
-            if (ref.isFedoraObject()) {
-                logger.info(ref.getContentId() + " was recognized as part of a Fedora object, but the entire object has not yet arrived.");
-            } else {
-                logger.info(ref.getContentId() + " was recognized as part of a DSpace object, but the entire object has not yet arrived.");
-            }
-        }
+        // notify the cache of the content
+        cache.notifyContentId(contentId);
     }
 
     /**
-     * Determines if the Fedora object specified by the given PID has been
-     * completely transferred to the staging area.  This method doesn't take
-     * advantage of caching and is not recommended for use. 
-     * @deprecated
+     * Walks through the fedora object and for each version of each MANAGED 
+     * datastream, creates the contentId that FedoraCloudSync would use for that
+     * datastream version.
      */
-    private boolean areAllPartsPresent(String pid) throws ContentStoreException, SAXException, IOException, ParserConfigurationException {
-        try {
-            Content foxml = contentStore.getContent(stagingSpaceId, pid);
-            logger.debug("found foxml for " + pid);
-            // 1.  find the foxml
-            FedoraObject o = new FOXMLReader().readObject(foxml.getStream());
-            // 2.  parse out all the expected datastream ids and verify that
-            //     a contentID exists with the correct size (and checksum if
-            //     applicable).
-            for (Datastream ds : o.datastreams().values()) {
-                if (ds.controlGroup().equals(ControlGroup.MANAGED)) {
-                    for (DatastreamVersion v : ds.versions()) {
-                        String contentId = pid + "+" + ds.id() + "+" + v.id();
-                        try {
-                            contentStore.getContent(stagingSpaceId, contentId);
-                            logger.debug("found content " + contentId + ".");
-                        } catch (NotFoundException ex) {
-                            logger.debug("failed to find content " + contentId + ", looking for chunk manifest...");
-                            // look for the chunked file
-                            String chunkManifestContentId = pid + "+" + ds.id() + "+" + v.id() + ".dura-manifest";
-                            try {
-                                Content manifest = contentStore.getContent(stagingSpaceId, chunkManifestContentId);
-                                JAXBContext jc = JAXBContext.newInstance(DuraChunkManifest.class);
-                                Unmarshaller u = jc.createUnmarshaller();
-                                DuraChunkManifest m = (DuraChunkManifest) u.unmarshal(manifest.getStream());
-                                for (DuraChunkManifest.Chunk chunk : m.chunks) {
-                                    if (!isContentIdPresent(chunk.chunkId, chunk.byteSize)) {
-                                        logger.debug("unable to find chunk file " + chunk.chunkId + " with size " + chunk.byteSize);
-                                        return false;
-                                    } else {
-                                        logger.debug("found chunk file " + chunk.chunkId);
-                                    }
-                                }
-                            } catch (NotFoundException nfe) {
-                                logger.debug("unable to find chunk manifest (or complete file) " + chunkManifestContentId);
-                                return false;
-                            } catch (JAXBException jaxbe) {
-                                logger.warn("unable to parse the durachunk manifest: " + chunkManifestContentId);
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-            return true;
-        } catch (NotFoundException ex) {
-            return false;
-        }
-    }
-
-    /**
-     * Determines if the Fedora object specified by the given PID has been
-     * completely transferred to the staging area.  The current implementation
-     * bases its determination entirely on cached references to content.
-     * @param pid the PID of the fedora object
-     * @return true if all the necessary datastreams are present and complete
-     */
-    private boolean isFedoraObjectComplete(String pid) throws ContentStoreException, SAXException, IOException, ParserConfigurationException {
-        FedoraObject o = foxmlCache.get(pid);
-        if (o == null) {
-            logger.trace(pid + " is not complete: foxml for {} not found in cache.", pid);
-            return false;
-        }
-
+    private Collection<String> getRequiredContentIdsFromFedoraObject(FedoraObject o) {
+        List<String> requiredContentIds = new ArrayList<String>();
+        requiredContentIds.add(o.pid());
         for (Datastream ds : o.datastreams().values()) {
             if (ds.controlGroup().equals(ControlGroup.MANAGED)) {
                 for (DatastreamVersion v : ds.versions()) {
-                    String contentId = pid + "+" + ds.id() + "+" + v.id();
-                    if (!hasContentBeenIdentified(pid, contentId, v.size() == null ? -1 : v.size())) {
-                        DuraChunkManifest chunkManifest = contentIdToChunkManifestMap.get(contentId);
-                        if (chunkManifest != null) {
-                            for (DuraChunkManifest.Chunk chunk : chunkManifest.chunks) {
-                                if (!this.hasContentBeenIdentified(pid, chunk.chunkId, chunk.byteSize)) {
-                                    logger.trace(pid + " is not complete: Unable to find chunk file " + chunk.chunkId + " with size " + String.valueOf(chunk.byteSize));
-                                    return false;
-                                }
-                            }
-                        } else {
-                            logger.trace("{} is not complete: Neither {}, nor the chunk manifest for that content was found in the cache of previously identified content.", pid, contentId);
-                            return false;
-                        }
-                    }
+                    requiredContentIds.add(o.pid() + "+" + ds.id() + "+" + v.id());
                 }
             }
         }
-        return true;
+        return requiredContentIds;
     }
 
-    /**
-     * Checks whether content with the given contentId is present and whether it
-     * has the same length.
-     * @param contentId the content id to check
-     * @param size the size in bytes that the file must be
-     * @throws ContentStoreException if there's an exception while trying to 
-     * locate the file or determine its size.
-     * @deprecated
-     */
-    private boolean isContentIdPresent(String contentId, long size) throws ContentStoreException {
-        /* NOTE:  the following properites are supported by default (example
-         *        values shown)
-         * content-checksum:6d45bb746dd36a9e32653fdc1607e42a
-         * content-mimetype:application/xml
-         * content-modified:Wed, 14 Nov 2012 22:14:30 UTC
-         * content-size:6597
-         */
-        try {
-            return Long.parseLong(contentStore.getContent(stagingSpaceId, contentId).getProperties().get("content-size")) == size;
-        } catch (NotFoundException ex) {
-            return false;
-        }
-    }
-
-    /**
-     * Checks the cache to determine if the given contentId has been reported
-     * yet by an invocation of addRecognizedContent().
-     * @param pid the pid to which the content belongs
-     * @param contentId the contentId
-     * @param size the size of the content
-     * @return true if the content has been reported, false otherwise
-     */
-    private boolean hasContentBeenIdentified(String pid, String contentId, long size) {
-        for (RecognizedContentReference r : idToContentMap.get(pid)) {
-            if (size == -1 || r.getContentId().equals(contentId) && r.getSize() == size) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     public static final Pattern FEDORA_CLOUDSYNC_CONTENTID_PATTERN = Pattern.compile("^(([A-Za-z0-9]|-|\\.)+:(([A-Za-z0-9])|-|\\.|~|_|(%[0-9A-F]{2}))+)(\\+.*)*$");
     public static final Pattern FOXML_CONTENTID_PATTERN = Pattern.compile("^(([A-Za-z0-9]|-|\\.)+:(([A-Za-z0-9])|-|\\.|~|_|(%[0-9A-F]{2}))+)$");
     
@@ -586,22 +430,17 @@ public class DropboxProcessor {
      * AIPs and parses the ID from the "mets.xml" entry.
      * @param spaceId the id of the space in which the content resides
      * @param contentId the ide of the content
-     * @return a RecognizedContentReference which identifies the the object
-     * that is (or contains) the content with the provided contentId
+     * @return the object ID for the specified contentId
      * @throws AptrustException if any exception occurs while analyzing or
      * accessing the content
      * @throws UnrecognizedContentException in the event that the content is
      * not recognized as belonging to a fedora or dspace object.
      */
-    private RecognizedContentReference determineLocalId(String contentId) throws AptrustException {
+    private String determineObjectId(String contentId) throws AptrustException {
         // 1.  see if it's part of a fedora object
         Matcher m = FEDORA_CLOUDSYNC_CONTENTID_PATTERN.matcher(contentId);
         if (m.matches()) {
-            try {
-                return new RecognizedContentReference(contentId, m.group(1), getContentSize(contentId));
-            } catch (ContentStoreException e) {
-                throw new AptrustException(e);
-            }
+            return m.group(1);
         }
 
         // 2.  see if it's a zip file (dspace AIP)
@@ -609,7 +448,7 @@ public class DropboxProcessor {
         m = zipFilePattern.matcher(contentId);
         if (m.matches()) {
             try {
-                return new RecognizedContentReference(contentId, new DSpaceAIPPackage(contentStore.getContent(stagingSpaceId, contentId).getStream()), getContentSize(contentId));
+                return new DSpaceAIPPackage(contentStore.getContent(stagingSpaceId, contentId).getStream()).getId();
             } catch (ContentStoreException ex) {
                 throw new AptrustException(ex);
             }
@@ -617,19 +456,6 @@ public class DropboxProcessor {
 
         // 3.  for now, other files are unrecognized
         throw new UnrecognizedContentException(contentId);
-    }
-
-    /**
-     * A helper method to determine the size of the content with the specified
-     * contentId.
-     * @param contentId the contentId for the content whose size (in bytes) is
-     * in question
-     * @return the size, in bytes, of the content
-     * @throws ContentStoreException if an exception is encountered while
-     * accessing the DuraCloud content store.
-     */
-    private long getContentSize(String contentId) throws ContentStoreException {
-        return Long.parseLong(contentStore.getContent(stagingSpaceId, contentId).getProperties().get("content-size"));
     }
 
     /**
@@ -645,7 +471,7 @@ public class DropboxProcessor {
      * @throws JAXBException 
      * @throws FedoraClientException 
      */
-    private void ingestObject(String manifestId, long ingestedObjectCount, String pid) {
+    private void ingestObject(String manifestId, long ingestedObjectCount, String pid, boolean offline) {
         IngestManifest manifest = null;
         try {
             // 1.  pull the manifest from fedora
@@ -661,15 +487,18 @@ public class DropboxProcessor {
                 }
             }
     
-            // 2.  move the content to production
-            for (RecognizedContentReference ref : idToContentMap.get(pid)) {
-                contentStore.copyContent(stagingSpaceId, ref.getContentId(), productionSpaceId, ref.getContentId());
-                logger.info("Copied content {} from staging to production.", ref.getContentId());
+            // 2.  move the content to production)
+            for (String contentId : cache.getObjectContent(pid)) {
+                contentStore.copyContent(stagingSpaceId, contentId, productionSpaceId, contentId);
+                logger.info("Copied content {} from staging to production.", contentId);
             }
 
-            for (RecognizedContentReference ref : idToContentMap.get(pid)) {
-                contentStore.deleteContent(stagingSpaceId, ref.getContentId());
-                logger.info("Deleted content {} from staging.", ref.getContentId());
+            for (String contentId : cache.getObjectContent(pid)) {
+                contentStore.deleteContent(stagingSpaceId, contentId);
+                if (offline) {
+                    cache.forgetContentId(contentId);
+                }
+                logger.info("Deleted content {} from staging.", contentId);
             }
 
             // 3.  update the manifest in Solr
@@ -702,19 +531,8 @@ public class DropboxProcessor {
                 logger.error("Exception while rolling back solr!", ex);
             }
         }
-
-        // 5.  clear the cached references to parts of it
-        completeStagedPids.remove(pid);
-        foxmlCache.remove(pid);
-        if (idToContentMap.containsKey(pid)) {
-            for (RecognizedContentReference ref : idToContentMap.get(pid)) {
-                contentIdToChunkManifestMap.remove(ref.getContentId());
-            }
-            idToContentMap.remove(pid);
-        }
-
     }
-    
+
     /**
      * A helper method to fetch (and parse) the specified IngestManifest from 
      * fedora.

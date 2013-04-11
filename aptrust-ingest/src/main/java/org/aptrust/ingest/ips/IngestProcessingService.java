@@ -56,7 +56,12 @@ public class IngestProcessingService implements MessageListener, ExceptionListen
         new IngestProcessingService(fc, s, cs, p.getProperty("duracloud-jms-broker-url"));
     }
 
-    private Map<String, DropboxProcessor> stagingSpaceIdToProcessorMap;
+    /**
+     * A map to allows one SpaceLIstener to be assigned to each space.
+     * Messages originating from that space will be routed to the appropriate
+     * listener.
+     */
+    private Map<String, SpaceListener> spaceToListenerMap;
 
     public IngestProcessingService(FedoraClient fc, SolrServer solr, ContentStore cs, String jmsUrl) throws JMSException, ContentStoreException, AptrustException, IOException {
         initializeDropboxProcessors(fc, solr, cs);
@@ -86,15 +91,15 @@ public class IngestProcessingService implements MessageListener, ExceptionListen
     }
 
     private void initializeDropboxProcessors(FedoraClient fc, SolrServer solr, ContentStore cs) throws ContentStoreException, AptrustException, IOException {
-        stagingSpaceIdToProcessorMap = new HashMap<String, DropboxProcessor>();
+        spaceToListenerMap = new HashMap<String, SpaceListener>();
         List<String> spaceIds = cs.getSpaces();
         for (String spaceId : spaceIds) {
             String stagingSpaceId = spaceId + "staging";
             if (spaceIds.contains(stagingSpaceId)) {
-                stagingSpaceIdToProcessorMap.put(stagingSpaceId, new DropboxProcessor(stagingSpaceId, fc, solr, cs));
+                spaceToListenerMap.put(stagingSpaceId, new DropboxProcessor(stagingSpaceId, fc, solr, cs));
                 logger.info("Registered processor for space \"" + stagingSpaceId + "\".");
             }
-        }  
+        }
     }
 
     public void onMessage(Message message) {
@@ -103,16 +108,16 @@ public class IngestProcessingService implements MessageListener, ExceptionListen
                 MapMessage m = (MapMessage) message;
                 
                 String spaceId = m.getString("spaceId");
-                if (stagingSpaceIdToProcessorMap.containsKey(spaceId)) {
+                if (spaceToListenerMap.containsKey(spaceId)) {
                     String contentId = m.getString("contentId");
                     String storeId = m.getString("storeId");
                     String destination = m.getJMSDestination().toString();
                     if (destination.endsWith("delete")) {
                         logger.debug("Passing delete message on to process for space \"" + spaceId +  "\". (" + m.getJMSMessageID() + ")");
-                        stagingSpaceIdToProcessorMap.get("spaceId").notifyUpdate(new DuraCloudUpdateEvent(contentId));
+                        spaceToListenerMap.get(spaceId).notifyDelete(contentId);
                     } else { // ingest or copy
                         logger.debug("Passing update message on to process for space \"" + spaceId +  "\". (" + m.getJMSMessageID() + ")");
-                        stagingSpaceIdToProcessorMap.get(spaceId).notifyUpdate(new DuraCloudUpdateEvent(contentId));
+                        spaceToListenerMap.get(spaceId).notifyUpdate(contentId);
                     }
                 } else {
                     logger.debug("Skipping update to content in space \"" + spaceId +  "\". (" + m.getJMSMessageID() + ")");

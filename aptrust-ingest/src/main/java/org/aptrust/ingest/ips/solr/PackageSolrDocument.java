@@ -1,4 +1,6 @@
-package org.aptrust.ingest.ips;
+package org.aptrust.ingest.ips.solr;
+
+import java.util.Date;
 
 import org.aptrust.common.solr.AptrustSolrDocument;
 import org.aptrust.common.solr.SolrField;
@@ -14,8 +16,11 @@ public class PackageSolrDocument {
 
     private IngestPackage p;
 
+    private Date ingestDate;
+
     public PackageSolrDocument(IngestPackage p) {
         this.p = p;
+        ingestDate = new Date();
     }
 
     @SolrField(name=AptrustSolrDocument.RECORD_TYPE)
@@ -51,5 +56,10 @@ public class PackageSolrDocument {
     @SolrField(name=AptrustSolrDocument.TITLE)
     public String getTitle() {
         return p.getMetadata().getTitle();
+    }
+
+    @SolrField(name=AptrustSolrDocument.INGEST_DATE)
+    public Date getIngestDate() {
+        return ingestDate;
     }
 }

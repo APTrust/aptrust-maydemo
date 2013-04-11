@@ -103,7 +103,7 @@ public class AptrustClientImpl implements AptrustClient {
             new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY,
                                 "institution");
         SolrQueryClause failedHealthCheck =
-            new SolrQueryClause(AptrustSolrDocument.FAILED_HEATH_CHECK, "true");
+            new SolrQueryClause(AptrustSolrDocument.FAILED_HEALTH_CHECK, "true");
 
         try {
             s.setPackageCount(getResponseCount(packageRecords.and(currentInstitution)
@@ -445,7 +445,7 @@ public class AptrustClientImpl implements AptrustClient {
         Date last =
             (Date) doc.getFieldValue(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE);
         boolean success =
-            !Boolean.TRUE.equals(doc.getFieldValue(AptrustSolrDocument.FAILED_HEATH_CHECK));
+            !Boolean.TRUE.equals(doc.getFieldValue(AptrustSolrDocument.FAILED_HEALTH_CHECK));
         return new HealthCheckInfo(last, success);
     }
 

@@ -1,6 +1,5 @@
-package org.aptrust.ingest.ips;
+package org.aptrust.ingest.ips.solr;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -18,7 +17,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.core.CoreContainer;
 import org.aptrust.common.solr.AptrustSolrDocument;
-import org.aptrust.ingest.api.DigitalObject;
 import org.aptrust.ingest.api.IngestManifest;
 import org.aptrust.ingest.api.IngestPackage;
 import org.junit.After;

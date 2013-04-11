@@ -907,7 +907,7 @@
    <field name="keyword" type="string" indexed="true" stored="false" multiValued="true" />
    <field name="access_control_policy" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="title" type="string" indexed="true" stored="true" />
-   <field name="last_heath_check_date" type="date" indexed="true" stored="true" multiValued="false" />
+   <field name="last_health_check_date" type="date" indexed="true" stored="true" multiValued="false" />
    <field name="failed_health_check" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="submitting_user" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="message" type="string" indexed="false" stored="true" multiValued="false" />

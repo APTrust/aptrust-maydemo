@@ -1,4 +1,4 @@
-package org.aptrust.ingest.ips;
+package org.aptrust.ingest.ips.solr;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,6 +95,11 @@ public class IngestSolrDocument {
         d.m = m;
         d.operationStatus = IngestStatus.COMPLETED;
         d.endDate = completionDate;
+        d.total = 0;
+        for (IngestPackage p : m.getPackagesToSubmit()) {
+            d.total += p.getDigitalObjects().length;
+        }
+        d.progress = d.total;
         return d;
     }
 

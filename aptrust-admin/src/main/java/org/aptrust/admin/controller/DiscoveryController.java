@@ -65,7 +65,7 @@ public class DiscoveryController extends BaseController {
                                         searchParams,
                                         AptrustSolrDocument.DPN_BOUND,
                                         AptrustSolrDocument.ACCESS_CONTROL_POLICY,
-                                        AptrustSolrDocument.FAILED_HEATH_CHECK);
+                                        AptrustSolrDocument.FAILED_HEALTH_CHECK);
         model.addAttribute(QUERY_RESPONSE_KEY, response);
         model.addAttribute(SEARCH_PARAMS_KEY, searchParams);
 

@@ -48,15 +48,15 @@ public class DuraChunkManifest {
     @XmlRootElement(name="chunk")
     public static final class Chunk {
         @XmlAttribute(name="chunkId")
-        String chunkId;
+        public String chunkId;
 
         @XmlAttribute(name="index")
-        int index;
+        public int index;
 
         @XmlAttribute(name="byteSize")
-        long byteSize;
+        public long byteSize;
 
         @XmlAttribute(name="md5")
-        String md5;
+        public String md5;
     }
 }

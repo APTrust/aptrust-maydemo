@@ -1,4 +1,4 @@
-package org.aptrust.ingest.ips;
+package org.aptrust.ingest.ips.solr;
 
 import org.aptrust.common.solr.AptrustSolrDocument;
 import org.aptrust.common.solr.SolrField;
@@ -14,9 +14,9 @@ import org.aptrust.ingest.api.IngestPackage;
 public class ObjectSolrDocument {
 
     private IngestPackage p;
-    
+
     private String pid;
-    
+
     public ObjectSolrDocument(String objectPid, IngestPackage ingestPackage) {
         p = ingestPackage;
         pid = objectPid;
@@ -34,7 +34,7 @@ public class ObjectSolrDocument {
 
     @SolrField(name=AptrustSolrDocument.ID)
     public String getId() {
-        return pid;
+        return p.getMetadata().getInstitution() + "-" + pid;
     }
 
     @SolrField(name=AptrustSolrDocument.PACKAGE_ID)

@@ -194,7 +194,7 @@ public class AptrustSolrDocument {
      * This field is only present in Solr documents with the "record_type" of
      * "package".
      */
-    public static final String FAILED_HEATH_CHECK = "failed_health_check";
+    public static final String FAILED_HEALTH_CHECK = "failed_health_check";
 
     /**
      * The field name within Solr for the field containing the id of the 
@@ -262,6 +262,7 @@ public class AptrustSolrDocument {
             assertRequiredField(ACCESS_CONTROL_POLICY, doc, o, String.class);
             assertRequiredField(OBJECT_COUNT, doc, o, Integer.class);
             assertRequiredField(TITLE, doc, o, String.class);
+            assertRequiredField(INGEST_DATE, doc, o, Date.class);
             // all other fields are optional
         } else if (recordType.equals("object")) {
             assertRequiredField(PACKAGE_ID, doc, o, String.class);
