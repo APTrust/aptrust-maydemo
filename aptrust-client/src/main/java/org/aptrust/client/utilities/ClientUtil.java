@@ -18,11 +18,7 @@ public class ClientUtil {
         p.load(ClientUtil.class.getClassLoader().getResourceAsStream("client-config.properties"));
         PropertiesClientConfig config = new PropertiesClientConfig(p);
         AptrustClientImpl client = new AptrustClientImpl(config);
-        
-        System.out.println("Institution ids:");
-        for (String institutionId : client.getInstitutionIds()) {
-            System.out.println("  " + institutionId);
-        }
+
         System.out.println("Institutions:");
         for (InstitutionInfo i : client.getInstitutions()) {
             summarize(i, client);

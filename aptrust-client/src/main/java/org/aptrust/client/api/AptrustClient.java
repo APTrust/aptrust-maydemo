@@ -1,6 +1,5 @@
 package org.aptrust.client.api;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -19,32 +18,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public interface AptrustClient {
 
     /**
-     * Returns a Collection containing all known institution identifiers. This
-     * may return an empty list, but should not return null.
-     * 
-     * @return A Collection of institution ids
-     */
-    public Collection<String> getInstitutionIds() throws AptrustException;
-
-    /**
      * 
      * @return
      * @throws AptrustException
      */
     List<InstitutionInfo> getInstitutions() throws AptrustException;
 
-    /**
-     * Returns information about the institution with the given id.
-     * 
-     * @param institutionId
-     * @return
-     * @throws AptrustException
-     *             if no institution is found with the given id, or if some
-     *             other error prevents
-     */
-    public InstitutionInfo getInstitutionInfo(String institutionId)
-        throws AptrustException;
-
+    public InstitutionInfo getInstitutionInfo(String institutionId) throws AptrustException;
+        
     /**
      * Returns a summary for the specified institution.
      * 

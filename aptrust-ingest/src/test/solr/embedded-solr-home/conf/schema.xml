@@ -912,6 +912,7 @@
    <field name="submitting_user" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="message" type="string" indexed="false" stored="true" multiValued="false" />
    <field name="package_id" type="string" indexed="true" stored="true" multiValued="false" />
+   <field name="object_id" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="date_sort" type="tdate" indexed="true" stored="false" multiValued="false" />
    <field name="included_pid" type="string" indexed="true" stored="false" multiValued="true" />
 

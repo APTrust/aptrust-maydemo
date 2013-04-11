@@ -42,8 +42,6 @@ import org.apache.solr.common.SolrInputDocument;
  *       <li>access_control_policy</li>
  *       <li>ingest_date</li>
  *       <li>object_count</li>
- *       <li>last_health_check_date</li>
- *       <li>failed_health_check</li>
  *       <li>included_pid (indexed only)</li>
  *     </ul>
  *   </li>
@@ -55,6 +53,18 @@ import org.apache.solr.common.SolrInputDocument;
  *       <li>institution_id</li>
  *       <li>title</li>
  *       <li>package_id</li>
+ *     </ul>
+ *   </li>
+ *   <li>
+ *     content records
+ *     <ul>
+ *       <li>id</li>
+ *       <li>record_type="content"</li>
+ *       <li>institution_id</li>
+ *       <li>package_id</li>
+ *       <li>object_id</li>
+ *       <li>last_health_check_date</li>
+ *       <li>failed_health_check</li>
  *     </ul>
  *   </li>
  * </ul>
@@ -70,8 +80,8 @@ public class AptrustSolrDocument {
 
     /**
      * The field name within Solr for the field containing the record type
-     * values.  Possible values include "object", "package" and "ingest".  This
-     * field is stored and indexed for every Solr document.
+     * values.  Possible values include "content", "object", "package" and
+     * "ingest".  This field is stored and indexed for every Solr document.
      */
     public static final String RECORD_TYPE = "record_type";
 
@@ -183,7 +193,7 @@ public class AptrustSolrDocument {
      * The field name within Solr for the field containing the date of the last
      * health check for some (or all) of the contents of this package.  This 
      * field is only present in Solr documents with the "record_type" of
-     * "package".
+     * "content".
      */
     public static final String LAST_HEALTH_CHECK_DATE = "last_health_check_date";
 
@@ -192,16 +202,23 @@ public class AptrustSolrDocument {
      * for all records with a failed health check.  All other values are
      * considered sufficient to indicate that no health checks have failed.  
      * This field is only present in Solr documents with the "record_type" of
-     * "package".
+     * "content".
      */
     public static final String FAILED_HEALTH_CHECK = "failed_health_check";
 
     /**
      * The field name within Solr for the field containing the id of the 
      * package to which an object belongs.  This field is only present in Solr
-     * documents with the "record_type" of "object".
+     * documents with the "record_type" of "object" or "content".
      */
     public static final String PACKAGE_ID = "package_id";
+
+    /**
+     * The field name within Solr for the field containing the id of the 
+     * object to which content belongs.  This field is only present in Solr
+     * documents with the "record_type" of "content".
+     */
+    public static final String OBJECT_ID = "object_id";
 
     /**
      * A method that uses reflection to build a SolrInputDocument.  For each 
@@ -267,11 +284,16 @@ public class AptrustSolrDocument {
         } else if (recordType.equals("object")) {
             assertRequiredField(PACKAGE_ID, doc, o, String.class);
             // all other fields are optional
+        } else if (recordType.equals("content")) {
+            assertRequiredField(PACKAGE_ID, doc, o, String.class);
+            assertRequiredField(OBJECT_ID, doc, o, String.class);
+            assertRequiredField(LAST_HEALTH_CHECK_DATE, doc, o, Date.class);
+            assertRequiredField(FAILED_HEALTH_CHECK, doc, o, String.class);
         }
 
         return doc;
     }
-    
+
     private static void assertRequiredField(String field, SolrInputDocument doc, Object o, Class<?> c) {
         if (doc.getField(field) == null) {
             throw new IllegalArgumentException("Object " + o.getClass().getName() + " is not annotated with the required \"" + field + "\" field!");

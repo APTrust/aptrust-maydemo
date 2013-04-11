@@ -37,6 +37,7 @@ import org.aptrust.ingest.api.IngestManifest;
 import org.aptrust.ingest.api.IngestPackage;
 import org.aptrust.ingest.dspace.DSpaceAIPPackage;
 import org.aptrust.ingest.exceptions.UnrecognizedContentException;
+import org.aptrust.ingest.ips.solr.ContentSolrDocument;
 import org.aptrust.ingest.ips.solr.IngestSolrDocument;
 import org.aptrust.ingest.ips.solr.ObjectSolrDocument;
 import org.aptrust.ingest.ips.solr.PackageSolrDocument;
@@ -490,6 +491,8 @@ public class DropboxProcessor implements SpaceListener {
             // 2.  move the content to production)
             for (String contentId : cache.getObjectContent(pid)) {
                 contentStore.copyContent(stagingSpaceId, contentId, productionSpaceId, contentId);
+                // TODO: ensure that fixity checking is part of the copy operation in DuraCloud
+                solr.add(AptrustSolrDocument.createValidSolrDocument(new ContentSolrDocument(institutionId, ingestPackage.getMetadata().getId(), pid, contentId, true, new Date())));
                 logger.info("Copied content {} from staging to production.", contentId);
             }
 

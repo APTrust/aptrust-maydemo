@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,6 +66,8 @@ public class AptrustClientImpl implements AptrustClient {
     protected ClientConfig config;
 
     protected SolrServer solr;
+
+    private List<InstitutionInfo> cachedInstitutions;
 
     public AptrustClientImpl(ClientConfig config) {
         if (config == null) {
@@ -214,68 +218,23 @@ public class AptrustClientImpl implements AptrustClient {
         } catch (ContentStoreException ex) {
             throw new AptrustException(ex);
         }
+        cachedInstitutions = institutions;
         return institutions;
     }
 
-    /**
-     * Gets identifiers for all institutions for which any data is present in
-     * the solr index. This implementation may not result in a comprehensive
-     * list of institutions in cases where no content has been ingested. TODO:
-     * possibly fetch this information from another source
-     */
-    public Collection<String> getInstitutionIds() throws AptrustException {
-        int count = 0;
-        List<String> institutionIds = new ArrayList<String>();
-        do {
-            try {
-                QueryResponse r =
-                    fetchFacetPage(AptrustSolrDocument.INSTITUTION_ID,
-                                   institutionIds.size(),
-                                   100);
-                FacetField f =
-                    r.getFacetField(AptrustSolrDocument.INSTITUTION_ID);
-                for (Count c : f.getValues()) {
-                    institutionIds.add(c.getName());
-                }
-            } catch (SolrServerException ex) {
-                throw new AptrustException(ex);
-            }
-        } while (institutionIds.size() < count);
-        return institutionIds;
-    }
-
-    /**
-     * Queries DuraCloud for an institution with the given identifier. The
-     * current implementation assumes that for every registered institution
-     * there is a space with that institution's id which has a property
-     * "institution_display_name" that contains the full name of that
-     * institution.
-     * 
-     * @return an InstitutionInfo for the given institutionId, or null if none
-     *         can be found
-     * @throws AptrustException
-     *             wrapping any exception caught while querying the DuraCloud
-     *             API.
-     */
-    
-    public InstitutionInfo getInstitutionInfo(String institutionId)
-        throws AptrustException {
-
-        try {
-            return new InstitutionInfo(institutionId,
-                                       getInstitutionDisplayName(institutionId));
-        } catch (NullPointerException ex) {
-            return null;
-
+    public InstitutionInfo getInstitutionInfo(String institutionId) throws AptrustException {
+        if (cachedInstitutions == null || !institutionId.contains(institutionId)) {
+            cachedInstitutions = getInstitutions();
         }
+        for (InstitutionInfo i : cachedInstitutions) {
+            if (i.getId().equals(institutionId)) {
+                return i;
+            }
+        }
+        return null;
     }
 
     /**
-     * FIXME The institution display name, which was formerly being pulled from
-     * Duracloud, is no longer available through that channel since Space
-     * Properties are no longer supported. Current work around is to map the
-     * institutionIds in a properties file.
-     * 
      * @param institutionId
      * @return
      */
@@ -409,9 +368,9 @@ public class AptrustClientImpl implements AptrustClient {
                 // there's a couple complex fields that must be populated
                 // from data not simply stored in the Solr record
                 s.setInstitutionName(institutionName);
-                if (doc.containsKey(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE)) {
-                    s.setHealthCheckInfo(parseHealthCheck(doc));
-                }
+
+                // populate the health check
+                s.setHealthCheckInfo(computePackageHealthCheck(institutionId, s.getId()));
 
                 packages.add(s);
                 if (pageOffset + 1 >= page.size()) {
@@ -440,13 +399,45 @@ public class AptrustClientImpl implements AptrustClient {
             throw new AptrustException(ex);
         }
     }
+    
 
-    protected HealthCheckInfo parseHealthCheck(SolrDocument doc) {
-        Date last =
-            (Date) doc.getFieldValue(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE);
-        boolean success =
-            !Boolean.TRUE.equals(doc.getFieldValue(AptrustSolrDocument.FAILED_HEALTH_CHECK));
-        return new HealthCheckInfo(last, success);
+    private HealthCheckInfo computePackageHealthCheck(String institutionId, String packageId) throws AptrustException {
+        SolrQueryClause contentRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "content");
+        SolrQueryClause currentInstitution = new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
+        SolrQueryClause fromPackage = new SolrQueryClause(AptrustSolrDocument.PACKAGE_ID, packageId);
+
+        SolrQueryClause query = contentRecords.and(currentInstitution).and(fromPackage);
+
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        params.set("q", query.toString());
+        params.set("facet", "true");
+        params.set("facet.field", AptrustSolrDocument.LAST_HEALTH_CHECK_DATE, AptrustSolrDocument.FAILED_HEALTH_CHECK);
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+        f.setTimeZone(TimeZone.getTimeZone("GMT"));
+        try {
+            QueryResponse response = solr.query(params);
+            boolean failed = false;
+            Date lastHealthCheckDate = null;
+            for (Count c : response.getFacetField(AptrustSolrDocument.FAILED_HEALTH_CHECK).getValues()) {
+                if (c.getName().equals("true")) {
+                    failed = true;
+                }
+            }
+            if (response.getFacetField(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE).getValues().isEmpty()) {
+                // no last health check
+            } else {
+                // most common health check date is reported as the date for the package, this is potentially 
+                // incorrect for the package (ie, the package as a whole may never have been checked)
+                // NOTE this should be fixed with a future version
+                String dateStr = response.getFacetField(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE).getValues().get(0).getName();
+                lastHealthCheckDate = f.parse(dateStr);
+                logger.debug("Date: " + dateStr + " was parsed as " + lastHealthCheckDate);
+            }
+
+            return new HealthCheckInfo(lastHealthCheckDate, !failed);
+        } catch (Exception ex) {
+            throw new AptrustException(ex);
+        }
     }
 
     /**
@@ -485,9 +476,9 @@ public class AptrustClientImpl implements AptrustClient {
 
                 // populate complex fields
                 p.setInstitutionName(institutionName);
-                if (doc.containsKey(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE)) {
-                    p.setHealthCheckInfo(parseHealthCheck(doc));
-                }
+
+                // populate the health check
+                p.setHealthCheckInfo(computePackageHealthCheck(institutionId, p.getId()));
 
                 // query to populate object details
                 List<ObjectDescriptor> objects =

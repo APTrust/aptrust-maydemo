@@ -63,7 +63,7 @@ public class IngestProcessingService implements MessageListener, ExceptionListen
      */
     private Map<String, SpaceListener> spaceToListenerMap;
 
-    public IngestProcessingService(FedoraClient fc, SolrServer solr, ContentStore cs, String jmsUrl) throws JMSException, ContentStoreException, AptrustException, IOException {
+    public IngestProcessingService(FedoraClient fc, SolrServer solr, ContentStore cs, String jmsUrl) throws Exception {
         initializeDropboxProcessors(fc, solr, cs);
         
         // Create a ConnectionFactory
@@ -90,7 +90,7 @@ public class IngestProcessingService implements MessageListener, ExceptionListen
         consumer.setMessageListener(this);
     }
 
-    private void initializeDropboxProcessors(FedoraClient fc, SolrServer solr, ContentStore cs) throws ContentStoreException, AptrustException, IOException {
+    private void initializeDropboxProcessors(FedoraClient fc, SolrServer solr, ContentStore cs) throws Exception {
         spaceToListenerMap = new HashMap<String, SpaceListener>();
         List<String> spaceIds = cs.getSpaces();
         for (String spaceId : spaceIds) {
@@ -100,6 +100,7 @@ public class IngestProcessingService implements MessageListener, ExceptionListen
                 logger.info("Registered processor for space \"" + stagingSpaceId + "\".");
             }
         }
+        spaceToListenerMap.put("x-service-out", new FixityReportSpaceListener("x-service-out", solr, cs));
     }
 
     public void onMessage(Message message) {

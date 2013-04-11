@@ -23,10 +23,11 @@ public class FixityReport {
 
     private Map<String, FixityCheck> contentIdToCheckMap;
 
+    public static final Pattern REPORT_CONTENT_ID_PATTERN = Pattern.compile("bit-integrity/fixity-report-fingerprints-([^-]+)-(\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d)-vs-manifest-(\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d)\\.tsv");
+
     public FixityReport(String contentId, InputStream is) throws IOException {
-        Pattern p = Pattern.compile("bit-integrity/fixity-report-fingerprints-([^-]+)-(\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d)-vs-manifest-(\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d)\\.tsv");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
-        Matcher m = p.matcher(contentId);
+        Matcher m = REPORT_CONTENT_ID_PATTERN.matcher(contentId);
         if (m.matches()) {
             try {
                 spaceId = m.group(1);
@@ -100,5 +101,15 @@ public class FixityReport {
 
         public boolean passed;
 
+    }
+
+    public static String getSpaceIdFromReportContentId(String contentId) {
+        Matcher m = REPORT_CONTENT_ID_PATTERN.matcher(contentId);
+        if (m.matches()) {
+            return m.group(1);
+        } else {
+            return null;
+        }
+        
     }
 }
