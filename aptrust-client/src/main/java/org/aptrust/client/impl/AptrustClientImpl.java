@@ -348,8 +348,12 @@ public class AptrustClientImpl implements AptrustClient {
             query =
                 query.and(SolrQueryClause.parseUserQuery(searchParams.getQuery()));
         }
-        List<PackageSummary> packages = new ArrayList<PackageSummary>();
+        // add date range to query
+        if (searchParams.getStartDate() != null || searchParams.getEndDate() != null) {
+            query = query.and(SolrQueryClause.dateRange(AptrustSolrDocument.INGEST_DATE, searchParams.getStartDate(), searchParams.getEndDate()));
+        }
 
+        List<PackageSummary> packages = new ArrayList<PackageSummary>();
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
         params.set("facet", "true");
