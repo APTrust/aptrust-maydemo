@@ -28,6 +28,8 @@
     <unitTests>**/*Test.class</unitTests>
     <integrationTests>**/Test*.class</integrationTests>
     <jetty.port>8888</jetty.port>
+    <tomcat.port>${tomcat.default.port}</tomcat.port>
+    <tomcat.default.port>8080</tomcat.default.port>
   </properties>
   <repositories>
     <repository>
@@ -255,6 +257,37 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>tomcat</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>tomcat-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>tomcat-deploy</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>deploy-only</goal>
+                </goals>
+                <configuration>
+                  <server>tomcat-server</server>
+                  <url>http://localhost:${tomcat.port}/manager</url>
+                  <update>true</update>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  
   <dependencies>
 
     <dependency>
