@@ -38,7 +38,8 @@ public interface AptrustClient {
     public Summary getSummary(String institutionId) throws AptrustException;
 
     /**
-     * Returns a list of ingest process summaries.
+     * Returns a list of ingest process summaries ordered from most recently
+     * started to least recently started.
      * 
      * @param institutionId
      * @param startDate

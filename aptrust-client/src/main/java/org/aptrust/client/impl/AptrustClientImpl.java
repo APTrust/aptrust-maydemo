@@ -300,6 +300,7 @@ public class AptrustClientImpl implements AptrustClient {
 
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
+        params.set("sort", AptrustSolrDocument.OPERATION_START_DATE + " desc");
         logger.debug(query.toString());
         try {
             QueryResponse response = solr.query(params);
