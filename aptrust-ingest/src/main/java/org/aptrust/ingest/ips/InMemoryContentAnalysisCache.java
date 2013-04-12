@@ -18,11 +18,14 @@ public class InMemoryContentAnalysisCache implements ContentAnalysisCache {
 
     private Map<String, Set<String>> objectIdToRequiredContentMap;
 
+    private Map<String, String> objectIdToTitleCache;
+
     private Map<String, DuraChunkManifest> contentIdToChunkManifestMap;
     
     public InMemoryContentAnalysisCache() {
         contentIds = new HashSet<String>();
         objectIdToRequiredContentMap = new HashMap<String, Set<String>>();
+        objectIdToTitleCache = new HashMap<String, String>();
         contentIdToChunkManifestMap = new HashMap<String, DuraChunkManifest>();
     }
 
@@ -91,6 +94,19 @@ public class InMemoryContentAnalysisCache implements ContentAnalysisCache {
             }
         }
         return result;
+    }
+
+    public void cacheObjectTitle(String objectId, String title) {
+        objectIdToTitleCache.put(objectId, title);
+    }
+
+    public String getObjectTitle(String objectId) {
+        return objectIdToTitleCache.get(objectId);
+    }
+
+    public void forgetObject(String objectId) {
+        objectIdToTitleCache.remove(objectId);
+        objectIdToRequiredContentMap.remove(objectId);
     }
 
 }

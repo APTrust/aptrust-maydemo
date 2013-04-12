@@ -17,9 +17,12 @@ public class ObjectSolrDocument {
 
     private String pid;
 
-    public ObjectSolrDocument(String objectPid, IngestPackage ingestPackage) {
+    private String title;
+
+    public ObjectSolrDocument(String objectPid, IngestPackage ingestPackage, String title) {
         p = ingestPackage;
         pid = objectPid;
+        this.title = title;
     }
 
     @SolrField(name=AptrustSolrDocument.RECORD_TYPE)
@@ -41,5 +44,9 @@ public class ObjectSolrDocument {
     public String getPackageId() {
         return p.getMetadata().getId();
     }
-    
+
+    @SolrField(name=AptrustSolrDocument.TITLE)
+    public String getTitle() {
+        return title;
+    }
 }

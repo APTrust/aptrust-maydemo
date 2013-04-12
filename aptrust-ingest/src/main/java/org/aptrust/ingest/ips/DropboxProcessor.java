@@ -386,6 +386,7 @@ public class DropboxProcessor implements SpaceListener {
             Content foxml = contentStore.getContent(stagingSpaceId, contentId);
             logger.debug("parsing and caching foxml for " +  objectId);
             FedoraObject o = new FOXMLReader().readObject(foxml.getStream());
+            cache.cacheObjectTitle(o.pid(), o.label());
             cache.assertObjectParts(getRequiredContentIdsFromFedoraObject(o), o.pid());
         }
 
@@ -449,7 +450,9 @@ public class DropboxProcessor implements SpaceListener {
         m = zipFilePattern.matcher(contentId);
         if (m.matches()) {
             try {
-                return new DSpaceAIPPackage(contentStore.getContent(stagingSpaceId, contentId).getStream()).getId();
+                DSpaceAIPPackage p = new DSpaceAIPPackage(contentStore.getContent(stagingSpaceId, contentId).getStream());
+                cache.cacheObjectTitle(p.getId(), p.getTitle());
+                return p.getId();
             } catch (ContentStoreException ex) {
                 throw new AptrustException(ex);
             }
@@ -512,8 +515,9 @@ public class DropboxProcessor implements SpaceListener {
                     PackageSolrDocument pDoc = new PackageSolrDocument(p);
                     solr.add(AptrustSolrDocument.createValidSolrDocument(pDoc));
                     for (DigitalObject o : p.getDigitalObjects()) {
-                        ObjectSolrDocument oDoc = new ObjectSolrDocument(o.getId(), p);
+                        ObjectSolrDocument oDoc = new ObjectSolrDocument(o.getId(), p, cache.getObjectTitle(o.getId()));
                         solr.add(AptrustSolrDocument.createValidSolrDocument(oDoc));
+                        cache.forgetObject(o.getId());
                     }
                 }
                 // update the ingest object in Solr

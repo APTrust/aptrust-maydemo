@@ -28,6 +28,12 @@ public interface ContentAnalysisCache {
     public void assertObjectParts(Collection<String> contentIds, String objectId);
 
     /**
+     * For objects that have human-readable titles, this method may be invoked
+     * to cache that title.
+     */
+    public void cacheObjectTitle(String objectId, String title);
+
+    /**
      * Makes note of the fact that a DuraChunkManifest exists for the given 
      * contentId.
      */
@@ -48,4 +54,14 @@ public interface ContentAnalysisCache {
      * isObjectComplete().
      */
     public Collection<String> getObjectContent(String objectId);
+
+    /**
+     * Gets any previously cached title for the given object id.
+     */
+    public String getObjectTitle(String objectId);
+
+    /**
+     * Removes anything cached (the content or title) for the given object.
+     */
+    public void forgetObject(String objectId);
 }

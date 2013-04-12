@@ -75,7 +75,7 @@ Page: Home page placeholder.
                  <c:if test="${objectDetail.objectId == objectDescriptor.id}">
                   selected="true"
                  </c:if>
-             >${objectDescriptor.localId}</option>
+             >${objectDescriptor.title}</option>
           </c:forEach>
         </select>
         </form>
@@ -83,7 +83,7 @@ Page: Home page placeholder.
     </div>
 
     <div id="object">
-      <h2 id="object-title">${objectDetail.localId}</h2>
+      <h2 id="object-title">${objectDetail.title}</h2>
 
       <h3>Object Properties</h3>
       <table

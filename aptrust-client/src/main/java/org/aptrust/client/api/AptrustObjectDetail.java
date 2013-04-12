@@ -12,6 +12,9 @@ import org.aptrust.common.solr.SolrField;
  */
 public class AptrustObjectDetail {
     private String objectId;
+
+    private String title;
+
     private List<ContentSummary> content;
     
     public AptrustObjectDetail() {
@@ -35,7 +38,12 @@ public class AptrustObjectDetail {
     }
 
     public String getTitle(){
-        return getObjectId();
+        return title;
+    }
+
+    @SolrField(name=AptrustSolrDocument.TITLE)
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public List<ContentSummary> getContentSummaries() {
