@@ -18,6 +18,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.aptrust.client.impl.SolrQueryClause;
 import org.aptrust.common.solr.AptrustSolrDocument;
+import org.aptrust.common.solr.ContentSolrDocument;
 import org.aptrust.ingest.api.DigitalObject;
 import org.aptrust.ingest.api.IngestManifest;
 import org.aptrust.ingest.api.IngestPackage;

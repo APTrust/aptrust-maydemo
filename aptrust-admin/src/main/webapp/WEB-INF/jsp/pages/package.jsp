@@ -75,7 +75,7 @@ Page: Home page placeholder.
                  <c:if test="${objectDetail.objectId == objectDescriptor.id}">
                   selected="true"
                  </c:if>
-             >${objectDescriptor.id}</option>
+             >${objectDescriptor.localId}</option>
           </c:forEach>
         </select>
         </form>
@@ -83,7 +83,7 @@ Page: Home page placeholder.
     </div>
 
     <div id="object">
-      <h2 id="object-title">${objectDetail.title}</h2>
+      <h2 id="object-title">${objectDetail.localId}</h2>
 
       <h3>Object Properties</h3>
       <table
@@ -92,31 +92,29 @@ Page: Home page placeholder.
         cellspacing="0">
         <tr>
           <th>Object ID</th>
-          <td id="${objectDetail.objectId}">${objectDetail.objectId}</td>
+          <td id="${objectDetail.objectId}">${objectDetail.localId}</td>
         </tr>
 
       </table>
 
       <h3>Data Streams</h3>
       <c:choose>
-        <c:when test="${not empty objectDetail.datastreamProfiles}">
+        <c:when test="${not empty objectDetail.contentSummaries}">
       <table class="data-streams">
         <thead>
           <tr>
             <th>Title</th>
-            <th>Date Created</th>
-            <th>Type</th>
-            <th>Size</th>
+            <th>last health check</th>
+            <th>healthy</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <c:forEach var="ds" items="${objectDetail.datastreamProfiles}">
+          <c:forEach var="cs" items="${objectDetail.contentSummaries}">
           <tr>
-            <td>${ds.dsLabel}</td>
-            <td>${ds.dsCreateDate}</td>
-            <td>${ds.dsMIME}</td>
-            <td>${ds.dsSize}</td>
+            <td>${cs.name}</td>
+            <td>${cs.lastFixityCheck}</td>
+            <td>${cs.passed}</td>
                   <td><a
                     href="#"
                     onclick="alert('this feature is not yet implemented.')">Open</a></td>

@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.aptrust.common.solr.AptrustSolrDocument;
+import org.aptrust.common.solr.ContentSolrDocument;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -30,6 +30,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.aptrust.client.api.AptrustClient;
 import org.aptrust.client.api.AptrustObjectDetail;
+import org.aptrust.client.api.ContentSummary;
 import org.aptrust.client.api.HealthCheckInfo;
 import org.aptrust.client.api.IngestProcessSummary;
 import org.aptrust.client.api.IngestStatus;
@@ -41,6 +42,7 @@ import org.aptrust.client.api.SearchParams;
 import org.aptrust.client.api.Summary;
 import org.aptrust.common.exception.AptrustException;
 import org.aptrust.common.solr.AptrustSolrDocument;
+import org.aptrust.common.solr.ContentSolrDocument;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreImpl;
 import org.duracloud.common.model.Credential;
@@ -540,9 +542,27 @@ public class AptrustClientImpl implements AptrustClient {
             if (response.getResults().getNumFound() == 1) {
                 SolrDocument doc = response.getResults().get(0);
                 AptrustObjectDetail d = new AptrustObjectDetail();
-                // TODO datastream info is not yet being populated.
-                // d.setDatastreamProfiles(datastreamProfiles);
                 AptrustSolrDocument.populateFromSolrDocument(d, doc);
+
+                // get information on content (datastream versions or files)
+                ModifiableSolrParams subqueryParams = new ModifiableSolrParams();
+                SolrQueryClause contentRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "content");
+                SolrQueryClause currentInstitution = new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
+                SolrQueryClause fromObject = new SolrQueryClause(AptrustSolrDocument.OBJECT_ID, d.getLocalId());
+                SolrQueryClause contentQuery = contentRecords.and(currentInstitution).and(fromObject);
+                subqueryParams.set("q", contentQuery.toString());
+                List<ContentSummary> summaries = new ArrayList<ContentSummary>();
+                for (SolrDocument content : solr.query(subqueryParams).getResults()) {
+                    ContentSolrDocument csd = new ContentSolrDocument();
+                    AptrustSolrDocument.populateFromSolrDocument(csd, content);
+                    ContentSummary sum = new ContentSummary();
+                    sum.setLastFixityCheck(csd.getHealthCheckDate());
+                    sum.setPassed(!Boolean.parseBoolean(csd.getFailedHealthCheck()));
+                    sum.setName(csd.getContentId());
+                    summaries.add(sum);
+                }
+                d.setContentSummaries(summaries);
+
                 return d;
             } else if (response.getResults().getNumFound() > 1) {
                 throw new AptrustException("Solr Configuration Error: Solr has more than one record with id "

@@ -1,4 +1,4 @@
-package org.aptrust.ingest.ips.solr;
+package org.aptrust.common.solr;
 
 import java.util.Date;
 

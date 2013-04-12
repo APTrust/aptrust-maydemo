@@ -5,8 +5,6 @@ import java.util.List;
 import org.aptrust.common.solr.AptrustSolrDocument;
 import org.aptrust.common.solr.SolrField;
 
-import com.yourmediashelf.fedora.generated.management.DatastreamProfile;
-
 /**
  * 
  * @author Daniel Bernstein
@@ -14,7 +12,7 @@ import com.yourmediashelf.fedora.generated.management.DatastreamProfile;
  */
 public class AptrustObjectDetail {
     private String objectId;
-    private List<DatastreamProfile> datastreamProfiles;
+    private List<ContentSummary> content;
     
     public AptrustObjectDetail() {
     }
@@ -32,34 +30,20 @@ public class AptrustObjectDetail {
         objectId = id;
     }
 
+    public String getLocalId() {
+        return objectId.substring(objectId.indexOf('-') + 1);
+    }
+
     public String getTitle(){
         return getObjectId();
     }
 
-//    public List<DatastreamProfile> getDatastreamProfiles(){
-//        
-//        List<DatastreamProfile> list = new LinkedList<DatastreamProfile>();
-//        int i = 0;
-//        while(i++ < 5){
-//            DatastreamProfile d = new DatastreamProfile();
-//            d.setDsMIME("application/pdf");
-//            d.setDsLabel("Datastream #" +i);
-//            d.setDsSize(new BigInteger("123423423"));
-//            GregorianCalendar cal = new GregorianCalendar(2012, i+1, i+1);
-//            XMLGregorianCalendar value = new XMLGregorianCalendarImpl(cal);
-//            d.setDsCreateDate(value);
-//            list.add(d);
-//        }
-//        
-//        return list;
-//    }
-
-    public List<DatastreamProfile> getDatastreamProfiles() {
-        return datastreamProfiles;
+    public List<ContentSummary> getContentSummaries() {
+        return content;
     }
 
-    public void setDatastreamProfiles(List<DatastreamProfile> datastreamProfiles) {
-        this.datastreamProfiles = datastreamProfiles;
+    public void setContentSummaries(List<ContentSummary> content) {
+        this.content = content;
     }
     
 }

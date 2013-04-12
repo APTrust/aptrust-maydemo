@@ -32,6 +32,10 @@ public class ObjectDescriptor {
     public void setId(String id) {
         this.id = id;
     }
+    
+    public String getLocalId() {
+        return id.substring(id.indexOf('-') + 1);
+    }
 
     public String getTitle() {
         return title;
