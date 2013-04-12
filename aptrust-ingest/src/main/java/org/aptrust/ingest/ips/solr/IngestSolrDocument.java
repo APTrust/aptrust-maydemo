@@ -168,4 +168,13 @@ public class IngestSolrDocument {
         }
         return values;
     }
+
+    @SolrField(name=AptrustSolrDocument.INCLUDED_PACKAGE)
+    public List<String> getIncludedPackageIds() {
+        List<String> values = new ArrayList<String>();
+        for (IngestPackage p : m.getPackagesToSubmit()){
+            values.add(p.getMetadata().getId());
+        }
+        return values;
+    }
 }

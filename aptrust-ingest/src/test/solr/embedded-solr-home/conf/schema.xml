@@ -915,6 +915,7 @@
    <field name="object_id" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="date_sort" type="tdate" indexed="true" stored="false" multiValued="false" />
    <field name="included_pid" type="string" indexed="true" stored="false" multiValued="true" />
+   <field name="included_package" type="string" indexed="true" stored="false" multiValued="true" />
 
     <field name="text" type="text_general" indexed="true" stored="false" multiValued="true"/>
 

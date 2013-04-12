@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +18,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -478,6 +478,34 @@ public class AptrustClientImpl implements AptrustClient {
 
                 // populate complex fields
                 p.setInstitutionName(institutionName);
+                
+                // ingested by, modified by, ingest date
+                ModifiableSolrParams subqueryParams = new ModifiableSolrParams();
+                SolrQueryClause ingestRecords = new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "ingest");
+                SolrQueryClause currentInstitution = new SolrQueryClause(AptrustSolrDocument.INSTITUTION_ID, institutionId);
+                SolrQueryClause completed = new SolrQueryClause(AptrustSolrDocument.OPERATION_STATUS, IngestStatus.COMPLETED.name());
+                SolrQueryClause containingPackage = new SolrQueryClause(AptrustSolrDocument.INCLUDED_PACKAGE, p.getId());
+                SolrQueryClause ingestsQuery = ingestRecords.and(currentInstitution).and(completed).and(containingPackage);
+                subqueryParams.set("q", ingestsQuery.toString());
+                subqueryParams.set("sort", AptrustSolrDocument.OPERATION_END_DATE + " desc");
+                subqueryParams.set("rows", "1");
+                
+                QueryResponse subqueryResponse = solr.query(subqueryParams);
+                if (subqueryResponse.getResults().getNumFound() > 0) {
+                    IngestProcessSummary s = new IngestProcessSummary();
+                    AptrustSolrDocument.populateFromSolrDocument(s, subqueryResponse.getResults().get(0));
+                    p.setIngestedBy(s.getInitiatingUser());
+                    p.setIngestDate(s.getEndDate());
+                    if (subqueryResponse.getResults().getNumFound() > 1) {
+                        subqueryParams.set("start", String.valueOf(subqueryResponse.getResults().getNumFound() - 1));
+                        subqueryResponse = solr.query(subqueryParams);
+                        AptrustSolrDocument.populateFromSolrDocument(s, subqueryResponse.getResults().get(0));
+                    }
+                    p.setModifiedBy(s.getInitiatingUser());
+                    p.setModifiedDate(s.getEndDate());
+                } else {
+                    logger.warn("No ingest operations found for package " + p.getId());
+                }
 
                 // populate the health check
                 p.setHealthCheckInfo(computePackageHealthCheck(institutionId, p.getId()));
@@ -508,10 +536,6 @@ public class AptrustClientImpl implements AptrustClient {
                     }
                 }
                 p.setObjectDescriptors(objects);
-                // TODO Set these values from SOLR index
-                p.setIngestedBy("Not Available");
-                p.setModifiedBy("Not Available");
-                p.setModifiedDate(null);
                 return p;
             }
         } catch (SolrServerException ex) {

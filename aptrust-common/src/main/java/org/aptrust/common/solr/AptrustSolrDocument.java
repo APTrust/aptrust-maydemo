@@ -29,6 +29,7 @@ import org.apache.solr.common.SolrInputDocument;
  *       <li>operation_end_date</li>
  *       <li>message</li>
  *       <li>included_pid (indexed only)</li>
+ *       <li>included_package (indexed only)</li>
  *     </ul>
  *   </li>
  *   <li>
@@ -108,6 +109,13 @@ public class AptrustSolrDocument {
      * "object" record for that pid and inspect the "package_id" field.
      */
     public static final String INCLUDED_PID = "included_pid";
+
+    /**
+     * The field name within Solr for the field containing object values that
+     * are part of the ingest operation.  This can be queried to quickly
+     * ingest to which an package belongs.
+     */
+    public static final String INCLUDED_PACKAGE = "included_package";
 
     /**
      * The field name within Solr for the field containing the username of the
