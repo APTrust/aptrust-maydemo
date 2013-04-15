@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -25,11 +26,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.aptrust.common.metadata.APTrustMetadata;
 import org.aptrust.ingest.api.DigitalObject;
 import org.aptrust.ingest.api.IngestClientConfiguration;
 import org.aptrust.ingest.api.IngestManifest;
 import org.aptrust.ingest.api.IngestPackage;
+import org.aptrust.ingest.dspace.ManifestGenerator;
 import org.aptrust.ingest.fedora.LocalFedoraRepository;
 import org.aptrust.ingest.impl.PropertiesIngestClientConfiguration;
 import org.duracloud.client.ContentStore;
@@ -54,8 +58,9 @@ public class IngestClient {
      * 1.  Ingest prepared content from a Fedora repository
      * 2.  Ingest dspace packages described in a spreadsheet/csv
      * 3.  others, eventually
+     * @throws Exception 
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         // parse the arguments
         CommandLineArguments a = new CommandLineArguments(args);
         if (!a.isValid()) {
@@ -71,8 +76,18 @@ public class IngestClient {
                 System.err.println("Error reading configuration file: " + ex.getMessage());
             }
             IngestClientConfiguration c = new PropertiesIngestClientConfiguration(p);
-
-            if (a.isPrepackagedFedora()) {
+            if (a.isAIPIngest()) {
+                System.out.println("Beginning ingest of DSpace AIPs in " + a.getAipDir() + "." + (a.isDryRun() ? " (dry-run)" : ""));
+                IngestManifest m = ManifestGenerator.generateManifest(c.getDuraCloudUsername(), a.getAipDir(), a.isDPNBound(), a.getAccessConditions(), a.getOperationName());
+                IngestClient client = new IngestClient(c, a);
+                List<File> aips = new ArrayList<File>();
+                for (File f : a.getAipDir().listFiles()) {
+                    if (f.getName().endsWith(".zip")) {
+                        aips.add(f);
+                    }
+                }
+                client.ingestDspace(m, aips);
+            } else if (a.isPrepackagedFedora()) {
                 System.out.println("Beginning ingest of packages defined in fedora." + (a.isDryRun() ? " (dry-run)" : ""));
                 
                 try {
@@ -82,7 +97,7 @@ public class IngestClient {
                     
                     IngestClient client = new IngestClient(c, a);
                     System.out.println("  initiating ingest");
-                    client.ingest(m);
+                    client.ingestFedora(m);
                 } catch (MalformedURLException ex) {
                     System.err.println("Invalid fedora repository URL: " + a.getFedoraUrl());
                     System.exit(-1);
@@ -144,12 +159,20 @@ public class IngestClient {
      * @param m a manifest of materials for ingest/update/removal
      * @throws Exception 
      */
-    public void ingest(IngestManifest m) throws Exception {
+    public void ingestFedora(IngestManifest m) throws Exception {
         // TODO: add some code to ensure that two operations aren't running 
         // at once.
         validateOperation(m);
         m.setId(transferManifest(m));
         queueDataTransfer(m);
+    }
+
+    public void ingestDspace(IngestManifest m, List<File> aips) throws Exception {
+        validateOperation(m);
+        m.setId(transferManifest(m));
+        for (File aip : aips) {
+            transferFile(aip);
+        }
     }
 
     /**
@@ -213,6 +236,28 @@ public class IngestClient {
 
         // Step three, return the ID
         return id;
+    }
+    
+    private void transferFile(File f) throws ContentStoreException, IOException, JAXBException {
+        // Step one, generate an ID
+        String contentId = f.getName();
+        HashOutputStream hos = new HashOutputStream(new NullOutputStream());
+        IOUtils.copy(new FileInputStream(f), hos);
+        String md5 = hos.getMD5Hash();
+        
+        // Step two, transfer the file
+        if (!arguments.isDryRun()) {
+            InputStream is = new FileInputStream(f);
+            try {
+                ContentStore cs = new ContentStoreImpl(configuration.getDuraCloudUrl(), StorageProviderType.valueOf(configuration.getDuraCloudProviderName()), configuration.getDuraCloudProviderId(), new RestHttpHelper(new Credential(configuration.getDuraCloudUsername(), configuration.getDuraCloudPassword())));
+                // TODO: ensure uniqueness of content id, or at least prevent overwrites
+                cs.addContent(configuration.getDuraCloudSpaceId(), contentId, is, f.length(), "text/xml", md5, null);
+            } finally {
+                is.close();
+            }
+        } else {
+            System.out.println("Skipping manifest transfer (dry-run).");
+        }
     }
 
     /**
@@ -379,17 +424,29 @@ public class IngestClient {
 
         private String errorMessage;
 
-        private String operationName = "Fedora Ingest Operation";
+        private String operationName = "Ingest Operation";
+
+        private File dspaceAipDir;
+
+        private boolean dpnBound;
 
         private boolean dryRun;
+
+        private String accessConditions="restricted";
 
         public CommandLineArguments(String [] originalArgs) {
             dryRun = false;
             List<String> args = processFlags(originalArgs);
-            if (args.size() > 0 && args.get(0).equals("--fedora-packages") && args.size() == 4) {
+            if (args.size() == 4 && args.get(0).equals("--fedora-packages")) {
                 fedoraUrl = args.get(1);
                 fedoraUsername = args.get(2);
                 fedoraPassword = args.get(3);
+                valid = true;
+            } else if (args.size() > 1 && args.get(0).equals("--aip-dir")) {
+                dspaceAipDir = new File(args.get(1));
+                if (!dspaceAipDir.exists()) {
+                    throw new RuntimeException(dspaceAipDir.getAbsolutePath() + " does not exist!");
+                }
                 valid = true;
             } else {
                 valid = false;
@@ -415,6 +472,8 @@ public class IngestClient {
                     dryRun = true;
                 } else if (arg.equals("--name")) {
                     nextIsName = true;
+                } else if (arg.equals("--dpn")) {
+                    dpnBound = true;
                 } else {
                     newArgs.add(arg);
                 }
@@ -433,7 +492,23 @@ public class IngestClient {
         public boolean isPrepackagedFedora() {
             return fedoraUrl != null;
         }
-        
+
+        public boolean isAIPIngest() {
+            return dspaceAipDir != null;
+        }
+
+        public File getAipDir() {
+            return dspaceAipDir;
+        }
+
+        public boolean isDPNBound() {
+            return dpnBound;
+        }
+
+        public String getAccessConditions() {
+            return accessConditions;
+        }
+
         /**
          * Returns the provided fedora URL.  If the provided URL included a 
          * trailing slash, that slash is omitted by this response.  For example
@@ -468,7 +543,10 @@ public class IngestClient {
         public String getArgumentUsage() {
             return " --fedora-packages [fedora-url] [fedora-username] [fedora-password]\n" 
                     + "  Optional Flags:\n    --dry-run (performs all local operations but writes nothing to remote systems)\n"
-                    + "Currently this AP Trust ingest client only supports ingest of pacakged materials in a local fedora repository."
+                    + "    --name \"name\" (names the ingest operation"
+                    + "\n --aip-dir [aip dir]\n"
+                    + "  Optional Flags:\n    --dpn (sends all packages to DPN)\n"
+                    + "    --name \"name\" (names the ingest operation)\n"
                     + (errorMessage != null ? "\n" + errorMessage : "");
         }
 

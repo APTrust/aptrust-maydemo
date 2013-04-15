@@ -19,9 +19,19 @@ This application, run at partner institutions moves content into the DuraCloud s
 
 Early design documentation can be found on the AP Trust development wiki here: https://wiki.duraspace.org/display/aptrust/Ingest+Client
 
+### Fedora Content Ingest
+For ingesting content in fedora repositories that has already been marked as APTrust materials:
+
 	mvn exec:java -Dexec.mainClass=org.aptrust.ingest.IngestClient -Dexec.args="--fedora-packages http://hostname:8080/fedora/ fedoraUsername fedoraPassword --name \"ingest operation name\" --dry-run"
 
 * name and dry-run are optional
+
+### DSpace Content Ingest
+For ingesting DSPace content that has already been exported to a filesystem directory.
+
+	mvn exec:java -Dexec.mainClass=org.aptrust.ingest.IngestClient -Dexec.args="--aip-dir [aip directory] -name \"ingest operation name\" --dpn --dry-run"
+* name and dry-run are optional
+* dpn : when present flags all ingested content as DPN bound
 
 ## Ingest Processing Service
 This service listens to will respond to the addition or modification of files in any of the AP Trust staging spaces.  Early design documentation can be found on the AP Trust development wiki here: https://wiki.duraspace.org/display/aptrust/Ingest+Processing+Service
