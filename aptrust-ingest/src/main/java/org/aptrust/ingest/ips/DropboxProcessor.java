@@ -452,6 +452,7 @@ public class DropboxProcessor implements SpaceListener {
             try {
                 DSpaceAIPPackage p = new DSpaceAIPPackage(contentStore.getContent(stagingSpaceId, contentId).getStream());
                 cache.cacheObjectTitle(p.getId(), p.getTitle());
+                cache.assertObjectParts(Collections.singleton(contentId), p.getId());
                 return p.getId();
             } catch (ContentStoreException ex) {
                 throw new AptrustException(ex);
