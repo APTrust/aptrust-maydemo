@@ -514,6 +514,7 @@ public class AptrustClientImpl implements AptrustClient {
                                                           "object").and(new SolrQueryClause(AptrustSolrDocument.PACKAGE_ID,
                                                                                             p.getId()))
                                                                    .getQueryString());
+                objectQueryParams.set("sort", AptrustSolrDocument.ID + " asc");
 
                 SolrDocumentList page =
                     solr.query(objectQueryParams).getResults();
