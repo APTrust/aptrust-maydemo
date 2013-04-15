@@ -18,7 +18,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -234,22 +233,6 @@ public class AptrustClientImpl implements AptrustClient {
             }
         }
         return null;
-    }
-
-    /**
-     * @param institutionId
-     * @return
-     */
-    private String getInstitutionDisplayName(String institutionId) {
-        try {
-            Properties p = new Properties();
-            InputStream is = AptrustClientImpl.class.getResourceAsStream("/institutions.properties");
-            p.load(is);
-            return p.getProperty(institutionId, institutionId);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -586,8 +569,12 @@ public class AptrustClientImpl implements AptrustClient {
                 SolrQueryClause fromObject = new SolrQueryClause(AptrustSolrDocument.OBJECT_ID, d.getLocalId());
                 SolrQueryClause contentQuery = contentRecords.and(currentInstitution).and(fromObject);
                 subqueryParams.set("q", contentQuery.toString());
+                subqueryParams.set("sort", AptrustSolrDocument.ID + " asc");
                 List<ContentSummary> summaries = new ArrayList<ContentSummary>();
-                for (SolrDocument content : solr.query(subqueryParams).getResults()) {
+                SolrDocumentList page = solr.query(subqueryParams).getResults();
+                for (long i = 0; i < page.getNumFound(); i++) {
+                    int pageOffset = (int) (i - page.getStart());
+                    SolrDocument content = page.get(pageOffset);
                     ContentSolrDocument csd = new ContentSolrDocument();
                     AptrustSolrDocument.populateFromSolrDocument(csd, content);
                     ContentSummary sum = new ContentSummary();
@@ -595,6 +582,11 @@ public class AptrustClientImpl implements AptrustClient {
                     sum.setPassed(!Boolean.parseBoolean(csd.getFailedHealthCheck()));
                     sum.setName(csd.getContentId());
                     summaries.add(sum);
+                    if (pageOffset + 1 >= page.size()) {
+                        // fetch next page of results
+                        subqueryParams.set("start", String.valueOf(i + 1));
+                        page = solr.query(subqueryParams).getResults();
+                    }
                 }
                 d.setContentSummaries(summaries);
 
