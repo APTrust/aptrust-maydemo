@@ -75,7 +75,7 @@ Page: Package Discovery
         </form:form>
       </div>
       
-      <c:if test="${not empty searchParams.constraints}">
+      <c:if test="${not empty searchParams.constraints or not empty searchParams.startDate or not empty searchParams.endDate}">
         <div id="filters">
             <h3>Filters:</h3> 
             <ul>

@@ -183,7 +183,7 @@ Page: Home page placeholder.
             packages</a> are <strong>DPN Bound</strong></li>
         <li><a href="${discoveryUrl}?constraints[0].name=access_control_policy&constraints[0].value=world">${summary.publicPackageCount} packages</a>
           are <strong>Public</strong></li>
-        <li><a href="${discoveryUrl}constraints[0].name=access_control_policy&constraints[0].value=private">${summary.privatePackageCount}
+        <li><a href="${discoveryUrl}?constraints[0].name=access_control_policy&constraints[0].value=restricted">${summary.privatePackageCount}
             packages</a> are <strong>Private</strong></li>
         <li><a href="${discoveryUrl}?constraints[0].name=institution_only&constraints[0].value=true">${summary.institutionPackageCount}
             packages</a> are <strong>Institution Only</strong></li>

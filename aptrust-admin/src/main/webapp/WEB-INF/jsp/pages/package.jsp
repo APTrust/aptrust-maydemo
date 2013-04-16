@@ -66,7 +66,7 @@ Page: Home page placeholder.
           name="filter"
           value="${filter}"
           type="text"
-          placeholder="Filter by Title">
+          placeholder="Filter object by title">
           <select id="objectId" name="objectId" size="8">
           <c:forEach
             var="objectDescriptor"

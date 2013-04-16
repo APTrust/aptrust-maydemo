@@ -9,7 +9,7 @@
 
 <header role="banner">
   <hgroup>
-    <h1>AP Trust</h1>
+    <h1><a href="${pageContext.request.contextPath}">AP Trust</a></h1>
     <h2>${institution.fullName }</h2>
   </hgroup>
   <div id="courtesy">
