@@ -86,6 +86,8 @@ public class AptrustClientImpl implements AptrustClient {
      * referenced in the configuration.
      */
     public Summary getSummary(String institutionId) throws AptrustException {
+        validateInstitutionId(institutionId);
+
         Summary s = new Summary();
         s.setInstitutionId(institutionId);
 
@@ -176,6 +178,12 @@ public class AptrustClientImpl implements AptrustClient {
         return s;
     }
 
+    protected void validateInstitutionId(String institutionId)
+        throws AptrustException {
+        //validate the institution id
+        getInstitutionInfo(institutionId);
+    }
+
     /**
      * Gets all institutions registered with AP Trust.  For an institution to
      * be recognized there must be two spaces one with the id "x" and another
@@ -232,7 +240,8 @@ public class AptrustClientImpl implements AptrustClient {
                 return i;
             }
         }
-        return null;
+        
+        throw new AptrustException("An institution with id ("+ institutionId + ") could not be found.");
     }
 
     /**
@@ -256,6 +265,10 @@ public class AptrustClientImpl implements AptrustClient {
                                                           String name,
                                                           IngestStatus status)
         throws AptrustException {
+        
+        validateInstitutionId(institutionId);
+        
+        //query solr
         SolrQueryClause ingestRecords =
             new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "ingest");
         SolrQueryClause currentInstitution =
@@ -546,6 +559,9 @@ public class AptrustClientImpl implements AptrustClient {
                                                String packageId,
                                                String objectId)
         throws AptrustException {
+        
+        validateInstitutionId(institutionId);
+        
         SolrQueryClause objectRecords =
             new SolrQueryClause(AptrustSolrDocument.RECORD_TYPE, "object");
         SolrQueryClause idClause =
