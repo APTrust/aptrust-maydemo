@@ -65,13 +65,13 @@ Page: Home page placeholder.
           id="filter"
           name="filter"
           value="${filter}"
-          type="text"
+          type="text" 
           placeholder="Filter object by title">
           <select id="objectId" name="objectId" size="8">
           <c:forEach
             var="objectDescriptor"
             items="${packageDetail.objectDescriptors}">
-            <option value="${objectDescriptor.id}" 
+            <option value="${objectDescriptor.id}" title="${objectDescriptor.id}: ${objectDescriptor.title}"
                  <c:if test="${objectDetail.objectId == objectDescriptor.id}">
                   selected="true"
                  </c:if>
