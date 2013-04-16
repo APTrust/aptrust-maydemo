@@ -71,11 +71,11 @@ Page: Home page placeholder.
           <c:forEach
             var="objectDescriptor"
             items="${packageDetail.objectDescriptors}">
-            <option value="${objectDescriptor.id}" title="${objectDescriptor.id}: ${objectDescriptor.title}"
+            <option value="${objectDescriptor.id}" title="(${objectDescriptor.id}) ${objectDescriptor.title}"
                  <c:if test="${objectDetail.objectId == objectDescriptor.id}">
                   selected="true"
                  </c:if>
-             >${objectDescriptor.title}</option>
+             >(${objectDescriptor.id}) ${objectDescriptor.title}</option>
           </c:forEach>
         </select>
         </form>
