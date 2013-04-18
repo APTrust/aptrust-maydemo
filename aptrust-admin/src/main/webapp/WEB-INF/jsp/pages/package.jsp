@@ -114,7 +114,14 @@ Page: Home page placeholder.
           <tr>
             <td>${cs.name}</td>
             <td>${cs.lastFixityCheck}</td>
-            <td>${cs.passed}</td>
+            <td>
+              <c:if test="${cs.passed}">
+                pass
+              </c:if>
+              <c:if test="!${cs.passed}">
+                fail
+              </c:if>
+            </td>
                   <td><a
                     href="#"
                     onclick="alert('this feature is not yet implemented.')">Open</a></td>
