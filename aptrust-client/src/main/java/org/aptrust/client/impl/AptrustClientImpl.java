@@ -2,14 +2,14 @@ package org.aptrust.client.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -60,6 +60,21 @@ import org.w3c.dom.Document;
  * queries.
  */
 public class AptrustClientImpl implements AptrustClient {
+
+    public static DateFormat SOLR_DATE_FACET_FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    public static DateFormat SOLR_DATE_FACET_FORMAT_2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+    static {
+        SOLR_DATE_FACET_FORMAT_1.setTimeZone(TimeZone.getTimeZone("GMT"));
+        SOLR_DATE_FACET_FORMAT_2.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+    
+    public static Date parseSolrDateFacet(String dateStr) throws ParseException {
+        try {
+            return SOLR_DATE_FACET_FORMAT_1.parse(dateStr);
+        } catch (ParseException ex) {
+            return SOLR_DATE_FACET_FORMAT_2.parse(dateStr);
+        }
+    }
 
     private final Logger logger =
         LoggerFactory.getLogger(AptrustClientImpl.class);
@@ -421,8 +436,6 @@ public class AptrustClientImpl implements AptrustClient {
         params.set("q", query.toString());
         params.set("facet", "true");
         params.set("facet.field", AptrustSolrDocument.LAST_HEALTH_CHECK_DATE, AptrustSolrDocument.FAILED_HEALTH_CHECK);
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
-        f.setTimeZone(TimeZone.getTimeZone("GMT"));
         try {
             QueryResponse response = solr.query(params);
             boolean failed = false;
@@ -439,8 +452,12 @@ public class AptrustClientImpl implements AptrustClient {
                 // incorrect for the package (ie, the package as a whole may never have been checked)
                 // NOTE this should be fixed with a future version
                 String dateStr = response.getFacetField(AptrustSolrDocument.LAST_HEALTH_CHECK_DATE).getValues().get(0).getName();
-                lastHealthCheckDate = f.parse(dateStr);
-                logger.debug("Date: " + dateStr + " was parsed as " + lastHealthCheckDate);
+                try {
+                    lastHealthCheckDate = parseSolrDateFacet(dateStr);
+                    logger.debug("Date: " + dateStr + " was parsed as " + lastHealthCheckDate);
+                } catch (ParseException ex) {
+                    logger.warn("Error parsing date value \"" + dateStr + "\" from " + AptrustSolrDocument.LAST_HEALTH_CHECK_DATE + " facet.", ex);
+                }
             }
 
             return new HealthCheckInfo(lastHealthCheckDate, !failed);
