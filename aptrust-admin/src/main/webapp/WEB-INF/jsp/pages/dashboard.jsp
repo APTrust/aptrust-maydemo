@@ -185,7 +185,7 @@ Page: Home page placeholder.
           are <strong>Public</strong></li>
         <li><a href="${discoveryUrl}?constraints[0].name=access_control_policy&constraints[0].value=restricted">${summary.privatePackageCount}
             packages</a> are <strong>Private</strong></li>
-        <li><a href="${discoveryUrl}?constraints[0].name=institution_only&constraints[0].value=true">${summary.institutionPackageCount}
+        <li><a href="${discoveryUrl}?constraints[0].name=access_control_policy&constraints[0].value=institution">${summary.institutionPackageCount}
             packages</a> are <strong>Institution Only</strong></li>
         <li><a href="${discoveryUrl}?constraints[0].name=failed_health_check&constraints[0].value=true">${summary.failedPackageCount}
             packages</a> have <strong>Failed Health Checks</strong></li>
