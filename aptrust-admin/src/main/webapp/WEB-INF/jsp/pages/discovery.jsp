@@ -71,7 +71,7 @@ Page: Package Discovery
     <div id="results">
       <div >
         <form:form modelAttribute="searchParams" method="GET">
-          <form:input id="search-text-field" placeholder="enter search terms" path="query"  />
+          <form:input id="search-text-field" placeholder="enter search terms: partial word search with *" path="query"  />
         </form:form>
       </div>
       
