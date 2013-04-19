@@ -34,7 +34,7 @@ public class ObjectDescriptor {
     }
     
     public String getLocalId() {
-        return id.substring(id.indexOf('-') + 1);
+        return id.substring(id.indexOf(':') + 1);
     }
 
     public String getTitle() {

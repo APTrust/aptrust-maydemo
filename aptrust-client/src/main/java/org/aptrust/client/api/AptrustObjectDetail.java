@@ -34,7 +34,7 @@ public class AptrustObjectDetail {
     }
 
     public String getLocalId() {
-        return objectId.substring(objectId.indexOf('-') + 1);
+        return objectId.substring(objectId.indexOf(':') + 1);
     }
 
     public String getTitle(){

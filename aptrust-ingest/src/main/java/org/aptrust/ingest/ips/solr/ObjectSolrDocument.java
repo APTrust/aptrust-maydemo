@@ -37,7 +37,7 @@ public class ObjectSolrDocument {
 
     @SolrField(name=AptrustSolrDocument.ID)
     public String getId() {
-        return p.getMetadata().getInstitution() + "-" + pid;
+        return p.getMetadata().getInstitution() + "-object:" + pid;
     }
 
     @SolrField(name=AptrustSolrDocument.PACKAGE_ID)

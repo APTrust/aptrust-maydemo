@@ -77,7 +77,7 @@ public class ContentSolrDocument {
 
     @SolrField(name=AptrustSolrDocument.ID)
     public void setId(String id) {
-        contentId = id.substring(id.indexOf('-') + 1);
+        contentId = id.substring(id.indexOf(':') + 1);
     }
 
     @SolrField(name=AptrustSolrDocument.FAILED_HEALTH_CHECK)
@@ -101,6 +101,6 @@ public class ContentSolrDocument {
     }
 
     public static String getId(String institutionId, String contentId) {
-        return institutionId + "-" + contentId;
+        return institutionId + "-content:" + contentId;
     }
 }
