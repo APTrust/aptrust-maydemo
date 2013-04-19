@@ -8,8 +8,8 @@ aptrust
 
 2. Build Instructions
 
-   cd into the aptrust project root directory and execute the following:
+    cd into the aptrust project root directory and execute the following:
 
-   mvn clean install
+    mvn clean install
 
 3. Running the aptrust admin web app:  see the README in ./aptrust-admin/
