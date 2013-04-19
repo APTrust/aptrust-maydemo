@@ -4,6 +4,7 @@ aptrust
 1. Prerequisites: 
 
    Maven 3.x
+
    Java 1.7.x
 
 2. Build Instructions
