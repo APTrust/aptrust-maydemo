@@ -262,8 +262,6 @@ public class AptrustClientImpl implements AptrustClient {
     /**
      * Queries Solr for ingest processes from a given institution that match the
      * provided criteria. <br />
-     * TODO: This method should force paging of results, this method might
-     * return an extremely large number of results!
      * 
      * @param institutionId
      *            (required) specifies the institution to which all of the
@@ -274,13 +272,17 @@ public class AptrustClientImpl implements AptrustClient {
      *            the user-assigned title of all returned operations
      * @param status
      *            the status all returned operations must have
+     * @deprecated Use the method with start and rows
      */
     public List<IngestProcessSummary> findIngestProcesses(String institutionId,
                                                           Date startDate,
                                                           String name,
                                                           IngestStatus status)
         throws AptrustException {
-        
+        return findIngestProcesses(institutionId, startDate, name, status, 0, 25);
+    }
+
+    public List<IngestProcessSummary> findIngestProcesses(String institutionId, Date startDate, String name, IngestStatus status, int start, int rows) throws AptrustException {
         validateInstitutionId(institutionId);
         
         //query solr
@@ -312,11 +314,12 @@ public class AptrustClientImpl implements AptrustClient {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
         params.set("sort", AptrustSolrDocument.OPERATION_START_DATE + " desc");
+        params.set("start", String.valueOf(start));
         logger.debug(query.toString());
         try {
             QueryResponse response = solr.query(params);
             SolrDocumentList page = response.getResults();
-            for (long i = 0; i < page.getNumFound(); i++) {
+            for (long i = page.getStart(); (i < page.getNumFound()) && (i < rows); i++) {
                 int pageOffset = (int) (i - page.getStart());
                 SolrDocument doc = page.get(pageOffset);
                 IngestProcessSummary s = new IngestProcessSummary();
@@ -337,13 +340,15 @@ public class AptrustClientImpl implements AptrustClient {
     /**
      * Performs a query against Solr for packages from the given institute that
      * match the given SearchParams.
-     * 
-     * TODO: This method should force paging of results, this method might
-     * return an extremely large number of results!
+     * @deprecated 
      */
     public PackageSummaryQueryResponse
         findPackageSummaries(String institutionId, SearchParams searchParams, String ... facetFields)
             throws AptrustException {
+        return findPackageSummaries(institutionId, searchParams, 0, 25, facetFields);
+    }
+
+    public PackageSummaryQueryResponse findPackageSummaries(String institutionId, SearchParams searchParams, int start, int rows, String ... facetFields) throws AptrustException {
 
         String institutionName =
             getInstitutionInfo(institutionId).getFullName();
@@ -373,10 +378,11 @@ public class AptrustClientImpl implements AptrustClient {
         List<PackageSummary> packages = new ArrayList<PackageSummary>();
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
+        params.set("start", String.valueOf(start));
         logger.debug("findPackageSummaries: " + query.toString());
         try {
             SolrDocumentList page = solr.query(params).getResults();
-            for (long i = 0; i < page.getNumFound(); i++) {
+            for (long i = page.getStart(); (i < page.getNumFound()) && (i < rows); i++) {
                 int pageOffset = (int) (i - page.getStart());
                 SolrDocument doc = page.get(pageOffset);
                 PackageSummary s = new PackageSummary();

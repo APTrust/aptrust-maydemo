@@ -50,6 +50,7 @@ public interface AptrustClient {
      *            optional
      * @return
      * @throws AptrustException
+     * @deprecated
      */
     @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     List<IngestProcessSummary> findIngestProcesses(String institutionId,
@@ -59,18 +60,55 @@ public interface AptrustClient {
         throws AptrustException;
 
     /**
+     * Returns a partial list of all ingest process summaries ordered from most
+     * recently started to least recently started.
+     * 
+     * @param institutionId
+     * @param startDate
+     *            optional
+     * @param name
+     *            optional
+     * @param status
+     *            optional
+     * @param start
+     *            the offset from the beginning of the list at which to start
+     *            returning results 
+     * @param rows
+     *            the maximum number of result to return
+     * @return
+     * @throws AptrustException
+     */
+    public List<IngestProcessSummary> findIngestProcesses(String institutionId, Date startDate, String name, IngestStatus status, int start, int rows) throws AptrustException;
+
+    /**
      * 
      * @param institutionId
      * @param searchParams
      * @param facetFields
      * @return
      * @throws AptrustException
+     * @deprecated
      */
     @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public PackageSummaryQueryResponse findPackageSummaries(String institutionId,
                                                      SearchParams searchParams,
                                                      String ... facetFields)
         throws AptrustException;
+
+    /**
+     * 
+     * @param institutionId
+     * @param searchParams
+     * @param facetFields
+     * @param start
+     *            the offset from the beginning of the list at which to start
+     *            returning results 
+     * @param rows
+     *            the maximum number of result to return
+     * @return
+     * @throws AptrustException
+     */
+    public PackageSummaryQueryResponse findPackageSummaries(String institutionId, SearchParams searchParams, int start, int rows, String ... facetFields) throws AptrustException;
 
     /**
      * 
