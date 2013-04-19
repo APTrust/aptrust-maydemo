@@ -15,9 +15,14 @@
   rel="stylesheet"
   type="text/css"
   href="${pageContext.request.contextPath}/static/css/styles.css" />
+  <link
+  rel="stylesheet"
+  type="text/css"
+  href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+  
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/init.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <tiles:insertAttribute name="head-extension" ignore="true"/>
 
 </head>

@@ -16,7 +16,9 @@ Page: Package Discovery
     name="head-extension">
     <script>
     $(function() {
-      $( "#startDate, #endDate" ).datepicker("option", "dateFormat","mm/dd/yyyy");
+      $( "#startDate, #endDate" )
+      	.datepicker()
+      	.datepicker("option", "dateFormat","mm/dd/yy");
     });
     </script>
   
