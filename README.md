@@ -1,5 +1,5 @@
 aptrust
-============
+=======
 
 1. Prerequisites: 
 
