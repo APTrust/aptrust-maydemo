@@ -242,7 +242,16 @@ Page: Home page placeholder.
                         ${ingest.message}
                       </c:when>
                       <c:otherwise>
-                         ${ingest.progress}% done
+                         ${ingest.progress}%  : 
+                         
+                         <c:choose>
+                          <c:when test="${ingest.ingestedObjectCount  == ingest.totalObjectCount }">
+                            ${ingest.totalObjectCount} objects
+                          </c:when>
+                          <c:otherwise>
+                             ${ingest.ingestedObjectCount} of ${ingest.totalObjectCount} objects
+                          </c:otherwise>
+                         </c:choose>
                       </c:otherwise>
                     </c:choose>
                   </strong>
