@@ -373,14 +373,9 @@ public class AptrustClientImpl implements AptrustClient {
         List<PackageSummary> packages = new ArrayList<PackageSummary>();
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
-        params.set("facet", "true");
-        if (facetFields != null) {
-            params.set("facet.field", facetFields);
-        }
         logger.debug("findPackageSummaries: " + query.toString());
         try {
-            QueryResponse response = solr.query(params);
-            SolrDocumentList page = response.getResults();
+            SolrDocumentList page = solr.query(params).getResults();
             for (long i = 0; i < page.getNumFound(); i++) {
                 int pageOffset = (int) (i - page.getStart());
                 SolrDocument doc = page.get(pageOffset);
@@ -400,10 +395,16 @@ public class AptrustClientImpl implements AptrustClient {
                 if (pageOffset + 1 >= page.size()) {
                     // fetch next page of results
                     params.set("start", String.valueOf(i + 1));
-                    response = solr.query(params);
+                    page = solr.query(params).getResults();
                 }
             }
-            
+
+            params.set("facet", "true");
+            if (facetFields != null) {
+                params.set("facet.field", facetFields);
+            }
+            params.set("rows", "0");
+            QueryResponse response = solr.query(params);
             List<FacetField> facets = response.getFacetFields();
             for(SearchConstraint sc : searchParams.getConstraints()){
                for(FacetField ff : response.getFacetFields()){
