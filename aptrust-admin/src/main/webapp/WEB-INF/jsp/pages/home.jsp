@@ -29,8 +29,9 @@
         </c:forEach>
       
       </ul>
-
+      
       <sec:authorize access="hasRole('ROLE_ROOT')">
+      <!-- 
       <section>
         <h2>Admin Tools</h2>
         <ul>
@@ -45,6 +46,7 @@
           </li>
         </ul>      
       </section>
+       -->
       </sec:authorize>
 
     </div>
