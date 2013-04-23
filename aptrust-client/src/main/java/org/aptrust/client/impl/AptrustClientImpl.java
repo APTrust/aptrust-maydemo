@@ -338,18 +338,9 @@ public class AptrustClientImpl implements AptrustClient {
         return results;
     }
 
-    /**
-     * Performs a query against Solr for packages from the given institute that
-     * match the given SearchParams.
-     * @deprecated 
-     */
-    public PackageSummaryQueryResponse
-        findPackageSummaries(String institutionId, SearchParams searchParams, String ... facetFields)
-            throws AptrustException {
-        return findPackageSummaries(institutionId, searchParams, 0, 25, facetFields);
-    }
 
-    public PackageSummaryQueryResponse findPackageSummaries(String institutionId, SearchParams searchParams, int start, int rows, String ... facetFields) throws AptrustException {
+    @Override
+    public PackageSummaryQueryResponse findPackageSummaries(String institutionId, SearchParams searchParams, String ... facetFields) throws AptrustException {
 
         String institutionName =
             getInstitutionInfo(institutionId).getFullName();
@@ -379,13 +370,13 @@ public class AptrustClientImpl implements AptrustClient {
         List<PackageSummary> packages = new ArrayList<PackageSummary>();
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query.toString());
-        params.set("start", String.valueOf(start));
+        params.set("start", String.valueOf(searchParams.getStartIndex()));
+        params.set("rows", String.valueOf(searchParams.getPageSize()));
         logger.debug("findPackageSummaries: " + query.toString());
         try {
             SolrDocumentList page = solr.query(params).getResults();
-            for (long i = page.getStart(); (i < page.getNumFound()) && (i < rows); i++) {
-                int pageOffset = (int) (i - page.getStart());
-                SolrDocument doc = page.get(pageOffset);
+            for (int i = 0; (i < page.size()); i++) {
+                SolrDocument doc = page.get(i);
                 PackageSummary s = new PackageSummary();
                 s.setInstitutionName(institutionName);
                 // populate the easily-mapped field
@@ -399,11 +390,6 @@ public class AptrustClientImpl implements AptrustClient {
                 s.setHealthCheckInfo(computePackageHealthCheck(institutionId, s.getId()));
 
                 packages.add(s);
-                if (pageOffset + 1 >= page.size()) {
-                    // fetch next page of results
-                    params.set("start", String.valueOf(i + 1));
-                    page = solr.query(params).getResults();
-                }
             }
 
             params.set("facet", "true");
@@ -426,7 +412,7 @@ public class AptrustClientImpl implements AptrustClient {
                }
             }
             return new PackageSummaryQueryResponse(packages,
-                                                   facets);
+                                                   facets, response.getResults().getNumFound());
         } catch (SolrServerException ex) {
             throw new AptrustException(ex);
         }

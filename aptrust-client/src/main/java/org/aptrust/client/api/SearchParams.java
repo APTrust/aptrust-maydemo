@@ -15,6 +15,8 @@ public class SearchParams {
     
     private List<SearchConstraint> constraints;
     public static final String DATE_TIME_FORMAT = "MM/dd/yyyy";
+    private long startIndex = 0;
+    private int pageSize = 20;
     
     @DateTimeFormat(pattern=DATE_TIME_FORMAT)
     private Date startDate;
@@ -30,7 +32,23 @@ public class SearchParams {
         this.query = query;
         this.constraints = constraints;
     }
+    
+    public long getStartIndex() {
+        return startIndex;
+    }
+    
+    public void setStartIndex(long startIndex) {
+        this.startIndex = startIndex;
+    }
 
+    public int getPageSize() {
+        return pageSize;
+    }
+    
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+    
     public String getQuery() {
         return query;
     }

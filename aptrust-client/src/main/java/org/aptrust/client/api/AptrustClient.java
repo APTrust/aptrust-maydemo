@@ -87,28 +87,12 @@ public interface AptrustClient {
      * @param facetFields
      * @return
      * @throws AptrustException
-     * @deprecated
      */
     @PreAuthorize("hasPermission(#institutionId, 'institutionId', 'admin')")
     public PackageSummaryQueryResponse findPackageSummaries(String institutionId,
                                                      SearchParams searchParams,
                                                      String ... facetFields)
         throws AptrustException;
-
-    /**
-     * 
-     * @param institutionId
-     * @param searchParams
-     * @param facetFields
-     * @param start
-     *            the offset from the beginning of the list at which to start
-     *            returning results 
-     * @param rows
-     *            the maximum number of result to return
-     * @return
-     * @throws AptrustException
-     */
-    public PackageSummaryQueryResponse findPackageSummaries(String institutionId, SearchParams searchParams, int start, int rows, String ... facetFields) throws AptrustException;
 
     /**
      * 

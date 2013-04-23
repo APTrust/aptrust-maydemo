@@ -130,6 +130,23 @@ Page: Package Discovery
       <c:set var="packages" value="${queryResponse.packageSummaries}"/>
       <c:choose>
         <c:when test="${not empty packages}">
+          <div>
+            <p>
+              <c:set var="endIndex" value="${searchParams.startIndex + packages.size()}"/>
+              <c:set var="nextIndex" value="${endIndex >= queryResponse.totalFound ? -1 : endIndex}"/>
+              <c:set var="previousIndex" value="${searchParams.startIndex-searchParams.pageSize < 0 ? 0 : searchParams.startIndex-searchParams.pageSize}"/>
+              
+              ${searchParams.startIndex + 1} - ${endIndex} of ${queryResponse.totalFound} matches                   
+
+               <c:if test="${searchParams.startIndex > 0}">
+                <a href="?startIndex=${previousIndex}&${searchParams.toQueryStringWithout(null)}">Previous</a> 
+              </c:if>
+              <c:if test="${nextIndex > 0}">
+                <a href="?startIndex=${nextIndex}&${searchParams.toQueryStringWithout(null)}">Next</a>
+              </c:if>              
+            </p>
+          </div>
+        
           <c:forEach var="package" items="${packages}">
           <div class="result">
             <c:set var="packageUrl" value="${packageBaseUrl}/${package.id}"/>
