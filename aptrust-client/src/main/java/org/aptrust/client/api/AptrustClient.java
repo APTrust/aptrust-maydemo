@@ -134,5 +134,6 @@ public interface AptrustClient {
      * This method is intended to be used by AP Trust root administrators to support 
      * disaster recovery and schema updates.
      */
+    @PreAuthorize("hasRole('ROLE_ROOT')")
     public void rebuildIndex() throws AptrustException;
 }
