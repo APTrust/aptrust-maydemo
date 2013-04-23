@@ -60,7 +60,8 @@ import org.w3c.dom.Document;
  * queries.
  */
 public class AptrustClientImpl implements AptrustClient {
-
+    private Logger log = LoggerFactory.getLogger(AptrustClientImpl.class);
+    
     public static DateFormat SOLR_DATE_FACET_FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     public static DateFormat SOLR_DATE_FACET_FORMAT_2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
     static {
@@ -685,5 +686,13 @@ public class AptrustClientImpl implements AptrustClient {
             e.printStackTrace();
             throw new AptrustException(e);
         }
+    }
+    
+    @Override
+    public void rebuildIndex() throws AptrustException{
+        log.info("rebuilding index...");
+        //FIXME To be Implemented.
+        log.warn("rebuildIndex() not implemented.");
+        throw new AptrustException("Not implemented!");
     }
 }

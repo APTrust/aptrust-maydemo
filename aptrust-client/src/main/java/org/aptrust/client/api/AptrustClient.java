@@ -144,5 +144,11 @@ public interface AptrustClient {
     public String getStorageReport(String institutionId, boolean staging)
         throws AptrustException;
 
-
+    
+    /**
+     * Rebuilds indexes from the source data stored in underlying preservation system.
+     * This method is intended to be used by AP Trust root administrators to support 
+     * disaster recovery and schema updates.
+     */
+    public void rebuildIndex() throws AptrustException;
 }

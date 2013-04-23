@@ -13,22 +13,18 @@
     <h2>${institution.fullName }</h2>
   </hgroup>
   <div id="courtesy">
-    <sec:authorize access="hasAnyRole('ROLE_ROOT','ROLE_USER')" >
-    <p>
-      Welcome, ${principal.username } ! <a href="${pageContext.request.contextPath}/j_spring_security_logout">Sign Out</a>
-    </p>
-    <form
-      action="${discoveryUrl}"
-      method="get"
-      accept-charset="utf-8">
-      <input
-        type="search"
-        name="query"
-        id="search"
-        placeholder="enter search terms"
-        value=""/>
-    </form>
-    </sec:authorize>
+    <%@include file="../include/signin-links.jsp"%>
+      <form
+    action="${discoveryUrl}"
+    method="get"
+    accept-charset="utf-8">
+    <input
+      type="search"
+      name="query"
+      id="search"
+      placeholder="enter search terms"
+      value="" />
+  </form>
     
   </div>
 </header>
