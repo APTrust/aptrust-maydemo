@@ -118,7 +118,7 @@ Page: Home page placeholder.
               <c:if test="${cs.passed}">
                 pass
               </c:if>
-              <c:if test="!${cs.passed}">
+              <c:if test="${!cs.passed}">
                 fail
               </c:if>
             </td>

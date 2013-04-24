@@ -156,7 +156,7 @@ Page: Package Discovery
             <p class="meta">
               <a href="${packageUrl}">${package.objectCount} Objects</a> | Added ${package.ingestDate} |  ${package.institutionName}
             </p>
-            <p class="health-check ${package.healthCheckInfo.good ? 'good' : ''}">Last Health Check: ${package.healthCheckInfo.date}</p>
+            <p class="health-check ${package.healthCheckInfo.good ? 'good' : 'bad'}">Last Health Check: ${package.healthCheckInfo.date}</p>
           </div>
           </c:forEach>
         </c:when>

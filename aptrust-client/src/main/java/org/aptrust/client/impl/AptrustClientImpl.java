@@ -435,7 +435,7 @@ public class AptrustClientImpl implements AptrustClient {
             boolean failed = false;
             Date lastHealthCheckDate = null;
             for (Count c : response.getFacetField(AptrustSolrDocument.FAILED_HEALTH_CHECK).getValues()) {
-                if (c.getName().equals("true")) {
+                if (c.getName().equals("true") && c.getCount() > 0) {
                     failed = true;
                 }
             }
