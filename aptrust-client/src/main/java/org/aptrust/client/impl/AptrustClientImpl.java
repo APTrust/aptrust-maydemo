@@ -121,7 +121,7 @@ public class AptrustClientImpl implements AptrustClient {
                                 "world");
         SolrQueryClause isPrivate =
             new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY,
-                                "private");
+                                "restricted");
         SolrQueryClause isInstitutionOnly =
             new SolrQueryClause(AptrustSolrDocument.ACCESS_CONTROL_POLICY,
                                 "institution");
@@ -633,19 +633,10 @@ public class AptrustClientImpl implements AptrustClient {
     private long getResponseCount(String query) throws SolrServerException {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.set("q", query);
-        return solr.query(params).getResults().getNumFound();
+        long count = solr.query(params).getResults().getNumFound();
+        return count;
     }
 
-    private QueryResponse fetchFacetPage(String field, int offset, int max)
-        throws SolrServerException {
-        ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set("facet.field", "institution_id");
-        params.set("facet", "true");
-        params.set("facet.limit", max);
-        params.set("facet.offset", offset);
-        return solr.query(params);
-    }
-    
     @Override
     public String getStorageReport(String institutionId, boolean staging) throws AptrustException {
         try {

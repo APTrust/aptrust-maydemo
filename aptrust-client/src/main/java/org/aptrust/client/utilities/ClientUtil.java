@@ -18,7 +18,7 @@ public class ClientUtil {
         p.load(ClientUtil.class.getClassLoader().getResourceAsStream("client-config.properties"));
         PropertiesClientConfig config = new PropertiesClientConfig(p);
         AptrustClientImpl client = new AptrustClientImpl(config);
-
+        System.out.println("Solr URL: " + p.getProperty("solr-url"));
         System.out.println("Institutions:");
         for (InstitutionInfo i : client.getInstitutions()) {
             summarize(i, client);
@@ -34,7 +34,7 @@ public class ClientUtil {
         System.out.println("     DPN-bound: " + s.getDpnBoundPackageCount());
         System.out.println("     Failed:    " + s.getFailedPackageCount());
         System.out.println("     Public:    " + s.getPublicPackageCount());
-        System.out.println("     Private:   " + s.getInstitutionPackageCount());
+        System.out.println("     Private:   " + s.getPrivatePackageCount());
         System.out.println("    Objects:    " + s.getObjectCount());
         System.out.println();
         System.out.println("Current Operations:");
