@@ -97,7 +97,7 @@
     <org.springframework.webflow.version>2.3.0.RELEASE</org.springframework.webflow.version>
     <org.springframework.security.version>3.1.0.RELEASE</org.springframework.security.version>
     <tiles.version>2.2.2</tiles.version>
-    <jetty.version>8.1.4.v20120524</jetty.version>
+    <jetty.version>9.4.41.v20210516</jetty.version>
   </properties>
 
   <dependencyManagement>
